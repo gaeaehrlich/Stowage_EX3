@@ -30,8 +30,8 @@ class NaiveAlgorithm: public AbstractAlgorithm {
 
 public:
     //NaiveAlgorithm(ShipPlan plan, ShipRoute route, WeightBalanceCalculator calc);
-    int readShipPlan(const std::string& full_path_and_file_name) override ;
-    int readShipRoute(const std::string& full_path_and_file_name) override ;
+    int readShipPlan(const string& full_path_and_file_name) override ;
+    int readShipRoute(const string& full_path_and_file_name) override ;
     int setWeightBalanceCalculator(WeightBalanceCalculator& calculator) override;
     int getInstructionsForCargo(
             const std::string& input_full_path_and_file_name,

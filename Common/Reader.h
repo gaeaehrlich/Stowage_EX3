@@ -8,10 +8,13 @@
 #include <algorithm>
 #include <tuple>
 #include <memory>
-# include <map>
-#include "Container.h"
+#include <map>
 #include <filesystem>
 #include <fstream>
+
+#include "Container.h"
+#include "ShipPlan.h"
+#include "ShipRoute.h"
 
 using std::vector;
 using std::string;
@@ -30,8 +33,8 @@ public:
     static bool legalContainerId(string id);
     static bool legalCheckDigit(string id);
     static bool readCargoLoad(const string& path, vector<unique_ptr<Container>>& list);
-    static bool Reader::readShipPlan(const string& path);
-    static bool Reader::readShipRoute(const string& path);
+    static bool readShipPlan(const string& path, ShipPlan& plan);
+    static bool readShipRoute(const string& path, ShipRoute& route);
 };
 
 

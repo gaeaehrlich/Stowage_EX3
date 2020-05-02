@@ -1,5 +1,17 @@
 #include "NaiveAlgorithm.h"
 
+int NaiveAlgorithm::readShipPlan(const string& full_path_and_file_name) { // TODO
+    return Reader::readShipPlan(full_path_and_file_name, _plan);
+}
+
+int NaiveAlgorithm::readShipRoute(const string& full_path_and_file_name) {
+    return Reader::readShipRoute(full_path_and_file_name, _route);
+}
+
+int NaiveAlgorithm::setWeightBalanceCalculator(WeightBalanceCalculator& calculator) {
+    return 0;
+}
+
 int NaiveAlgorithm::getInstructionsForCargo(const string &input_path, const string &output_path) {
     if(!_route.isLastStop()) {
         Reader::readCargoLoad(input_path, _cargo_load);

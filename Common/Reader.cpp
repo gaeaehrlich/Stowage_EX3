@@ -186,7 +186,7 @@ bool Reader::readCargoLoad(const string &path, vector<unique_ptr<Container>>& li
     return true;
 }
 
-bool Reader::readShipPlan(const string& path) {
+bool Reader::readShipPlan(const string& path, ShipPlan& plan) {
     int x, y, num_floors;
     std::string line;
     std::ifstream file(path);
@@ -198,12 +198,12 @@ bool Reader::readShipPlan(const string& path) {
         }
     }
     while (Reader::ignoreLine(line));
-    if (!Reader::splitPlanLine(line, vec, false)) { return fasle; }
+    if (!Reader::splitPlanLine(line, vec, false)) { return false; }
     num_floors = vec[0];
     x = vec[1];
     y = vec[2];
 
-    map< pair<int,int>, int > plan;
+    map< pair<int,int>, int > floors_plan;
     while (std::getline(file, line)) {
         if (Reader::ignoreLine(line)) { continue; }
         if(!Reader::splitPlanLine(line, vec)) { return false; }
@@ -211,15 +211,15 @@ bool Reader::readShipPlan(const string& path) {
             cout << "WARNING: invalid arguments. This line will be ignored" << endl;
             continue;
         }
-        plan[{vec[0], vec[1]}] = vec[2];
+        floors_plan[{vec[0], vec[1]}] = vec[2];
     }
+    plan = ShipPlan(num_floors, floors_plan);
     return true;
-    //Simulation::_plan = ShipPlan(num_floors, plan);
 }
 
-bool Reader::readShipRoute(const string &path) {
+bool Reader::readShipRoute(const string &path, ShipRoute& route) {
     string curr_port, prev_port;
-    vector<string> route;
+    vector<string> ports;
     std::ifstream file(path);
     while (std::getline(file, curr_port)) {
         curr_port.erase(std::remove_if(curr_port.begin(), curr_port.end(), [](unsigned char x){return std::isspace(x);})
@@ -231,8 +231,8 @@ bool Reader::readShipRoute(const string &path) {
         if (curr_port == prev_port) {
             cout << "Bad input: port can not appear in two consecutive lines" << endl;
         }
-        route.emplace_back(curr_port);
+        ports.emplace_back(curr_port);
         prev_port = curr_port;
     }
-    _route = ShipRoute(route);
+    route = ShipRoute(ports);
 }
