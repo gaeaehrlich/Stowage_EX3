@@ -11,6 +11,8 @@
 #include <map>
 #include <filesystem>
 #include <fstream>
+#include <regex>
+
 
 #include "Container.h"
 #include "ShipPlan.h"
@@ -20,6 +22,8 @@ using std::vector;
 using std::string;
 using std::map;
 using std::unique_ptr;
+namespace fs = std::filesystem;
+
 
 class Reader {
 public:
@@ -35,7 +39,11 @@ public:
     static bool readCargoLoad(const string& path, vector<unique_ptr<Container>>& list);
     static bool readShipPlan(const string& path, ShipPlan& plan);
     static bool readShipRoute(const string& path, ShipRoute& route);
+    static bool checkDirPath(const string& pathName);
+    static int getTravels(const string& dir);
+    static string getPath(const string& dir, const string& search);
+    static map<string, vector< pair<int, string>>> getCargoPath(const string& dir);
 };
 
 
-#endif //STOWAGE_FILEUTILS_H
+#endif //STOWAGE_READER_H

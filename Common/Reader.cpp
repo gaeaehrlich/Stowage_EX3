@@ -114,8 +114,7 @@ bool Reader::splitPlanLine(string& line, vector<int>& vec, bool warning)
     return convertVectorToInt(vec, str_vec, warning);
 }
 
-bool Reader::splitInstructionLine(string& line, char& op, string& id, int& floor, int& x, int& y)
-{
+bool Reader::splitInstructionLine(string& line, char& op, string& id, int& floor, int& x, int& y) {
     vector<string> str_vec(5);
     if (!splitLine(line, str_vec, 5)) { return false; }
     if (str_vec[0].size() != 1) {
@@ -235,4 +234,59 @@ bool Reader::readShipRoute(const string &path, ShipRoute& route) {
         prev_port = curr_port;
     }
     route = ShipRoute(ports);
+    return true;
+}
+
+bool Reader::checkDirPath(const string& pathName) {
+    std::filesystem::path path = pathName;
+    return std::filesystem::is_directory(path);
+}
+
+int Reader::getTravels(const string &dir) { // TODO: check! changed to regex
+    int travel = 0;
+    std::regex format("Travel_[1-9]+");
+    for(const auto & entry : fs::directory_iterator(dir)) {
+        if(std::regex_match(entry.path().string(), format)) {
+            travel++;
+        }
+    }
+    return travel;
+}
+
+string Reader::getPath(const string& dir, const string& search) {
+    for(const auto & entry : fs::directory_iterator(dir)) {
+        if(entry.path().filename().string() == search) {
+            return entry.path().string();
+        }
+    }
+    return "";
+}
+
+map<string, vector< pair<int, string>>> Reader::getCargoPath(const string &dir) {
+    //std::regex re("[:alpha:][:alpha:][:alpha:][:alpha:][:alpha:]_[1-9]+\\.cargo_data");
+    map<string, vector< pair<int, string>>> res;
+    for(const auto & entry : fs::directory_iterator(dir)) {
+        string filename = entry.path().filename().string();
+        if(filename.find(".cargo_data") !=  string::npos) {
+            string delimiter = "_";
+            size_t pos = filename.find(delimiter);
+            string symbol = filename.substr(0, pos);
+            if(!Reader::legalPortSymbol(symbol)) {
+                return res;
+            }
+            filename.erase(0, pos + delimiter.length());
+            delimiter = ".";
+            pos = filename.find(delimiter);
+            string num = filename.substr(0, pos);
+            filename.erase(0, pos + delimiter.length());
+            if(filename != "cargo_data") {
+                return res;
+            }
+            res[symbol].push_back({std::stoi(num), entry.path().string()});
+        }
+    }
+    for(pair<string, vector< pair<int, string>>> element : res) {
+        sort(element.second.begin(), element.second.end());
+    }
+    return res;
 }

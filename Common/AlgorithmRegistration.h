@@ -1,12 +1,11 @@
-#ifndef STOWAGE_ALGORITHMREGISTRATION_H
-#define STOWAGE_ALGORITHMREGISTRATION_H
-
+#ifndef STOWAGE_ALGORITHMREGISTRAION_H
+#define STOWAGE_ALGORITHMREGISTRAION_H
 
 #pragma once
 
 #include <functional>
 #include <memory>
-#include "AbstractAlgorithm.h"
+#include "../Algorithm/AbstractAlgorithm.h"
 
 class AlgorithmRegistration {
 public:
@@ -16,7 +15,6 @@ public:
 #define REGISTER_ALGORITHM(class_name) \
 AlgorithmRegistration register_me_##class_name \
 	([]{return std::make_unique<class_name>();} );
-
 
 
 #endif //STOWAGE_ALGORITHMREGISTRATION_H

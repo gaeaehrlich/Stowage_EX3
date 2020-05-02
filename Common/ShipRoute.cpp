@@ -35,3 +35,14 @@ void ShipRoute::next() {
 bool ShipRoute::isLastStop() {
     return static_cast<long unsigned int>(_pos) == _route.size() -1;
 }
+
+int ShipRoute::getPortNumber() {
+    int count = 0;
+    for(int i = 0; i <= _pos; i++) {
+        if(_route[i] == _route[_pos]) {
+            count++;
+        }
+    }
+    return count;
+}
+

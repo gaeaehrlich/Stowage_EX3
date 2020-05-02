@@ -20,6 +20,7 @@ public:
     string getCurrentPort();
     void next();
     bool isLastStop();
+    int getPortNumber();
 };
 
 

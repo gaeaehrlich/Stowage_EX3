@@ -41,8 +41,8 @@ bool Crane::load(const string& id, Position pos, ShipPlan& plan) {
 
     vector<pair<int, int>>  vec = pos._floor > 0 ? plan.getFloor(pos._floor - 1).getLegalLocations() : vector<pair<int, int>>();
     if(!Reader::legalContainerId(id) || !Reader::legalPortSymbol(container -> getDest())
-       || plan.hasContainer(id) || ((pos._floor > 0) && std::count(vec.begin(), vec.end(), make_pair(pos._x, pos._y)) > 0
-           && plan.getFloor(pos._floor - 1).isEmpty(pos._x, pos._y))) {
+       || plan.hasContainer(id) || ((pos._floor > 0) && std::count(vec.begin(), vec.end(), std::make_pair(pos._x, pos._y)) > 0
+                                    && plan.getFloor(pos._floor - 1).isEmpty(pos._x, pos._y))) {
         std::cout << "ERROR: Algorithm is making a mistake when loading " << container -> getId() << std::endl;
         return false;
     }
@@ -56,30 +56,23 @@ bool Crane::load(const string& id, Position pos, ShipPlan& plan) {
     return true;
 }
 
-bool Crane::unload(string id, Position pos, ShipPlan& plan) {
-    unique_ptr <Container> container;
-    if(plan.hasContainer(id)) {
-        container = std::move(plan.getFloor(pos._floor).getContainer({pos._x, pos._y}));
-        if (container == nullptr || container -> getId() != id) {
-            //error
-            //return
-        }
-    }
-    else {
-        //error
-        //return
-    }
-    if((pos._floor + 1 < plan.numberOfFloors()) && !plan.getFloor(pos._floor + 1).isEmpty(pos._x, pos._y)) {
-        std::cout << "ERROR: Algorithm is making a mistake when unloading " << container -> getId() << std::endl;
-        return false;
-    }
-    unique_ptr <Container> removed = std::move(plan.getFloor(pos._floor).pop(pos._x, pos._y));
-    if (removed == nullptr) {
-        std::cout << "ERROR: Algorithm is making a mistake when unloading " << container -> getId() << std::endl;
+bool Crane::unload(string id, Position pos, ShipPlan& plan) { // TODO: if making error, do we want the instruction to be made? what about _cargo_data?
+    if(!plan.hasContainer(id)) {
+        std::cout << "ERROR: Algorithm is making a mistake when trying to unload " << id << ". Instruction was not made." << std::endl;
         return false;
     }
 
-    std::cout << "Unloading container " << container -> getId() << " from position: floor: " << pos._floor
+    if((pos._floor + 1 < plan.numberOfFloors()) && !plan.getFloor(pos._floor + 1).isEmpty(pos._x, pos._y)) {
+        std::cout << "ERROR: Algorithm is making a mistake when unloading " << id << ". Instruction was not made." << std::endl;
+        return false;
+    }
+    unique_ptr <Container> removed = std::move(plan.getFloor(pos._floor).pop(pos._x, pos._y));
+    if (removed == nullptr || removed -> getId() != id) {
+        std::cout << "ERROR: Algorithm is making a mistake when unloading " << id << ". Instruction was made." << std::endl;
+        return false;
+    }
+
+    std::cout << "Unloading container " << id << " from position: floor: " << pos._floor
               << ", x: " << pos._x << ", y: " << pos._y << std::endl;
     _container_data[removed -> getId()] = std::move(removed);
     return true;
