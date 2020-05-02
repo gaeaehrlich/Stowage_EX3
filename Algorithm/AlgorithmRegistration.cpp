@@ -1,0 +1,1 @@
+#include "AlgorithmRegistration.h"
