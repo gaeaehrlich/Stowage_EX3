@@ -1,24 +1,27 @@
 #include "Crane.h"
 
+#include <utility>
+
 void Crane::set_operations(vector<Operation> operations) {
     _operations = std::move(operations);
 }
 
-int Crane::start(ShipPlan& plan) {
+pair<int,int> Crane::start(ShipPlan& plan, ShipRoute& route, vector<Operation> operations, const string &error_path, const string &sail_info) {
+    set_operations(std::move(operations));
     int count = 0;
     for(Operation& op : _operations) {
         switch(op._operation) {
             case LOAD:
-                count += load(op._container_id, op._position, plan) ? 1 : 0;
+                count += load(op._container_id, op._position, plan, error_path, sail_info) ? 1 : 0;
                 break;
             case UNLOAD:
-                count += unload(op._container_id, op._position, plan) ? 1 : 0;
+                count += unload(op._container_id, op._position, plan, error_path, sail_info) ? 1 : 0;
                 break;
-            case REJECT: reject(op._container_id, op._position);
+            case REJECT: reject(op._container_id, op._position, error_path, sail_info);
                 break;
         }
     }
-    return count;
+    return {count, count}; //TODO
 }
 
 void Crane::end() { // TODO
@@ -29,14 +32,17 @@ void Crane::end() { // TODO
     _container_data.clear();
 }
 
-bool Crane::load(const string& id, Position pos, ShipPlan& plan) {
-    unique_ptr <Container> container;
+bool Crane::load(const string& id, Position pos, ShipPlan& plan, const string &error_path, const string &sail_info) {
+    unique_ptr<Container> container;
     if(_container_data.count(id) == 1) {
         container = std::move(_container_data[id]);
     }
     else {
-        //error
-        //return
+        std::ofstream file;
+        file.open(error_path, std::ios::out | std::ios::app);
+        file << sail_info << "Trying to load container that's not waiting at port. Instruction terminated.\n";
+        file.close();
+        return false;
     }
 
     vector<pair<int, int>>  vec = pos._floor > 0 ? plan.getFloor(pos._floor - 1).getLegalLocations() : vector<pair<int, int>>();
@@ -56,7 +62,7 @@ bool Crane::load(const string& id, Position pos, ShipPlan& plan) {
     return true;
 }
 
-bool Crane::unload(string id, Position pos, ShipPlan& plan) { // TODO: if making error, do we want the instruction to be made? what about _cargo_data?
+bool Crane::unload(string id, Position pos, ShipPlan& plan, const string &error_path, const string &sail_info) { // TODO: if making error, do we want the instruction to be made? what about _cargo_data?
     if(!plan.hasContainer(id)) {
         std::cout << "ERROR: Algorithm is making a mistake when trying to unload " << id << ". Instruction was not made." << std::endl;
         return false;
@@ -66,19 +72,19 @@ bool Crane::unload(string id, Position pos, ShipPlan& plan) { // TODO: if making
         std::cout << "ERROR: Algorithm is making a mistake when unloading " << id << ". Instruction was not made." << std::endl;
         return false;
     }
-    unique_ptr <Container> removed = std::move(plan.getFloor(pos._floor).pop(pos._x, pos._y));
-    if (removed == nullptr || removed -> getId() != id) {
+    pair<int, unique_ptr<Container>> removed = std::move(plan.getFloor(pos._floor).pop(pos._x, pos._y));
+    if (removed.second == nullptr || removed.second -> getId() != id) {
         std::cout << "ERROR: Algorithm is making a mistake when unloading " << id << ". Instruction was made." << std::endl;
         return false;
     }
 
     std::cout << "Unloading container " << id << " from position: floor: " << pos._floor
               << ", x: " << pos._x << ", y: " << pos._y << std::endl;
-    _container_data[removed -> getId()] = std::move(removed);
+    _container_data[removed.second -> getId()] = std::move(removed.second);
     return true;
 }
 
-void Crane::reject(string id, Position pos) {
+void Crane::reject(string id, Position pos, const string &error_path, const string &sail_info) {
     string reason;
     switch(pos._floor) {
         case SPACE: reason = "Not enough space on ship";

@@ -41,7 +41,7 @@ bool getPaths(int argc, char *argv[], string& travel_path, string& algorithm_pat
 }
 
 int main(int argc, char *argv[]) {
-    string travel_path, algorithm_path = "./", output_path = "./";
+    string travel_path, algorithm_path = ".\\", output_path = ".\\"; // TODO: which way the / \\ ?!
     if(!getPaths(argc, argv, travel_path, algorithm_path, output_path)) {
         return -1;
     }

@@ -1,12 +1,7 @@
 #include "Reader.h"
-#include <cmath>
 
-using namespace std;
-using std::vector;
-
-bool Reader::splitLine(string& line, vector<string>& vec, int n, bool warning)
-{
-    stringstream ssin(line);
+bool Reader::splitLine(string& line, vector<string>& vec, int n, bool warning) {
+    std::stringstream ssin(line);
     int i = 0;
     string str, left;
     while (ssin.good() && i < n){
@@ -15,9 +10,9 @@ bool Reader::splitLine(string& line, vector<string>& vec, int n, bool warning)
         if (i != n - 1) {
             if (str[str.length() - 1] != ',') {
                 if (warning) {
-                    cout << "WARNING: wrong format. This line will be ignored" << endl;
+                    std::cout << "WARNING: wrong format. This line will be ignored" << std::endl;
                 }
-                else { cout << "Bad Input: wrong format." << endl; }
+                else { std::cout << "Bad Input: wrong format." << std::endl; }
                 return false;
             }
             str.pop_back();
@@ -33,47 +28,44 @@ bool Reader::splitLine(string& line, vector<string>& vec, int n, bool warning)
     }
     if(i != n) {
         if (warning) {
-            cout << "WARNING: wrong number of arguments. This line will be ignored" << endl;
+            std::cout << "WARNING: wrong number of arguments. This line will be ignored" << std::endl;
         }
-        else { cout << "Bad Input: wrong number of arguments" << endl; }
-        return false;
-    }
-    return true;
-}
-bool Reader::convertVectorToInt(vector<int>& int_vec, vector<string>& str_vec, bool warning, int sign)
-{
-    string number_sign = "negative";
-    if (sign == -1) {
-        number_sign = "positive";
-    }
-    try
-    {
-        for (unsigned long long i = 0; i < str_vec.size(); i++) {
-            int number = stoi(str_vec[i]);
-            if (number*sign < 0) {
-                std::cout << sign << " warn about " << (number) << std::endl;
-                if (warning) {
-                    cout << "WARNING: number can't be " << number_sign <<". This line will be ignored" << endl;
-                }
-                else { cout << "Bad input: number can't be " << number_sign << endl; }
-                return false;
-            }
-            int_vec[i] = number;
-        }
-    }
-    catch (invalid_argument const &e)
-    {
-        if (warning) {
-            cout << "WARNING: invalid argument. This line will be ignored" << endl;
-        }
-        else { cout << "Bad input: invalid argument" << endl; }
+        else { std::cout << "Bad Input: wrong number of arguments" << std::endl; }
         return false;
     }
     return true;
 }
 
-bool Reader::ignoreLine(string& str)
-{
+bool Reader::convertVectorToInt(vector<int>& int_vec, vector<string>& str_vec, bool warning, int sign) {
+    string number_sign = "negative";
+    if (sign == -1) {
+        number_sign = "positive";
+    }
+    try {
+        for (unsigned long long i = 0; i < str_vec.size(); i++) {
+            int number = stoi(str_vec[i]);
+            if (number*sign < 0) {
+                std::cout << sign << " warn about " << (number) << std::endl;
+                if (warning) {
+                    std::cout << "WARNING: number can't be " << number_sign <<". This line will be ignored" << std::endl;
+                }
+                else { std::cout << "Bad input: number can't be " << number_sign << std::endl; }
+                return false;
+            }
+            int_vec[i] = number;
+        }
+    }
+    catch (std::invalid_argument const &e) {
+        if (warning) {
+            std::cout << "WARNING: invalid argument. This line will be ignored" << std::endl;
+        }
+        else { std::cout << "Bad input: invalid argument" << std::endl; }
+        return false;
+    }
+    return true;
+}
+
+bool Reader::ignoreLine(string& str) {
     for (char c : str) {
         if (c == '#') { return true; }
         else if (!std::isspace(c)) { return false; }
@@ -88,25 +80,22 @@ bool Reader::splitCargoLine(string& line, string& id, int& weight, string& desti
     }
 
     id = str_vec[0];
-    try
-    {
+    try {
         weight = stoi(str_vec[1]);
         if (weight < 0) {
-            cout << "WARNING: invalid argument for container weight. This line will be ignored" << endl;
+            std::cout << "WARNING: invalid argument for container weight. This line will be ignored" << std::endl;
             return false;
         }
     }
-    catch (invalid_argument const &e)
-    {
-        cout << "WARNING: invalid argument for container weight. This line will be ignored" << endl;
+    catch (std::invalid_argument const &e) {
+        std::cout << "WARNING: invalid argument for container weight. This line will be ignored" << std::endl;
         return false;
     }
     destination = str_vec[2];
     return true;
 }
 
-bool Reader::splitPlanLine(string& line, vector<int>& vec, bool warning)
-{
+bool Reader::splitPlanLine(string& line, vector<int>& vec, bool warning) {
     vector<string> str_vec(3);
     if(!splitLine(line, str_vec, 3, warning)) {
         return false;
@@ -118,12 +107,12 @@ bool Reader::splitInstructionLine(string& line, char& op, string& id, int& floor
     vector<string> str_vec(5);
     if (!splitLine(line, str_vec, 5)) { return false; }
     if (str_vec[0].size() != 1) {
-        cout << "WARNING: operation should be represented by a single char. This line will be ignored" << std::endl;
+        std::cout << "WARNING: operation should be represented by a single char. This line will be ignored" << std::endl;
         return false;
     }
     op = str_vec[0][0];
     if (op != 'L' && op != 'U' && op != 'R') {
-        cout << "WARNING: operation is illegal. This line will be ignored" << endl;
+        std::cout << "WARNING: operation is illegal. This line will be ignored" << std::endl;
         return false;
     }
     id = str_vec[1];
@@ -185,15 +174,19 @@ bool Reader::readCargoLoad(const string &path, vector<unique_ptr<Container>>& li
     return true;
 }
 
-bool Reader::readShipPlan(const string& path, ShipPlan& plan) {
+int Reader::readShipPlan(const string& path, ShipPlan& plan) {
+    int errors = 0;
+    std::filesystem::path file_path = path;
+    if(path.empty() || !std::filesystem::exists(file_path)) {
+        errors += (2 ^ 3);
+    }
     int x, y, num_floors;
     std::string line;
     std::ifstream file(path);
     vector<int> vec(3);
     do {
         if (!std::getline(file, line)) {
-            cout << "Bad input: file does not contain a plan" << endl;
-            return false;
+            if(!(errors & 3)) errors += (2 ^ 3);
         }
     }
     while (Reader::ignoreLine(line));
@@ -207,16 +200,21 @@ bool Reader::readShipPlan(const string& path, ShipPlan& plan) {
         if (Reader::ignoreLine(line)) { continue; }
         if(!Reader::splitPlanLine(line, vec)) { return false; }
         if (x < vec[0] || y < vec[1] || num_floors < vec[2]) {
-            cout << "WARNING: invalid arguments. This line will be ignored" << endl;
+            std::cout << "WARNING: invalid arguments. This line will be ignored" << std::endl;
             continue;
         }
         floors_plan[{vec[0], vec[1]}] = vec[2];
     }
     plan = ShipPlan(num_floors, floors_plan);
-    return true;
+    return errors;
 }
 
-bool Reader::readShipRoute(const string &path, ShipRoute& route) {
+int Reader::readShipRoute(const string &path, ShipRoute& route) {
+    std::filesystem::path file_path = path;
+    if(path.empty() || !std::filesystem::exists(file_path)) {
+        std::cout << "No file" << std::endl;
+        return false;
+    }
     string curr_port, prev_port;
     vector<string> ports;
     std::ifstream file(path);
@@ -225,10 +223,10 @@ bool Reader::readShipRoute(const string &path, ShipRoute& route) {
                 , curr_port.end());
         if (Reader::ignoreLine(curr_port)) { continue; }
         if(!Reader::legalPortSymbol(curr_port)) {
-            cout << "Bad input: port symbol is illegal" << endl;
+            std::cout << "Bad input: port symbol is illegal" << std::endl;
         }
         if (curr_port == prev_port) {
-            cout << "Bad input: port can not appear in two consecutive lines" << endl;
+            std::cout << "Bad input: port can not appear in two consecutive lines" << std::endl;
         }
         ports.emplace_back(curr_port);
         prev_port = curr_port;
@@ -242,51 +240,29 @@ bool Reader::checkDirPath(const string& pathName) {
     return std::filesystem::is_directory(path);
 }
 
-int Reader::getTravels(const string &dir) { // TODO: check! changed to regex
+int Reader::getTravels(const string &dir) {
     int travel = 0;
     std::regex format("Travel_[1-9]+");
     for(const auto & entry : fs::directory_iterator(dir)) {
-        if(std::regex_match(entry.path().string(), format)) {
+        if(std::regex_match(entry.path().stem().string(), format)) {
             travel++;
         }
     }
     return travel;
 }
 
-string Reader::getPath(const string& dir, const string& search) {
-    for(const auto & entry : fs::directory_iterator(dir)) {
-        if(entry.path().filename().string() == search) {
-            return entry.path().string();
+vector<Operation> Reader::getInstructionsVector(const string &path) {
+    vector<Operation> ops;
+    char op_char;
+    int floor, x, y;
+    string line, id;
+    std::ifstream file(path);
+    while (std::getline(file, line)) {
+        if (Reader::ignoreLine(line)) { continue; }
+        if (Reader::splitInstructionLine(line, op_char, id, floor, x, y)) {
+            Operation op = Operation(op_char, id, Position(floor, x, y));
+            ops.push_back(op);
         }
     }
-    return "";
-}
-
-map<string, vector< pair<int, string>>> Reader::getCargoPath(const string &dir) {
-    //std::regex re("[:alpha:][:alpha:][:alpha:][:alpha:][:alpha:]_[1-9]+\\.cargo_data");
-    map<string, vector< pair<int, string>>> res;
-    for(const auto & entry : fs::directory_iterator(dir)) {
-        string filename = entry.path().filename().string();
-        if(filename.find(".cargo_data") !=  string::npos) {
-            string delimiter = "_";
-            size_t pos = filename.find(delimiter);
-            string symbol = filename.substr(0, pos);
-            if(!Reader::legalPortSymbol(symbol)) {
-                return res;
-            }
-            filename.erase(0, pos + delimiter.length());
-            delimiter = ".";
-            pos = filename.find(delimiter);
-            string num = filename.substr(0, pos);
-            filename.erase(0, pos + delimiter.length());
-            if(filename != "cargo_data") {
-                return res;
-            }
-            res[symbol].push_back({std::stoi(num), entry.path().string()});
-        }
-    }
-    for(pair<string, vector< pair<int, string>>> element : res) {
-        sort(element.second.begin(), element.second.end());
-    }
-    return res;
+    return ops;
 }

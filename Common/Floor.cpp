@@ -6,29 +6,31 @@ Floor::Floor(const vector< pair<int, int> >& indexes) {
     }
 }
 
-bool Floor::insert(int x, int y, std::unique_ptr<Container> container) {
+int Floor::insert(int x, int y, std::unique_ptr<Container> container) {
     if(_map.find({x,y}) == _map.end()) {
         printf("Unavailable location for this floor");
-        return false;
+        return LOCATION;
     }
     else if(_map[{x,y}] != nullptr) {
         printf("There is a container in this position");
-        return false;
+        return CONTAINER;
     }
     _map[{x,y}] = std::move(container);
-    return true;
+    return OK;
 }
 
-std::unique_ptr<Container> Floor::pop(int x, int y) {
+pair<int, unique_ptr<Container>> Floor::pop(int x, int y) {
     if(_map.find({x,y}) == _map.end()) {
-        return nullptr;
+        printf("Unavailable location for this floor");
+        return {LOCATION, nullptr};
     }
     else if(_map[{x,y}] != nullptr) {
-        std::unique_ptr<Container> container = std::move(_map[{x,y}]);
-        _map[{x,y}] = nullptr; //will this delete container?
-        return container;
+        unique_ptr<Container> container = std::move(_map[{x,y}]);
+        _map[{x,y}] = nullptr; // TODO: will this delete container?
+        return {OK, std::move(container)};
     }
-    return nullptr;
+    printf("No container to pop");
+    return {CONTAINER, nullptr};
 }
 
 bool Floor::isEmpty(int x, int y) {

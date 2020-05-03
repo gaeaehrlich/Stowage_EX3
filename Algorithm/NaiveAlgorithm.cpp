@@ -51,7 +51,7 @@ void NaiveAlgorithm::unloadInstructions(const string &output_path) {
     vector<Position> unload = findContainersToUnload();
     for(const Position& pos: unload) {
         unloadContainersAbove(pos, file);
-        unique_ptr<Container> removed = std::move(_plan.getFloor(pos._floor).pop(pos._x, pos._y));
+        unique_ptr<Container> removed = std::move(_plan.getFloor(pos._floor).pop(pos._x, pos._y).second);
         file << instructionToString('U', removed -> getId(), pos);
         // delete container;
     }
@@ -128,7 +128,7 @@ void NaiveAlgorithm::unloadContainersAbove(Position pos, std::ofstream& file) {
     for(int i = _plan.numberOfFloors() - 1; i > pos._floor; i--) {
         if(!_plan.getFloor(i).isEmpty(pos._x, pos._y)) {
             if(_plan.getFloor(i).getContainerDest({pos._x, pos._y}) != _route.getCurrentPort()) {
-                unique_ptr<Container> removed = _plan.getFloor(i).pop(pos._x, pos._y);
+                unique_ptr<Container> removed = _plan.getFloor(i).pop(pos._x, pos._y).second;
                 file << instructionToString('U', removed -> getId(), Position(i, pos._x, pos._y));
                 _temporary_unloaded.emplace_back(std::move(removed));
             }

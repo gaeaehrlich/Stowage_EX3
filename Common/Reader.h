@@ -12,16 +12,18 @@
 #include <filesystem>
 #include <fstream>
 #include <regex>
-
+#include <cmath>
 
 #include "Container.h"
 #include "ShipPlan.h"
 #include "ShipRoute.h"
+#include "Operation.h"
 
 using std::vector;
 using std::string;
 using std::map;
 using std::unique_ptr;
+using std::make_unique;
 namespace fs = std::filesystem;
 
 
@@ -37,12 +39,11 @@ public:
     static bool legalContainerId(string id);
     static bool legalCheckDigit(string id);
     static bool readCargoLoad(const string& path, vector<unique_ptr<Container>>& list);
-    static bool readShipPlan(const string& path, ShipPlan& plan);
-    static bool readShipRoute(const string& path, ShipRoute& route);
+    static int readShipPlan(const string& path, ShipPlan& plan);
+    static int readShipRoute(const string& path, ShipRoute& route);
     static bool checkDirPath(const string& pathName);
     static int getTravels(const string& dir);
-    static string getPath(const string& dir, const string& search);
-    static map<string, vector< pair<int, string>>> getCargoPath(const string& dir);
+    static vector<Operation> getInstructionsVector(const string &path);
 };
 
 
