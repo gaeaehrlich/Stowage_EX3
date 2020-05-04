@@ -16,6 +16,9 @@ public:
     bool isFull();
     bool isLegalLocation(Position position);
     bool isEmptyPosition(Position position);
+    bool isLegalFloor(Position position);
+    bool isLegalXY(Position position);
+    string getIdAtPosition(Position position);
 };
 
 

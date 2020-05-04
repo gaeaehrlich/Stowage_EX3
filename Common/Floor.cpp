@@ -6,17 +6,15 @@ Floor::Floor(const vector< pair<int, int> >& indexes) {
     }
 }
 
-int Floor::insert(int x, int y, std::unique_ptr<Container> container) {
-    if(_map.find({x,y}) == _map.end()) {
-        printf("Unavailable location for this floor");
-        return LOCATION;
+bool Floor::insert(int x, int y, std::unique_ptr<Container> container) {
+    if(_map.find({x,y}) == _map.end()) { // illegal location
+        return false;
     }
-    else if(_map[{x,y}] != nullptr) {
-        printf("There is a container in this position");
-        return CONTAINER;
+    else if(_map[{x,y}] != nullptr) { // already container at this position
+        return false;
     }
     _map[{x,y}] = std::move(container);
-    return OK;
+    return true;
 }
 
 pair<int, unique_ptr<Container>> Floor::pop(int x, int y) {
@@ -88,4 +86,11 @@ bool Floor::hasContainer(string container_id) {
         }
     }
     return false;
+}
+
+string Floor::getContainerID(int x, int y) {
+    if(!isLegalLocation(x, y)) {
+        return "";
+    }
+    return _map[{x,y}] ? _map[{x,y}] -> getId() : "";
 }

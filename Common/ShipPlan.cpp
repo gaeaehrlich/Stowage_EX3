@@ -45,10 +45,25 @@ bool ShipPlan::isFull() {
     return false;
 }
 
+bool ShipPlan::isLegalFloor(Position position) {
+    return position._floor >= 0 && position._floor < numberOfFloors();
+}
+
+bool ShipPlan::isLegalXY(Position position) {
+    return _floors[position._floor].isLegalLocation(position._x, position._y);
+}
+
 bool ShipPlan::isLegalLocation(Position position) {
-    return position._floor >= 0 && _floors[position._floor].isLegalLocation(position._x, position._y);
+    return isLegalFloor(position) && isLegalXY(position);
 }
 
 bool ShipPlan::isEmptyPosition(Position position) {
-    return position._floor >= 0 && _floors[position._floor].isEmpty(position._x, position._y);
+    return position._floor >= 0 && position._floor < numberOfFloors() && _floors[position._floor].isEmpty(position._x, position._y);
+}
+
+string ShipPlan::getIdAtPosition(Position position) {
+    if(!isLegalLocation(position)) {
+        return "";
+    }
+    return _floors[position._floor].getContainerID(position._x, position._y);
 }

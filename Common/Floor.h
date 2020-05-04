@@ -19,7 +19,7 @@ class Floor {
 public:
     Floor();
     explicit Floor(const vector< pair<int,int> >& indexes);
-    int insert(int x, int y, std::unique_ptr<Container> container);
+    bool insert(int x, int y, std::unique_ptr<Container> container);
     pair<int, unique_ptr<Container>> pop(int x, int y);
     bool isEmpty(int x, int y);
     bool isEmpty(pair<int, int> location);
@@ -29,6 +29,7 @@ public:
     bool isFloorFull();
     bool hasContainer(string container_id);
     bool isLegalLocation(int x, int y);
+    string getContainerID(int x, int y);
 };
 
 
