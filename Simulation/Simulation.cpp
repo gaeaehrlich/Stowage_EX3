@@ -13,14 +13,14 @@ string Simulation::getPath(const string& travel_dir, const string& search) {
 bool Simulation::readShipPlan(const string& error_path, const string& travel_path, int travelNumber, unique_ptr<AbstractAlgorithm>& algorithm) {
     string plan_path = getPath(travel_path, "ship_plan");
     int errors = Reader::readShipPlan(plan_path, _plan);
-    algorithm -> readShipPlan(plan_path);  // TODO: algorithm should be able to run even if files are bad
+    algorithm -> readShipPlan(plan_path);
     return writeShipPlanErrors(error_path, errors);
 }
 
 bool Simulation::readShipRoute(const string& error_path, const string& travel_path, int travelNumber, unique_ptr<AbstractAlgorithm>& algorithm) {
     string route_path = getPath(travel_path, "route");
     int errors = Reader::readShipRoute(route_path, _route);
-    algorithm -> readShipRoute(route_path); // TODO: algorithm should be able to run even if files are bad
+    algorithm -> readShipRoute(route_path);
     return writeShipRouteErrors(error_path, errors);
 }
 
@@ -62,7 +62,6 @@ int Simulation::sail(unique_ptr<AbstractAlgorithm> &algorithm, const string &tra
         getInstructionForCargo(cargoPath, travel_output_path, error_path, containersAtPort, algorithm);
         string sail_info = "Algorithm: alg name, Travel: " + std::to_string(travelNumber) + " Port: " + port + "  : ";
         pair<int, int> results = sendInstructionsToCrane(std::move(containersAtPort), travel_output_path, error_path, sail_info); // TODO alg name
-        // TODO: check algorithm correctness
         _route.next();
     }
     return 0;

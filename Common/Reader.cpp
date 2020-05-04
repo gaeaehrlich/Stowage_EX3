@@ -160,7 +160,11 @@ bool Reader::legalCheckDigit(string id) {
 }
 
 bool Reader::readCargoLoad(const string &path, vector<unique_ptr<Container>>& list) {
-    //TODO: if weight or port don't exist, put -1/""
+    //TODO: if weight or port don't exist, put -1/"". these are the cases to handle:
+//    2^12 - containers at port: bad line format, missing or bad weight (ID rejected) - put -1
+//    2^13 - containers at port: bad line format, missing or bad port dest (ID rejected) - put ""
+//    2^14 - containers at port: bad line format, ID cannot be read (ignored) - put ""
+//    2^16 - containers at port: file cannot be read altogether (assuming no cargo to be loaded at this port) - return false;
     vector<unique_ptr<Container>> cargo;
     string line, destination,  id;
     int weight;

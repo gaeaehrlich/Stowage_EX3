@@ -27,6 +27,7 @@ class NaiveAlgorithm: public AbstractAlgorithm {
     WeightBalanceCalculator _calc; // TODO: where to put weightbalance? common or algorithm?
     vector<unique_ptr<Container>> _cargo_load;
     vector<unique_ptr<Container>> _temporary_unloaded;
+    bool _invalid_travel = false;
 
 public:
     //NaiveAlgorithm(ShipPlan plan, ShipRoute route, WeightBalanceCalculator calc);
@@ -36,16 +37,15 @@ public:
     int getInstructionsForCargo(
             const std::string& input_full_path_and_file_name,
             const std::string& output_full_path_and_file_name) override;
-    bool cmpContainers(const unique_ptr<Container>& a, const unique_ptr<Container>& b);
     void sortCargoLoad();
-    void unloadInstructions(const string& output_path);
-    void loadInstructions(const string& output_path, vector<unique_ptr<Container>>& list);
+    void unloadInstructions(std::ofstream& file);
+    int loadInstructions(std::ofstream& file, vector<unique_ptr<Container>>& list);
     Position findPosition();
-    int rejectingContainer(const string& id, string dest);
+    int rejectingContainer(unique_ptr<Container>& container);
     vector<Position> findContainersToUnload();
     void unloadContainersAbove(Position position, std::ofstream& file);
-    vector<unique_ptr<Container>> readCargoLoad(const string& path);
     string instructionToString(char instruction, const string& id, Position pos);
+    int countContainersOnPort(const string& id);
 };
 
 
