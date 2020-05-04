@@ -10,3 +10,8 @@ string Container::getDest() const{
 string Container::getId() const {
     return _id;
 }
+
+int Container::getWeight() const {
+    return _weight;
+}
+

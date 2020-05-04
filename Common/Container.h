@@ -14,6 +14,8 @@ public:
     Container(int weight, string destination, string id);
     [[nodiscard]] string getDest() const;
     [[nodiscard]] string getId() const;
+    [[nodiscard]] int getWeight() const;
+
 };
 
 

@@ -160,6 +160,7 @@ bool Reader::legalCheckDigit(string id) {
 }
 
 bool Reader::readCargoLoad(const string &path, vector<unique_ptr<Container>>& list) {
+    //TODO: if weight or port don't exist, put -1/""
     vector<unique_ptr<Container>> cargo;
     string line, destination,  id;
     int weight;

@@ -38,7 +38,7 @@ string Simulation::getCargoPath(const string &travel_dir, const string &port) {
 void Simulation::getInstructionForCargo(const string &cargoPath, const string &output_path, const string &error_path, vector<unique_ptr<Container>>& containersAtPort, unique_ptr<AbstractAlgorithm> &algorithm) {
     int errors = Reader::readCargoLoad(cargoPath, containersAtPort);
     algorithm -> getInstructionsForCargo(cargoPath, output_path);
-    writeCargoErrors(error_path, errors); // void because to fatal errors
+    writeCargoErrors(error_path, errors); // void because no fatal errors
 }
 
 string Simulation::createPortOutputFile(const string &output_path, const string &port, int travelNumber) {
@@ -48,9 +48,9 @@ string Simulation::createPortOutputFile(const string &output_path, const string 
     return file;
 }
 
-pair<int, int> Simulation::sendInstructionsToCrane(const string &instructions_path, const string &error_path, const string &sail_ifo) {
+pair<int, int> Simulation::sendInstructionsToCrane(vector<unique_ptr<Container>> containers, const string &instructions_path, const string &error_path, const string &sail_info) {
     vector<Operation> instructions = Reader::getInstructionsVector(instructions_path);
-    return _crane.start(_plan, _route, instructions, error_path, sail_ifo);
+    return _crane.start(_plan, _route, std::move(containers), instructions, error_path, sail_info);
 }
 
 int Simulation::sail(unique_ptr<AbstractAlgorithm> &algorithm, const string &travel_path, int travelNumber, const string& output_path, const string& error_path) {
@@ -61,7 +61,7 @@ int Simulation::sail(unique_ptr<AbstractAlgorithm> &algorithm, const string &tra
         string travel_output_path = createPortOutputFile(output_path, port, travelNumber);
         getInstructionForCargo(cargoPath, travel_output_path, error_path, containersAtPort, algorithm);
         string sail_info = "Algorithm: alg name, Travel: " + std::to_string(travelNumber) + " Port: " + port + "  : ";
-        pair<int, int> results = sendInstructionsToCrane(travel_output_path, error_path, sail_info); // TODO alg name
+        pair<int, int> results = sendInstructionsToCrane(std::move(containersAtPort), travel_output_path, error_path, sail_info); // TODO alg name
         // TODO: check algorithm correctness
         _route.next();
     }

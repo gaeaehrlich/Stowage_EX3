@@ -39,7 +39,7 @@ public:
     void getInstructionForCargo(const string &cargoPath, const string &output_path, const string &error_path, vector<unique_ptr<Container>>& containersAtPort, unique_ptr<AbstractAlgorithm> &algorithm);
     bool writeCargoErrors(const string& error_path, int errors);
     string createPortOutputFile(const string& output_path, const string& port, int travelNumber);
-    pair<int, int> sendInstructionsToCrane(const string& instructions_path, const string &error_path, const string &sail_info);
+    pair<int, int> sendInstructionsToCrane(vector<unique_ptr<Container>> containers, const string& instructions_path, const string &error_path, const string &sail_info);
 };
 
 
