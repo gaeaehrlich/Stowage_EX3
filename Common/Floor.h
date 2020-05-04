@@ -28,6 +28,7 @@ public:
     bool isFloorEmpty();
     bool isFloorFull();
     bool hasContainer(string container_id);
+    bool isLegalLocation(int x, int y);
 };
 
 

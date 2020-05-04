@@ -18,7 +18,6 @@ ShipPlan::ShipPlan(int num, map< pair<int,int>, int > dict) {
     }
 }
 
-
 int ShipPlan::numberOfFloors() {
     return static_cast<int>(_floors.size());
 }
@@ -44,4 +43,12 @@ bool ShipPlan::isFull() {
         }
     }
     return false;
+}
+
+bool ShipPlan::isLegalLocation(Position position) {
+    return position._floor >= 0 && _floors[position._floor].isLegalLocation(position._x, position._y);
+}
+
+bool ShipPlan::isEmptyPosition(Position position) {
+    return position._floor >= 0 && _floors[position._floor].isEmpty(position._x, position._y);
 }

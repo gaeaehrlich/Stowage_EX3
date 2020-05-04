@@ -14,6 +14,8 @@ public:
     Floor& getFloor(int floor_number);
     bool hasContainer(string container_id);
     bool isFull();
+    bool isLegalLocation(Position position);
+    bool isEmptyPosition(Position position);
 };
 
 

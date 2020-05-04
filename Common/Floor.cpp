@@ -50,6 +50,15 @@ vector<pair<int, int> > Floor::getLegalLocations() {
     return keys;
 }
 
+bool Floor::isLegalLocation(int x, int y) {
+    for(const auto& it : _map) {
+        if(it.first == std::make_pair(x,y)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 string Floor::getContainerDest(pair<int, int> location) {
     return _map[location] -> getDest();
 }
