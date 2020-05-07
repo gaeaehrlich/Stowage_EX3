@@ -31,15 +31,14 @@ public:
     pair<int,int> start(ShipPlan& plan, ShipRoute& route, vector<unique_ptr<Container>> containers, vector<Operation> operations, const string &error_path, const string &sail_info);
     void end(ShipPlan& plan);
     pair<int, int> load(const string& id, Position pos, ShipPlan& plan, ShipRoute& route);
-    pair<int,int> unload(string id, Position pos, ShipPlan& plan);
-    int reject(const string& id, int errors, ShipPlan& plan, ShipRoute& route);
+    pair<int,int> unload(const string& id, Position pos, ShipPlan& plan);
+    int reject(const string& id, ShipPlan& plan, ShipRoute& route);
     void set_container_data(vector<unique_ptr<Container>> containers);
     pair<int, int> containerNotFoundError(const string& place);
     int shouldReject(unique_ptr<Container>& container, ShipPlan& plan, ShipRoute& route);
     void writeInstructionError(const string &instruction, const string& id, bool executed);
     int isErrorLoad(unique_ptr<Container>& container, ShipPlan& plan, ShipRoute& route, Position pos, bool& execute);
     int isErrorUnload(const string& id, ShipPlan& plan, Position pos, bool& execute);
-    void writeRejectError(const string& id, const string& msg);
 };
 
 

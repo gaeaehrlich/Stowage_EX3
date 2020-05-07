@@ -31,8 +31,8 @@ pair<int,int> Crane::start(ShipPlan& plan, ShipRoute& route, vector<unique_ptr<C
                 succ += result.first;
                 err += result.second;
                 break;
-            case REJECT: //reject assuming error code is in floor
-                err += reject(op._container_id, op._position._floor, plan, route);
+            case REJECT:
+                err += reject(op._container_id, plan, route);
                 break;
         }
     }
@@ -73,7 +73,7 @@ pair<int,int> Crane::load(const string& id, Position pos, ShipPlan& plan, ShipRo
     return {1, errors};
 }
 
-pair<int,int> Crane::unload(string id, Position pos, ShipPlan& plan) { // TODO: if making error, do we want the instruction to be made? what about _cargo_data?
+pair<int,int> Crane::unload(const string& id, Position pos, ShipPlan& plan) { // TODO: if making error, do we want the instruction to be made? what about _cargo_data?
     bool execute = true;
     int errors = isErrorUnload(id, plan, pos, execute);
     if(!execute) { return {0, errors}; }
@@ -84,8 +84,7 @@ pair<int,int> Crane::unload(string id, Position pos, ShipPlan& plan) { // TODO: 
     return {1, errors};
 }
 
-// return: true if rejecting, false if not
-int Crane::reject(const string& id, int errors, ShipPlan& plan, ShipRoute& route) {
+int Crane::reject(const string& id, ShipPlan& plan, ShipRoute& route) {
     unique_ptr<Container> container;
     if(_container_data.count(id) >= 1) {
         container = std::move(_container_data[id][0]);
@@ -93,52 +92,13 @@ int Crane::reject(const string& id, int errors, ShipPlan& plan, ShipRoute& route
     }
     else {
         containerNotFoundError("at port");
-        return false;
+        return 0;
     }
-    if(errors == 0) { return false; } //TODO: algorithm didn't give a reject reason
-    int error_count = 0;
-    if((errors & 10) && (_container_data.count(id) == 0)) {
-        writeRejectError(id, "containers at port: duplicate ID on port (ID rejected)\n");
-        error_count++;
+    int error_count = shouldReject(container, plan, route);
+    if(error_count == 0) {
+        writeInstructionError("Reject", container -> getId(), true);
     }
-    if((errors & 11) && (!plan.hasContainer(id))) {
-        writeRejectError(id, "containers at port: ID already on ship (ID rejected)\n");
-        error_count++;
-    }
-    if((errors & 12) && (container -> getWeight() >= 0)) {
-        writeRejectError(id, "containers at port: bad line format, missing or bad weight (ID rejected)\n");
-        error_count++;
-    }
-    // TODO: should the 2 last reasons for 13 be here?
-    if((errors & 13) && (Reader::legalPortSymbol(container -> getDest())
-                        || route.portInRoute(container -> getDest())
-                        || (container-> getDest() != _port))) {
-        writeRejectError(id, "containers at port: bad line format, missing or bad port dest (ID rejected)\n");
-        error_count++;
-    }
-    if((errors & 14) && (!container -> getId().empty())){
-        writeRejectError(id, "containers at port: bad line format, ID cannot be read (ignored)\n");
-        error_count++;
-    }
-    if((errors & 15) && (Reader::legalContainerId(id))) {
-        writeRejectError(id, "containers at port: illegal ID check ISO 6346 (ID rejected)\n");
-        error_count++;
-    }
-    if(errors & 16) {
-        //TODO
-        writeRejectError(id, "containers at port: file cannot be read altogether (assuming no cargo to be loaded at this port)\n");
-        error_count++;
-    }
-    if((errors & 17) && (!route.isLastStop())) {
-        writeRejectError(id, "containers at port: last port has waiting containers (ignored)\n");
-        error_count++;
-    }
-    if((errors & 18) && (!plan.isFull())) {
-        writeRejectError(id, "containers at port: total containers amount exceeds ship capacity (rejecting far containers)\n");
-        error_count++;
-    }
-    _container_data.erase(id); //TODO: do we need this? if rejected should stay on port
-    return error_count;
+    return error_count > 0 ? 0 : 1;
 }
 
 
@@ -162,8 +122,10 @@ int Crane::shouldReject(unique_ptr<Container>& container, ShipPlan& plan, ShipRo
     int errors = 0;
     if(_container_data.count(container -> getId()) > 0) errors++;
     if(plan.hasContainer(container -> getId())) errors++;
+    if(container -> getWeight() < 0) errors++;
     if(!Reader::legalPortSymbol(container -> getDest())) errors++;
     if(!Reader::legalContainerId(container -> getId())) errors++;
+    if(container -> getId().empty()) errors++;
     if(route.isLastStop()) errors++;
     if(plan.isFull()) errors++;
     if(!route.portInRoute(container -> getDest())) errors++;
@@ -216,11 +178,4 @@ int Crane::isErrorUnload(const string& id, ShipPlan &plan, Position pos, bool &e
     }
 
     return errors;
-}
-
-void Crane::writeRejectError(const string& id, const string& msg) {
-    std::ofstream file;
-    file.open(_error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
-    file << _sail_info << "ERROR: Algorithm is making a mistake when rejecting container " << id << ". FALSE REPORT:" <<msg;
-    file.close();
 }

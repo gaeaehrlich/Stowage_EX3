@@ -245,15 +245,15 @@ bool Reader::checkDirPath(const string& pathName) {
     return std::filesystem::is_directory(path);
 }
 
-int Reader::getTravels(const string &dir) {
-    int travel = 0;
-    std::regex format("Travel_[1-9]+");
+vector<string> Reader::getTravels(const string &dir) {
+    vector<string> travels;
+    std::regex format("(.*)_travel");
     for(const auto & entry : fs::directory_iterator(dir)) {
         if(std::regex_match(entry.path().stem().string(), format)) {
-            travel++;
+            travels.emplace_back(entry.path().stem().string());
         }
     }
-    return travel;
+    return travels;
 }
 
 vector<Operation> Reader::getInstructionsVector(const string &path) {

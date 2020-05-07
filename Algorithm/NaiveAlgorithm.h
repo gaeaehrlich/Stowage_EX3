@@ -28,6 +28,7 @@ class NaiveAlgorithm: public AbstractAlgorithm {
     vector<unique_ptr<Container>> _cargo_load;
     vector<unique_ptr<Container>> _temporary_unloaded;
     bool _invalid_travel = false;
+    int _status = 0;
 
 public:
     //NaiveAlgorithm(ShipPlan plan, ShipRoute route, WeightBalanceCalculator calc);

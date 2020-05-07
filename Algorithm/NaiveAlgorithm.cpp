@@ -3,12 +3,14 @@
 int NaiveAlgorithm::readShipPlan(const string& full_path_and_file_name) {
     int readStatus = Reader::readShipPlan(full_path_and_file_name, _plan);
     if((readStatus & 3) || (readStatus & 4)) _invalid_travel = true;
+    _status |= readStatus;
     return readStatus;
 }
 
 int NaiveAlgorithm::readShipRoute(const string& full_path_and_file_name) {
     int readStatus = Reader::readShipRoute(full_path_and_file_name, _route);
     if((readStatus & 7) || (readStatus & 8)) _invalid_travel = true;
+    _status |= readStatus;
     return readStatus;
 }
 
@@ -19,21 +21,20 @@ int NaiveAlgorithm::setWeightBalanceCalculator(WeightBalanceCalculator& calculat
 int NaiveAlgorithm::getInstructionsForCargo(const string &input_path, const string &output_path) {
     std::ofstream file;
     file.open(output_path, std::ios::trunc);
-    int status = 0;
     if(!_invalid_travel) {
         if(!Reader::readCargoLoad(input_path, _cargo_load)) {
-            status = 2^16;
+            _status |= 2^16;
         }
         else {
             unloadInstructions(file);
-            status = loadInstructions(file, _temporary_unloaded);
+            _status |= loadInstructions(file, _temporary_unloaded);
             sortCargoLoad();
-            status |= loadInstructions(file, _cargo_load);
+            _status |= loadInstructions(file, _cargo_load);
         }
     }
     //return _calc.balance(vector<Operation>()) == APPROVED; // TODO
     file.close();
-    return status;
+    return _status;
 }
 
 

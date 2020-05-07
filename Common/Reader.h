@@ -42,7 +42,7 @@ public:
     static int readShipPlan(const string& path, ShipPlan& plan);
     static int readShipRoute(const string& path, ShipRoute& route);
     static bool checkDirPath(const string& pathName);
-    static int getTravels(const string& dir);
+    static vector<string> getTravels(const string& dir);
     static vector<Operation> getInstructionsVector(const string &path);
 };
 
