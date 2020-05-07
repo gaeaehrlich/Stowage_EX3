@@ -28,17 +28,17 @@ public:
     void set_operations(vector<Operation> operations);
     void set_error_path( const string &error_path);
     void set_sail_info(const string &sail_info);
-    pair<int,int> start(ShipPlan& plan, ShipRoute& route, vector<unique_ptr<Container>> containers, vector<Operation> operations, const string &error_path, const string &sail_info);
+    int start(ShipPlan& plan, ShipRoute& route, vector<unique_ptr<Container>> containers, vector<Operation> operations, const string &error_path, const string &sail_info);
     void end(ShipPlan& plan);
-    pair<int, int> load(const string& id, Position pos, ShipPlan& plan, ShipRoute& route);
-    pair<int,int> unload(const string& id, Position pos, ShipPlan& plan);
-    int reject(const string& id, ShipPlan& plan, ShipRoute& route);
+    bool load(const string& id, Position pos, ShipPlan& plan, ShipRoute& route);
+    bool unload(const string& id, Position pos, ShipPlan& plan);
+    bool reject(const string& id, ShipPlan& plan, ShipRoute& route);
     void set_container_data(vector<unique_ptr<Container>> containers);
-    pair<int, int> containerNotFoundError(const string& place);
+    void containerNotFoundError(const string& place);
     int shouldReject(unique_ptr<Container>& container, ShipPlan& plan, ShipRoute& route);
     void writeInstructionError(const string &instruction, const string& id, bool executed);
-    int isErrorLoad(unique_ptr<Container>& container, ShipPlan& plan, ShipRoute& route, Position pos, bool& execute);
-    int isErrorUnload(const string& id, ShipPlan& plan, Position pos, bool& execute);
+    bool isErrorLoad(unique_ptr<Container>& container, ShipPlan& plan, ShipRoute& route, Position pos);
+    bool isErrorUnload(const string& id, ShipPlan& plan, Position pos);
 };
 
 

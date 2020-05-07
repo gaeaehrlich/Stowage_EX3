@@ -20,21 +20,21 @@ void Simulation::getInstructionForCargo(const string &cargoPath, const string &o
     writeCargoErrors(error_path, errors); // void because no fatal errors
 }
 
-pair<int, int> Simulation::sendInstructionsToCrane(vector<unique_ptr<Container>> containers, const string &instructions_path, const string &error_path, const string &sail_info) {
+int Simulation::sendInstructionsToCrane(vector<unique_ptr<Container>> containers, const string &instructions_path, const string &error_path, const string &sail_info) {
     vector<Operation> instructions = Reader::getInstructionsVector(instructions_path);
     return _crane.start(_plan, _route, std::move(containers), instructions, error_path, sail_info);
 }
 
-pair<int, int> Simulation::sail(unique_ptr<AbstractAlgorithm> &algorithm, const string &travel_path, const string& travel_name, const string& output_path, const string& error_path) {
+int Simulation::sail(unique_ptr<AbstractAlgorithm> &algorithm, const string &travel_path, const string& travel_name, const string& output_path, const string& error_path) {
     string travel_dir = travel_path + SUBDIR + travel_name;
-    pair<int, int> results = {0, 0};
+    int results = 0;
     for(const string& port: _route.getRoute()) {
         string cargoPath = getCargoPath(travel_dir, port);
         vector<unique_ptr<Container>> containersAtPort;
         string travel_output_path = createPortOutputFile(output_path, port);
         getInstructionForCargo(cargoPath, travel_output_path, error_path, containersAtPort, algorithm);
         string sail_info = "Algorithm: alg name, Travel: " + travel_name + " Port: " + port + "  : ";
-        addPair(results, sendInstructionsToCrane(std::move(containersAtPort), travel_output_path, error_path, sail_info)); // TODO alg name
+        results += sendInstructionsToCrane(std::move(containersAtPort), travel_output_path, error_path, sail_info); // TODO alg name
         _route.next();
     }
     return results;
@@ -47,9 +47,9 @@ void Simulation::start(const string &travel_path, const string &algorithm_path, 
     string error_path = output_path + SUBDIR + "simulation.errors";
     string results_path = output_path + SUBDIR + "simulation.results";
     vector<string> travels = Reader::getTravels(travel_path);
-    vector<tuple<string, vector<pair<int, int>>, int, int>> all_results;
+    vector<tuple<string, vector<int>, int, int>> all_results;
     for(auto& alg: algorithms) {
-        vector<pair<int, int>> results;
+        vector<int> results;
         for(int i = 0; i < travels.size(); i++) {
             if(!readShipPlan(error_path, travel_path, travels[i], alg) || !readShipRoute(error_path, travel_path, travels[i], alg)) { return; }
             string travel_output_path = output_path + SUBDIR + "<algorithm_name>" + travels[i] + "_crane_instructions"; //TODO algorithm name

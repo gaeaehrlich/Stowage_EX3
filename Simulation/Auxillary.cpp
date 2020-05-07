@@ -1,9 +1,5 @@
 #include "Simulation.h"
 
-pair<int,int> Simulation::addPair(const pair<int,int>& l, const pair<int,int>& r) {
-    return {l.first + r.first,l.second + r.second};
-}
-
 string Simulation::getPath(const string& travel_dir, const string& search) {
     std::regex format("(.*)\\." + search);
     for(const auto & entry : fs::directory_iterator(travel_dir)) {
@@ -141,7 +137,7 @@ bool Simulation::writeCargoErrors(const string &error_path, int errors) {
 }
 
 
-void Simulation::writeResults(const string &path, vector<tuple<string, vector<pair<int, int>>, int, int>> results, const vector<string>& travels) {
+void Simulation::writeResults(const string &path, vector<tuple<string, vector<int>, int, int>> results, const vector<string>& travels) {
     sort(results.begin(), results.end(), []( const auto& res1, const auto& res2 ) {
         if(std::get<3>(res1) == std::get<3>(res2)) { // if same #errors sort by #operations
             return std::get<2>(res1) < std::get<2>(res2);
@@ -157,16 +153,17 @@ void Simulation::writeResults(const string &path, vector<tuple<string, vector<pa
     for(auto& alg_result: results) {
         file << std::get<0>(alg_result) << ","; // algorithm name
         for(auto& travel_result: std::get<1>(alg_result)) { // iterating over each travel result
-            file << travel_result.first << ",";
+            file << travel_result << ",";
         }
         file << std::get<2>(alg_result) << "," << std::get<3>(alg_result) << "\n";
     }
 }
 
-int Simulation::sumResults(const vector<pair<int, int>>& results, bool sumOrErr) {
+int Simulation::sumResults(const vector<int>& results, bool sumOrErr) {
     int count = 0;
     for(auto& result: results) {
-        count += sumOrErr ? result.first : result.second;
+        if(sumOrErr && result != -1) count += result;
+        if(!sumOrErr && result == -1) count++;
     }
     return count;
 }

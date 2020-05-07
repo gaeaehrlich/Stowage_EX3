@@ -28,7 +28,7 @@ class Simulation {
 
 public:
     void start(const string& travel_path, const string& algorithm_path, const string& output_path);
-    pair<int, int> sail(unique_ptr<AbstractAlgorithm>& algorithm, const string& travel_path, const string& travel_name, const string& output_path, const string& error_path);
+    int sail(unique_ptr<AbstractAlgorithm>& algorithm, const string& travel_path, const string& travel_name, const string& output_path, const string& error_path);
     bool checkDirectories(const string& travel_path, const string& algorithm_path, const string& output_path);
     bool readShipPlan(const string& error_path, const string& travel_path, const string& travel, unique_ptr<AbstractAlgorithm>& algorithm);
     bool readShipRoute(const string& error_path, const string& travel_path, const string& travel, unique_ptr<AbstractAlgorithm>& algorithm);
@@ -39,10 +39,9 @@ public:
     void getInstructionForCargo(const string &cargoPath, const string &output_path, const string &error_path, vector<unique_ptr<Container>>& containersAtPort, unique_ptr<AbstractAlgorithm> &algorithm);
     bool writeCargoErrors(const string& error_path, int errors);
     string createPortOutputFile(const string& output_path, const string& port);
-    pair<int, int> sendInstructionsToCrane(vector<unique_ptr<Container>> containers, const string& instructions_path, const string &error_path, const string &sail_info);
-    pair<int,int> addPair(const pair<int,int>& l, const pair<int,int>& r);
-    void writeResults(const string &path, vector<tuple<string, vector<pair<int, int>>, int, int>> results, const vector<string>& travels);
-    int sumResults(const vector<pair<int, int>>& results, bool sumOrErr);
+    int sendInstructionsToCrane(vector<unique_ptr<Container>> containers, const string& instructions_path, const string &error_path, const string &sail_info);
+    void writeResults(const string &path, vector<tuple<string, vector<int>, int, int>> results, const vector<string>& travels);
+    int sumResults(const vector<int>& results, bool sumOrErr);
 };
 
 

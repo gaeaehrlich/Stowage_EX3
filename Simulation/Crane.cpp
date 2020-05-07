@@ -12,35 +12,33 @@ void Crane::set_sail_info(const string &sail_info) {
     _sail_info = sail_info;
 }
 
-pair<int,int> Crane::start(ShipPlan& plan, ShipRoute& route, vector<unique_ptr<Container>> containers, vector<Operation> operations, const string &error_path, const string &sail_info) {
+int Crane::start(ShipPlan& plan, ShipRoute& route, vector<unique_ptr<Container>> containers, vector<Operation> operations, const string &error_path, const string &sail_info) {
     set_container_data(std::move(containers));
     set_operations(std::move(operations));
     set_error_path(error_path);
     set_sail_info(sail_info);
-    int succ = 0, err = 0;
-    pair<int, int> result;
+    int sum_operations = 0;
     for(Operation& op : _operations) {
         switch(op._operation) {
             case LOAD:
-                result = load(op._container_id, op._position, plan, route);
-                succ += result.first;
-                err += result.second;
+                if(!load(op._container_id, op._position, plan, route)) { return -1; }
+                sum_operations++;
                 break;
             case UNLOAD:
-                result = unload(op._container_id, op._position, plan);
-                succ += result.first;
-                err += result.second;
+                if(!unload(op._container_id, op._position, plan)) { return -1; }
+                sum_operations++;
                 break;
             case REJECT:
-                err += reject(op._container_id, plan, route);
+                if(!reject(op._container_id, plan, route)) { return -1; }
                 break;
         }
     }
     end(plan);
-    return {succ, err};
+    return sum_operations;
 }
 
 void Crane::end(ShipPlan& plan) {
+    // השארה על הרציף של מכולה עם יעד קרוב כאשר נטענה לאוניה בנמל זה מכולה עם יעד רחוק יותר, או השארה על הרציף של מכולה שכבר היתה על האוניה והיעד שלה אינו נמל זה
     std::ofstream file;
     for(auto& element : _container_data) {
         for(auto& container: element.second) {
@@ -55,36 +53,33 @@ void Crane::end(ShipPlan& plan) {
     _container_data.clear();
 }
 
-pair<int,int> Crane::load(const string& id, Position pos, ShipPlan& plan, ShipRoute& route) {
+bool Crane::load(const string& id, Position pos, ShipPlan& plan, ShipRoute& route) {
     unique_ptr<Container> container;
     if(_container_data.count(id) == 0) {
-        return containerNotFoundError("at port");
+        containerNotFoundError("at port");
+        return false;
     }
     container = std::move(_container_data[id][0]);
     _container_data[id].erase(_container_data[id].begin());
 
-    bool execute = true;
-    int errors = isErrorLoad(container, plan, route, pos, execute);
-    if(!execute) { return {0, errors}; }
+    if(isErrorLoad(container, plan, route, pos)) { return false; }
 
     plan.getFloor(pos._floor).insert(pos._x, pos._y, std::move(container));
     std::cout << "Loading container " << id << " to position: floor: " << pos._floor << ", x: " << pos._x << ", y: " << pos._y << std::endl;
     _container_data.erase(id);
-    return {1, errors};
+    return true;
 }
 
-pair<int,int> Crane::unload(const string& id, Position pos, ShipPlan& plan) { // TODO: if making error, do we want the instruction to be made? what about _cargo_data?
-    bool execute = true;
-    int errors = isErrorUnload(id, plan, pos, execute);
-    if(!execute) { return {0, errors}; }
+bool Crane::unload(const string& id, Position pos, ShipPlan& plan) { // TODO: if making error, do we want the instruction to be made? what about _cargo_data?
+    if(isErrorUnload(id, plan, pos)) { return false; }
 
     pair<int, unique_ptr<Container>> removed = std::move(plan.getFloor(pos._floor).pop(pos._x, pos._y));
     std::cout << "Unloading container " << id << " from position: floor: " << pos._floor << ", x: " << pos._x << ", y: " << pos._y << std::endl;
     _container_data[removed.second -> getId()].emplace_back(std::move(removed.second));
-    return {1, errors};
+    return true;
 }
 
-int Crane::reject(const string& id, ShipPlan& plan, ShipRoute& route) {
+bool Crane::reject(const string& id, ShipPlan& plan, ShipRoute& route) {
     unique_ptr<Container> container;
     if(_container_data.count(id) >= 1) {
         container = std::move(_container_data[id][0]);
@@ -92,13 +87,13 @@ int Crane::reject(const string& id, ShipPlan& plan, ShipRoute& route) {
     }
     else {
         containerNotFoundError("at port");
-        return 0;
+        return false;
     }
     int error_count = shouldReject(container, plan, route);
     if(error_count == 0) {
         writeInstructionError("Reject", container -> getId(), true);
     }
-    return error_count > 0 ? 0 : 1;
+    return error_count > 0;
 }
 
 
@@ -109,12 +104,11 @@ void Crane::set_container_data(vector<unique_ptr<Container>> containers) {
 }
 
 
-pair<int, int> Crane::containerNotFoundError(const string &place) {
+void Crane::containerNotFoundError(const string &place) {
     std::ofstream file;
     file.open(_error_path, std::ios::out | std::ios::app);
     file << _sail_info << "Trying to get container that's not " << place << ". Instruction terminated.\n";
     file.close();
-    return {0, 1};
 }
 
 
@@ -143,39 +137,33 @@ void Crane::writeInstructionError(const string &instruction, const string &id, b
 }
 
 
-int Crane::isErrorLoad(unique_ptr<Container> &container, ShipPlan& plan, ShipRoute& route, Position pos, bool &execute) {
-    int errors = 0;
+bool Crane::isErrorLoad(unique_ptr<Container> &container, ShipPlan& plan, ShipRoute& route, Position pos) {
     Position lowerFloor = Position(pos._floor - 1, pos._x, pos._y);
     bool isLegalLocation = plan.isLegalLocation(pos) && plan.isEmptyPosition(pos);
     bool cellBelowNull = pos._floor > 0 ? false : (plan.isLegalLocation(lowerFloor) && plan.isEmptyPosition(lowerFloor));
     if(!isLegalLocation || cellBelowNull) {
         writeInstructionError("Load", container -> getId(), false);
-        execute = false;
-        return 1;
+        return true;
     }
-    if((errors = shouldReject(container, plan, route) > 0)) {
+    if(shouldReject(container, plan, route) > 0) {
         writeInstructionError("Load", container -> getId(), true);
     }
-    return errors;
+    return false;
 }
 
 
-int Crane::isErrorUnload(const string& id, ShipPlan &plan, Position pos, bool &execute) {
-    int errors = 0;
+bool Crane::isErrorUnload(const string& id, ShipPlan &plan, Position pos) {
     bool isLegalLocation = plan.isLegalLocation(pos);
     Position aboveFloor = Position(pos._floor + 1, pos._x, pos._y);
     bool cellAboveNull = pos._floor + 1 == plan.numberOfFloors() ? true : plan.isLegalFloor(aboveFloor) && !plan.isEmptyPosition(aboveFloor);
 
     if(!plan.hasContainer(id) || !isLegalLocation || !cellAboveNull) {
         writeInstructionError("Unload", id, false);
-        execute = false;
-        return 1;
+        return true;
     }
 
     if(plan.getIdAtPosition(pos) != id) {
         writeInstructionError("Unload", id, true);
-        return 1;
     }
-
-    return errors;
+    return false;
 }
