@@ -58,7 +58,7 @@ bool ShipPlan::isLegalLocation(Position position) {
 }
 
 bool ShipPlan::isEmptyPosition(Position position) {
-    return position._floor >= 0 && position._floor < numberOfFloors() && _floors[position._floor].isEmpty(position._x, position._y);
+    return isLegalFloor(position) && _floors[position._floor].isEmpty(position._x, position._y);
 }
 
 string ShipPlan::getIdAtPosition(Position position) {

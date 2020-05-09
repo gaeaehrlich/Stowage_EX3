@@ -27,6 +27,12 @@ string Simulation::createPortOutputFile(const string &output_path, const string 
     return file;
 }
 
+string Simulation::createTravelOutputFolder(const string &output_path, const string &alg_name, const string &travel_name) {
+    string path = output_path + SUBDIR + alg_name + "_" + travel_name + "_crane_instructions";
+    fs::create_directory(path);
+    return path;
+}
+
 bool Simulation::checkDirectories(const string &travel_path, const string &algorithm_path, const string &output_path) {
     bool travel = Reader::checkDirPath(travel_path);
     bool algorithm = Reader::checkDirPath(algorithm_path);
@@ -137,8 +143,12 @@ bool Simulation::writeCargoErrors(const string &error_path, int errors) {
 }
 
 
-void Simulation::writeResults(const string &path, vector<tuple<string, vector<int>, int, int>> results, const vector<string>& travels) {
-    sort(results.begin(), results.end(), []( const auto& res1, const auto& res2 ) {
+void Simulation::writeResults(const string &path, const map<string, vector<int>>& results, const vector<string>& travels) {
+    vector<tuple<string, vector<int>, int, int>> res_vec;
+    for(auto& alg_res: results) {
+        res_vec.emplace_back(alg_res.first, alg_res.second, sumResults(alg_res.second, true), sumResults(alg_res.second, false));
+    }
+    sort(res_vec.begin(), res_vec.end(), []( const auto& res1, const auto& res2 ) {
         if(std::get<3>(res1) == std::get<3>(res2)) { // if same #errors sort by #operations
             return std::get<2>(res1) < std::get<2>(res2);
         }
@@ -150,7 +160,7 @@ void Simulation::writeResults(const string &path, vector<tuple<string, vector<in
         file << travel << ",";
     }
     file << "Sum,\nNum Errors\n";
-    for(auto& alg_result: results) {
+    for(auto& alg_result: res_vec) {
         file << std::get<0>(alg_result) << ","; // algorithm name
         for(auto& travel_result: std::get<1>(alg_result)) { // iterating over each travel result
             file << travel_result << ",";
@@ -167,3 +177,4 @@ int Simulation::sumResults(const vector<int>& results, bool sumOrErr) {
     }
     return count;
 }
+

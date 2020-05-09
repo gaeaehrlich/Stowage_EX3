@@ -14,6 +14,7 @@
 #include "Crane.h"
 
 const string SUBDIR = "\\";
+const int FAILURE = -1;
 
 using std::string;
 using std::vector;
@@ -40,8 +41,9 @@ public:
     bool writeCargoErrors(const string& error_path, int errors);
     string createPortOutputFile(const string& output_path, const string& port);
     int sendInstructionsToCrane(vector<unique_ptr<Container>> containers, const string& instructions_path, const string &error_path, const string &sail_info);
-    void writeResults(const string &path, vector<tuple<string, vector<int>, int, int>> results, const vector<string>& travels);
+    void writeResults(const string &path, const map<string, vector<int>>& results, const vector<string>& travels);
     int sumResults(const vector<int>& results, bool sumOrErr);
+    string createTravelOutputFolder(const string& output_path, const string& alg_name, const string& travel_name);
 };
 
 
