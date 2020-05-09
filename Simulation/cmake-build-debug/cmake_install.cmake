@@ -1,4 +1,4 @@
-# Install script for directory: C:/Projects/uni/adv topics cpp/ex2/Stowage/Simulation
+# Install script for directory: C:/Users/Chen Hendler/CLionProjects/Stowage_EX2/Simulation
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Projects/uni/adv topics cpp/ex2/Stowage/Simulation/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/Chen Hendler/CLionProjects/Stowage_EX2/Simulation/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

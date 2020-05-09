@@ -1,18 +1,14 @@
 #include "Reader.h"
 
-bool Reader::splitLine(string& line, vector<string>& vec, int n, bool warning) {
-    std::stringstream ssin(line);
+int Reader::splitLine(string& line, vector<string>& vec, int n) {
+    std::stringstream ss(line);
     int i = 0;
     string str, left;
-    while (ssin.good() && i < n){
-        ssin >> std::skipws >> str;
+    while (ss.good() && i < n){
+        ss >> str;
         str.erase(std::remove_if(str.begin(), str.end(), [](unsigned char x){return std::isspace(x);}), str.end());
         if (i != n - 1) {
             if (str[str.length() - 1] != ',') {
-                if (warning) {
-                    std::cout << "WARNING: wrong format. This line will be ignored" << std::endl;
-                }
-                else { std::cout << "Bad Input: wrong format." << std::endl; }
                 return false;
             }
             str.pop_back();
@@ -20,51 +16,28 @@ bool Reader::splitLine(string& line, vector<string>& vec, int n, bool warning) {
         vec[i] = str;
         i++;
     }
-    while (ssin.good()) {
-        ssin >> std::skipws >> left;
-        if (!std::all_of(left.begin(),left.end(),[](unsigned char x){return std::isspace(x);})) {
-            i++;
+    while (ss.good()) {
+        ss >> left;
+        if (!std::all_of(left.begin(),left.end(),[](unsigned char x){return std::iscntrl(x);})) { // good?
+            return false;
         }
     }
-    if(i != n) {
-        if (warning) {
-            std::cout << "WARNING: wrong number of arguments. This line will be ignored" << std::endl;
-        }
-        else { std::cout << "Bad Input: wrong number of arguments" << std::endl; }
-        return false;
-    }
-    return true;
+    return i == n;
 }
 
-bool Reader::convertVectorToInt(vector<int>& int_vec, vector<string>& str_vec, bool warning, int sign) {
-    string number_sign = "negative";
-    if (sign == -1) {
-        number_sign = "positive";
-    }
+bool Reader::convertVectorToInt(vector<int>& int_vec, vector<string>& str_vec) {
     try {
         for (unsigned long long i = 0; i < str_vec.size(); i++) {
             int number = stoi(str_vec[i]);
-            if (number*sign < 0) {
-                std::cout << sign << " warn about " << (number) << std::endl;
-                if (warning) {
-                    std::cout << "WARNING: number can't be " << number_sign <<". This line will be ignored" << std::endl;
-                }
-                else { std::cout << "Bad input: number can't be " << number_sign << std::endl; }
-                return false;
-            }
             int_vec[i] = number;
         }
     }
     catch (std::invalid_argument const &e) {
-        if (warning) {
-            std::cout << "WARNING: invalid argument. This line will be ignored" << std::endl;
-        }
-        else { std::cout << "Bad input: invalid argument" << std::endl; }
         return false;
     }
     return true;
 }
-
+// relevant for this ex???
 bool Reader::ignoreLine(string& str) {
     for (char c : str) {
         if (c == '#') { return true; }
@@ -95,12 +68,12 @@ bool Reader::splitCargoLine(string& line, string& id, int& weight, string& desti
     return true;
 }
 
-bool Reader::splitPlanLine(string& line, vector<int>& vec, bool warning) {
+bool Reader::splitPlanLine(string& line, vector<int>& vec) {
     vector<string> str_vec(3);
-    if(!splitLine(line, str_vec, 3, warning)) {
+    if(!splitLine(line, str_vec, 3)) {
         return false;
     }
-    return convertVectorToInt(vec, str_vec, warning);
+    return convertVectorToInt(vec, str_vec) && vec[0] > 0 && vec[1] > 0 && vec[2] > 0;
 }
 
 bool Reader::splitInstructionLine(string& line, char& op, string& id, int& floor, int& x, int& y) {
@@ -120,14 +93,14 @@ bool Reader::splitInstructionLine(string& line, char& op, string& id, int& floor
     vector<string> sub_str_vec;
     std::copy(str_vec.begin() + 2, str_vec.end(), std::back_inserter(sub_str_vec));
     int sign = op == 'R' ? - 1 : 1;
-    if (convertVectorToInt(int_vec, sub_str_vec, true, sign)) {
+    if (convertVectorToInt(int_vec, sub_str_vec)) {
         floor = int_vec[0];
         x = int_vec[1];
         y = int_vec[2];
     }
     return true;
 }
-
+// todo: use regex
 bool Reader::legalPortSymbol(string symbol) {
     return symbol.size() == 5 &&
            std::all_of(symbol.begin(), symbol.end(), [](unsigned char c){ return std::isupper(c); });
@@ -180,64 +153,66 @@ bool Reader::readCargoLoad(const string &path, vector<unique_ptr<Container>>& li
 }
 
 int Reader::readShipPlan(const string& path, ShipPlan& plan) {
-    int errors = 0;
+    int errors = 0, x, y, num_floors;;
     std::filesystem::path file_path = path;
-    if(path.empty() || !std::filesystem::exists(file_path)) {
-        errors += (2 ^ 3);
-    }
-    int x, y, num_floors;
-    std::string line;
-    std::ifstream file(path);
+    if(path.empty() || !std::filesystem::exists(file_path)) { return  (2 ^ 3); }
+    std::string line; std::ifstream file(path);
+    if (!file || file.peek() == std::ifstream::traits_type::eof()) { return (2 ^ 3); }
     vector<int> vec(3);
-    do {
-        if (!std::getline(file, line)) {
-            if(!(errors & 3)) errors += (2 ^ 3);
-        }
-    }
-    while (Reader::ignoreLine(line));
-    if (!Reader::splitPlanLine(line, vec, false)) { return false; }
-    num_floors = vec[0];
-    x = vec[1];
-    y = vec[2];
-
-    map< pair<int,int>, int > floors_plan;
+    if (!std::getline(file, line) || !Reader::splitPlanLine(line, vec)) { return (2 ^ 3); }
+    num_floors = vec[0]; x = vec[1]; y = vec[2];
+    bool fatal = false;
+    map< pair<int,int>, int > m_plan;
     while (std::getline(file, line)) {
-        if (Reader::ignoreLine(line)) { continue; }
-        if(!Reader::splitPlanLine(line, vec)) { return false; }
-        if (x < vec[0] || y < vec[1] || num_floors < vec[2]) {
-            std::cout << "WARNING: invalid arguments. This line will be ignored" << std::endl;
+        if(!Reader::splitPlanLine(line, vec)) { // wrong format
+            errors |= (2 ^ 2);
             continue;
         }
-        floors_plan[{vec[0], vec[1]}] = vec[2];
+        if (x < vec[0] || y < vec[1] || num_floors <= vec[2]) { // wrong values
+            errors |= (2 ^ 2);
+            continue;
+        }
+        if (m_plan.find({x, y}) != m_plan.end()) { // duplicate x,y appearance
+            if (m_plan[{x, y}] == num_floors) { // same data
+                errors |= (2 ^ 2);
+            }
+            else { // different data
+                errors |= (2 ^ 4);
+                fatal = true;
+            }
+            continue; // todo: or just break? do we need to find ALL errors?
+        }
+        m_plan[{vec[0], vec[1]}] = vec[2];
     }
-    plan = ShipPlan(num_floors, floors_plan);
+    if (!fatal) {
+        plan = ShipPlan(num_floors, std::move(m_plan)); // why not?
+    }
     return errors;
 }
 
 int Reader::readShipRoute(const string &path, ShipRoute& route) {
     std::filesystem::path file_path = path;
-    if(path.empty() || !std::filesystem::exists(file_path)) {
-        std::cout << "No file" << std::endl;
-        return false;
-    }
+    if(path.empty() || !std::filesystem::exists(file_path)) { return (2 ^ 7); }
+    int errors = 0;
     string curr_port, prev_port;
     vector<string> ports;
     std::ifstream file(path);
+    if (!file || file.peek() == std::ifstream::traits_type::eof()) { return (2 ^ 7); }
     while (std::getline(file, curr_port)) {
-        curr_port.erase(std::remove_if(curr_port.begin(), curr_port.end(), [](unsigned char x){return std::isspace(x);})
-                , curr_port.end());
-        if (Reader::ignoreLine(curr_port)) { continue; }
-        if(!Reader::legalPortSymbol(curr_port)) {
-            std::cout << "Bad input: port symbol is illegal" << std::endl;
-        }
         if (curr_port == prev_port) {
-            std::cout << "Bad input: port can not appear in two consecutive lines" << std::endl;
+            errors |= ( 2 ^ 5);
+            continue;
+        }
+        if(!Reader::legalPortSymbol(curr_port)) {
+            errors |= (2 ^ 6);
+            continue;
         }
         ports.emplace_back(curr_port);
         prev_port = curr_port;
     }
-    route = ShipRoute(ports);
-    return true;
+    if (ports.size() == 1) { errors |= (2 ^ 8); }
+    else { route = ShipRoute(ports); }
+    return errors;
 }
 
 bool Reader::checkDirPath(const string& pathName) {

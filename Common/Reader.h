@@ -30,10 +30,10 @@ namespace fs = std::filesystem;
 class Reader {
 public:
     static bool splitInstructionLine(string& line, char& op, string& id, int& floor, int& x, int& y);
-    static bool splitPlanLine(string& line, vector<int>& vec, bool warning = true);
+    static bool splitPlanLine(string& line, vector<int>& vec);
     static bool splitCargoLine(string& line, string& id, int& weight, string& destination);
-    static bool splitLine(string& line, vector<string>& vec, int n, bool warning = true);
-    static bool convertVectorToInt(vector<int>& int_vec, vector<string>& str_vec, bool warning = true, int sign = 1);
+    static int splitLine(string& line, vector<string>& vec, int n);
+    static bool convertVectorToInt(vector<int>& int_vec, vector<string>& str_vec);
     static bool ignoreLine(string& str);
     static bool legalPortSymbol(string symbol);
     static bool legalContainerId(string id);
