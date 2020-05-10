@@ -24,7 +24,7 @@ class NaiveAlgorithm: public AbstractAlgorithm {
     // TODO : should be public?
     ShipPlan _plan;
     ShipRoute _route;
-    WeightBalanceCalculator _calc; // TODO: where to put weightbalance? common or algorithm?
+    WeightBalanceCalculator _calc;
     vector<unique_ptr<Container>> _cargo_load;
     vector<unique_ptr<Container>> _temporary_unloaded;
     bool _invalid_travel = false;

@@ -12,13 +12,15 @@ public:
     ShipPlan(int num, map< pair<int,int>, int > dict);
     int numberOfFloors();
     Floor& getFloor(int floor_number);
-    bool hasContainer(string container_id);
+    bool hasContainer(const string& container_id);
     bool isFull();
+    bool isEmpty();
     bool isLegalLocation(Position position);
     bool isEmptyPosition(Position position);
     bool isLegalFloor(Position position);
     bool isLegalXY(Position position);
     string getIdAtPosition(Position position);
+    int getWeightById(const string& id);
 };
 
 

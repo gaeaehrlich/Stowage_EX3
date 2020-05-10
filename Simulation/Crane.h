@@ -10,6 +10,7 @@
 #include "../Common/ShipPlan.h"
 #include "../Common/Operation.h"
 #include "../Common/Reader.h"
+#include "../Common/WeightBalanceCalculator.h"
 
 
 using std::string;
@@ -20,9 +21,10 @@ using std::unique_ptr;
 class Crane {
     vector<Operation> _operations;
 private:
-    map<string, vector<unique_ptr <Container>>> _container_data;
+    map<string, vector<unique_ptr<Container>>> _container_data;
     std::unordered_set<string> _temporary_unloaded;
     std::unordered_set<string> _newly_loaded_dest;
+    WeightBalanceCalculator _calculator;
     string _port;
     string _error_path;
     string _sail_info;
@@ -31,7 +33,7 @@ public:
     void set_operations(vector<Operation> operations);
     void set_error_path( const string &error_path);
     void set_sail_info(const string &sail_info);
-    int start(ShipPlan& plan, ShipRoute& route, vector<unique_ptr<Container>> containers, vector<Operation> operations, const string &error_path, const string &sail_info);
+    int start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calculator, vector<unique_ptr<Container>> containers, vector<Operation> operations, const string &error_path, const string &sail_info);
     bool end(ShipPlan& plan, ShipRoute& route);
     bool load(const string& id, Position pos, ShipPlan& plan, ShipRoute& route);
     bool unload(const string& id, Position pos, ShipPlan& plan);
@@ -48,6 +50,8 @@ public:
     bool shouldPrioritize(const string& dest, ShipRoute& route);
     void writeLoadError(const string& id, const string& reason);
     bool checkShip(ShipPlan& plan);
+    bool handleLastStop(ShipPlan& plan, ShipRoute& route);
+    void set_calculator(WeightBalanceCalculator& calculator);
 };
 
 

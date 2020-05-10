@@ -57,20 +57,20 @@ bool Simulation::writeShipPlanErrors(const string &error_path, int errors, const
     std::ofstream file;
     file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
     file << "SHIP PLAN ERRORS FOR TRAVEL: " << travel << "\n";
-    if(errors & 0) {
+    if(errors & (2^0)) {
         file << "ship plan: a position has an equal number of floors, or more, than the number of floors provided in the first line (ignored)\n";
     }
-    if(errors & 1) {
+    if(errors & (2^1)) {
         file << "ship plan: a given position exceeds the X/Y ship limits (ignored)\n";
     }
-    if(errors & 2) {
+    if(errors & (2^2)) {
         file << "ship plan: bad line format after first line (ignored)\n";
     }
-    if(errors & 3) {
+    if(errors & (2^3)) {
         file << "ship plan: travel error - bad first line or file cannot be read altogether (cannot run this travel)\n";
         fatal = true;
     }
-    if(errors & 4) {
+    if(errors & (2^4)) {
         file << "ship plan: travel error - duplicate x,y appearance with different data (cannot run this travel)";
         fatal = true;
     }
@@ -86,17 +86,17 @@ bool Simulation::writeShipRouteErrors(const string &error_path, int errors, cons
     std::ofstream file;
     file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
     file << "SHIP PLAN ERRORS FOR TRAVEL: " << travel << "\n";
-    if(errors & 5) {
+    if(errors & (2^5)) {
         file << "travel route: a port appears twice or more consecutively (ignored)\n";
     }
-    if(errors & 6) {
+    if(errors & (2^6)) {
         file << "travel route: bad port symbol format (ignored)\n";
     }
-    if(errors & 7) {
+    if(errors & (2^7)) {
         file << "travel route: travel error - empty file or file cannot be read altogether (cannot run this travel)\n";
         fatal = true;
     }
-    if(errors & 8) {
+    if(errors & (2^8)) {
         file << "travel route: travel error - file with only a single valid port (cannot run this travel)\n";
         fatal = true;
     }
@@ -105,37 +105,37 @@ bool Simulation::writeShipRouteErrors(const string &error_path, int errors, cons
 }
 
 bool Simulation::writeCargoErrors(const string &error_path, int errors) {
-    if(errors == 0){
+    if(errors == 0) {
         return true;
     }
     bool fatal = false;
     std::ofstream file;
     file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
-    if(errors & 10) { //countContainersOnPort(container ->getId()) > 0
+    if(errors & (2^10)) { //countContainersOnPort(container ->getId()) > 0
         file << "containers at port: duplicate ID on port (ID rejected)\n";
     }
-    if(errors & 11) { //_plan.hasContainer(container ->getId())
+    if(errors & (2^11)) { //_plan.hasContainer(container ->getId())
         file << "containers at port: ID already on ship (ID rejected)\n";
     }
-    if(errors & 12) { //container -> getWeight() < 0
+    if(errors & (2^12)) { // container -> getWeight() <= 0
         file << "containers at port: bad line format, missing or bad weight (ID rejected)\n";
     }
-    if(errors & 13) { // !Reader::legalPortSymbol(container -> getDest()) || !_route.portInRoute(container -> getDest()) || (container-> getDest() == _route.getCurrentPort())
+    if(errors & (2^13)) { // !Reader::legalPortSymbol(container -> getDest())
         file << "containers at port: bad line format, missing or bad port dest (ID rejected)\n";
     }
-    if(errors & 14) { // container -> getId().empty()
+    if(errors & (2^14)) { // container -> getId().empty()
         file << "containers at port: bad line format, ID cannot be read (ignored)\n";
     }
-    if(errors & 15) { // !Reader::legalContainerId(container ->getId())
+    if(errors & (2^15)) { // !Reader::legalContainerId(container ->getId())
         file << "containers at port: illegal ID check ISO 6346 (ID rejected)\n";
     }
-    if(errors & 16) {
+    if(errors & (2^16)) {
         file << "containers at port: file cannot be read altogether (assuming no cargo to be loaded at this port)\n";
     }
-    if(errors & 17) { // _route.isLastStop()
+    if(errors & (2^17)) { // _route.isLastStop()
         file << "containers at port: last port has waiting containers (ignored)\n";
     }
-    if(errors & 18) { // _plan.isFull()
+    if(errors & (2^18)) { // _plan.isFull()
         file << "containers at port: total containers amount exceeds ship capacity (rejecting far containers)\n";
     }
     file.close();

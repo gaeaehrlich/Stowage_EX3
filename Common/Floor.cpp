@@ -79,7 +79,7 @@ bool Floor::isFloorFull() {
     return true;
 }
 
-bool Floor::hasContainer(string container_id) {
+bool Floor::hasContainer(const string& container_id) {
     for(const auto& element : _map) {
         if(element.second != nullptr && element.second->getId() == container_id) {
             return true;
@@ -94,3 +94,13 @@ string Floor::getContainerID(int x, int y) {
     }
     return _map[{x,y}] ? _map[{x,y}] -> getId() : "";
 }
+
+int Floor::getWeightById(const string& id) {
+    for(const auto& element : _map) {
+        if(element.second != nullptr && element.second -> getId() == id) {
+            return element.second -> getWeight();
+        }
+    }
+    return -1;
+}
+

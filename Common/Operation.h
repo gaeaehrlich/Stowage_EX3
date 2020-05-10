@@ -4,16 +4,17 @@
 #include "Container.h"
 #include "Position.h"
 
-enum Op { LOAD, UNLOAD, REJECT };
+enum Op { LOAD = 'L', UNLOAD = 'U', REJECT = 'R' , MOVE = 'M' };
 
 class Operation {
 public:
     Op _operation;
     string _container_id;
     Position _position;
+    Position _move;
 
 public:
-    Operation(char operation, string container_id, Position _position);
+    Operation(char operation, string container_id, Position position, Position move = Position(-1, -1, -1));
 };
 
 #endif //STOWAGE_OPERATION_H

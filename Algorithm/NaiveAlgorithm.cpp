@@ -2,7 +2,7 @@
 
 int NaiveAlgorithm::readShipPlan(const string& full_path_and_file_name) {
     int readStatus = Reader::readShipPlan(full_path_and_file_name, _plan);
-    if((readStatus & 3) || (readStatus & 4)) _invalid_travel = true;
+    if((readStatus & (2^3)) || (readStatus & (2^4))) _invalid_travel = true;
     _status |= readStatus;
     return readStatus;
 }
@@ -14,7 +14,8 @@ int NaiveAlgorithm::readShipRoute(const string& full_path_and_file_name) {
     return readStatus;
 }
 
-int NaiveAlgorithm::setWeightBalanceCalculator(WeightBalanceCalculator& calculator) { //TODO
+int NaiveAlgorithm::setWeightBalanceCalculator(WeightBalanceCalculator& calculator) {
+    _calc = calculator;
     return 0;
 }
 
@@ -153,7 +154,7 @@ string NaiveAlgorithm::instructionToString(char instruction, const string& id, P
     return ss.str();
 }
 
-int NaiveAlgorithm::countContainersOnPort(const string& id ) {
+int NaiveAlgorithm::countContainersOnPort(const string& id) {
     int count = 0;
     for(auto& container: _cargo_load) {
         if(container -> getId() == id) {

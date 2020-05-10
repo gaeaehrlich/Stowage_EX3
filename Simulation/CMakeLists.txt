@@ -24,7 +24,7 @@ set(COMMON_SRC
 
 add_executable(Simulation
         main.cpp
-        Crane.h Crane.cpp
+        Crane.h Crane.cpp CraneAux.cpp
         Simulation.h Simulation.cpp Auxillary.cpp
         AlgorithmRegistration.cpp
         ${COMMON_SRC}

@@ -20,25 +20,32 @@ void Simulation::getInstructionForCargo(const string &cargoPath, const string &o
     writeCargoErrors(error_path, errors); // void because no fatal errors
 }
 
-int Simulation::sendInstructionsToCrane(vector<unique_ptr<Container>> containers, const string &instructions_path, const string &error_path, const string &sail_info) {
+int Simulation::sendInstructionsToCrane(vector<unique_ptr<Container>> containers, WeightBalanceCalculator& calculator, const string &instructions_path, const string &error_path, const string &sail_info) {
     vector<Operation> instructions = Reader::getInstructionsVector(instructions_path);
-    return _crane.start(_plan, _route, std::move(containers), instructions, error_path, sail_info);
+    return _crane.start(_plan, _route, calculator, std::move(containers), instructions, error_path, sail_info);
 }
 
 int Simulation::sail(unique_ptr<AbstractAlgorithm> &algorithm, const string &travel_path, const string& travel_name, const string& output_path, const string& error_path) {
     int results = 0;
+    bool failed = false;
     string travel_output_path = createTravelOutputFolder(output_path, "<alg name>", travel_name); // TODO: alg name
+    string plan_path = getPath(travel_path, "ship_plan");
+    WeightBalanceCalculator calculator;
+    calculator.readShipPlan(plan_path);
+    algorithm -> setWeightBalanceCalculator(calculator);
     for(const string& port: _route.getRoute()) {
         string cargoPath = getCargoPath(travel_path, port);
         vector<unique_ptr<Container>> containersAtPort;
         string port_output_path = createPortOutputFile(travel_output_path, port);
         getInstructionForCargo(cargoPath, port_output_path, error_path, containersAtPort, algorithm);
         string sail_info = "Algorithm: <alg name>, Travel: " + travel_name + " Port: " + port + "  : \n";
-        results += sendInstructionsToCrane(std::move(containersAtPort), port_output_path, error_path, sail_info); // TODO alg name
+        int num_op = sendInstructionsToCrane(std::move(containersAtPort), calculator, port_output_path, error_path, sail_info); // TODO alg name
+        if(num_op == FAILURE) { failed = true; }
+        results += num_op;
         // TODO: "finished" at error file?
         _route.next();
     }
-    return results;
+    return failed ? FAILURE : results;
 }
 
 
@@ -48,12 +55,12 @@ void Simulation::start(const string &travel_path, const string &algorithm_path, 
     string results_path = output_path + SUBDIR + "simulation.results";
     vector<string> travels = Reader::getTravels(travel_path);
     map<string, vector<int>> alg_results;
-    for(int i = 0; i < travels.size(); i++) {
+    for(const auto& travel_name : travels) {
+        string curr_travel_path = travel_path + SUBDIR + travel_name;
         vector<unique_ptr<AbstractAlgorithm>> algorithms; // TODO: init algorithms
         for(auto& alg: algorithms) {
-            string curr_travel_path = travel_path + SUBDIR + travels[i];
-            if(!readShipPlan(error_path, curr_travel_path, travels[i], alg) || !readShipRoute(error_path, curr_travel_path, travels[i], alg)) { continue; }
-            alg_results["<algorithm_name>"].emplace_back(sail(alg, curr_travel_path, travels[i], output_path, error_path)); // TODO: alg name
+            if(!readShipPlan(error_path, curr_travel_path, travel_name, alg) || !readShipRoute(error_path, curr_travel_path, travel_name, alg)) { continue; }
+            alg_results["<algorithm_name>"].emplace_back(sail(alg, curr_travel_path, travel_name, output_path, error_path)); // TODO: alg name
         }
     }
     writeResults(results_path, alg_results, travels);

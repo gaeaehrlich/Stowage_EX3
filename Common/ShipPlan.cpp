@@ -27,9 +27,9 @@ Floor& ShipPlan::getFloor(int floor_number) {
 }
 
 
-bool ShipPlan::hasContainer(string container_id) {
-    for(int i = 0; i < _floors.size(); i++) {
-        if(_floors[i].hasContainer(container_id)) {
+bool ShipPlan::hasContainer(const string& container_id) {
+    for(auto & _floor : _floors) {
+        if(_floor.hasContainer(container_id)) {
             return true;
         }
     }
@@ -37,12 +37,21 @@ bool ShipPlan::hasContainer(string container_id) {
 }
 
 bool ShipPlan::isFull() {
-    for(int i = 0; i < _floors.size(); i++) {
-        if(!_floors[i].isFloorFull()) {
+    for(auto & _floor : _floors) {
+        if(!_floor.isFloorFull()) {
             return true;
         }
     }
     return false;
+}
+
+bool ShipPlan::isEmpty() {
+    for(auto & _floor : _floors) {
+        if(!_floor.isFloorEmpty()) {
+            return false;
+        }
+    }
+    return true;
 }
 
 bool ShipPlan::isLegalFloor(Position position) {
@@ -66,4 +75,13 @@ string ShipPlan::getIdAtPosition(Position position) {
         return "";
     }
     return _floors[position._floor].getContainerID(position._x, position._y);
+}
+
+int ShipPlan::getWeightById(const string& id) {
+    for(auto& floor: _floors) {
+        if(floor.hasContainer(id)) {
+            return floor.getWeightById(id);
+        }
+    }
+    return -1;
 }
