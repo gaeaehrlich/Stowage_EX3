@@ -1,5 +1,5 @@
 #include "NaiveAlgorithm.h"
-REGISTER_ALGORITHM (_208967075_a)
+//REGISTER_ALGORITHM (_208967075_a)
 
 int NaiveAlgorithm::readShipPlan(const string& full_path_and_file_name) {
     int readStatus = Reader::readShipPlan(full_path_and_file_name, _plan);
@@ -63,15 +63,15 @@ void NaiveAlgorithm::unloadInstructions(std::ofstream& file) {
 
 int NaiveAlgorithm::loadInstructions(std::ofstream& file, vector<unique_ptr<Container>>& list) {
     int rejectReason = 0;
-    for(int i = 0; i < list.size(); i++) {
-        rejectReason = rejectingContainer(list[i]);
+    for(auto & container : list) {
+        rejectReason = rejectingContainer(container);
         if(rejectReason != 0) {
-            file << instructionToString('R', list[i] -> getId(), Position(rejectReason, rejectReason, rejectReason));
+            file << instructionToString('R', container -> getId(), Position(rejectReason, rejectReason, rejectReason));
         }
         else {
             Position pos = findPosition();
-            file << instructionToString('L', list[i] -> getId(), pos);
-            _plan.getFloor(pos._floor).insert(pos._x, pos._y, std::move(list[i]));
+            file << instructionToString('L', container -> getId(), pos);
+            _plan.getFloor(pos._floor).insert(pos._x, pos._y, std::move(container));
         }
     }
     //list.clear(); // TODO: why?

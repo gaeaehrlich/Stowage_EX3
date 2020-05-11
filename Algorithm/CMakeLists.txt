@@ -19,7 +19,6 @@ set(COMMON_SRC
         ../Common/Position.cpp
         ../Common/WeightBalanceCalculator.h
         ../Common/WeightBalanceCalculator.cpp
-        ../Common/AlgorithmRegistration.h
         )
 
 add_library(algorithm SHARED
