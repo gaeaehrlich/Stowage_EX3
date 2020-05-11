@@ -57,7 +57,8 @@ void Simulation::start(const string &travel_path, const string &algorithm_path, 
     map<string, vector<int>> alg_results;
     for(const auto& travel_name : travels) {
         string curr_travel_path = travel_path + SUBDIR + travel_name;
-        vector<unique_ptr<AbstractAlgorithm>> algorithms; // TODO: init algorithms
+        //auto algorithms = _instance.getAlgorithms(); // TODO: init algorithms
+        vector<unique_ptr<AbstractAlgorithm>> algorithms;
         for(auto& alg: algorithms) {
             if(!readShipPlan(error_path, curr_travel_path, travel_name, alg) || !readShipRoute(error_path, curr_travel_path, travel_name, alg)) { continue; }
             alg_results["<algorithm_name>"].emplace_back(sail(alg, curr_travel_path, travel_name, output_path, error_path)); // TODO: alg name

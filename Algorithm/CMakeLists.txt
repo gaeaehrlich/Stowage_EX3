@@ -23,6 +23,7 @@ set(COMMON_SRC
         )
 
 add_library(algorithm SHARED
+        ./AlgorithmRegistration.h
         ./AbstractAlgorithm.h
         ./NaiveAlgorithm.h
         ./NaiveAlgorithm.cpp

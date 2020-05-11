@@ -19,7 +19,7 @@ set(COMMON_SRC
         ../Common/Position.cpp
         ../Common/WeightBalanceCalculator.h
         ../Common/WeightBalanceCalculator.cpp
-        ../Common/AlgorithmRegistration.h
+        ../Algorithm/AlgorithmRegistration.h
         )
 
 add_executable(Simulation

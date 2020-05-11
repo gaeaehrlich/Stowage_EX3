@@ -122,6 +122,60 @@ Simulation/fast:
 	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/build
 .PHONY : Simulation/fast
 
+AlgorithmRegistration.obj: AlgorithmRegistration.cpp.obj
+
+.PHONY : AlgorithmRegistration.obj
+
+# target to build an object file
+AlgorithmRegistration.cpp.obj:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/AlgorithmRegistration.cpp.obj
+.PHONY : AlgorithmRegistration.cpp.obj
+
+AlgorithmRegistration.i: AlgorithmRegistration.cpp.i
+
+.PHONY : AlgorithmRegistration.i
+
+# target to preprocess a source file
+AlgorithmRegistration.cpp.i:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/AlgorithmRegistration.cpp.i
+.PHONY : AlgorithmRegistration.cpp.i
+
+AlgorithmRegistration.s: AlgorithmRegistration.cpp.s
+
+.PHONY : AlgorithmRegistration.s
+
+# target to generate assembly for a file
+AlgorithmRegistration.cpp.s:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/AlgorithmRegistration.cpp.s
+.PHONY : AlgorithmRegistration.cpp.s
+
+Auxillary.obj: Auxillary.cpp.obj
+
+.PHONY : Auxillary.obj
+
+# target to build an object file
+Auxillary.cpp.obj:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/Auxillary.cpp.obj
+.PHONY : Auxillary.cpp.obj
+
+Auxillary.i: Auxillary.cpp.i
+
+.PHONY : Auxillary.i
+
+# target to preprocess a source file
+Auxillary.cpp.i:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/Auxillary.cpp.i
+.PHONY : Auxillary.cpp.i
+
+Auxillary.s: Auxillary.cpp.s
+
+.PHONY : Auxillary.s
+
+# target to generate assembly for a file
+Auxillary.cpp.s:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/Auxillary.cpp.s
+.PHONY : Auxillary.cpp.s
+
 C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.obj: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.cpp.obj
 
 .PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.obj
@@ -311,6 +365,33 @@ C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.cpp.s:
 	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.cpp.s
 .PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.cpp.s
 
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.obj: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.obj
+
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.obj
+
+# target to build an object file
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.obj:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.obj
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.obj
+
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.i: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.i
+
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.i
+
+# target to preprocess a source file
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.i:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.i
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.i
+
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.s: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.s
+
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.s
+
+# target to generate assembly for a file
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.s:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.s
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.s
+
 Crane.obj: Crane.cpp.obj
 
 .PHONY : Crane.obj
@@ -337,6 +418,60 @@ Crane.s: Crane.cpp.s
 Crane.cpp.s:
 	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/Crane.cpp.s
 .PHONY : Crane.cpp.s
+
+CraneAux.obj: CraneAux.cpp.obj
+
+.PHONY : CraneAux.obj
+
+# target to build an object file
+CraneAux.cpp.obj:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/CraneAux.cpp.obj
+.PHONY : CraneAux.cpp.obj
+
+CraneAux.i: CraneAux.cpp.i
+
+.PHONY : CraneAux.i
+
+# target to preprocess a source file
+CraneAux.cpp.i:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/CraneAux.cpp.i
+.PHONY : CraneAux.cpp.i
+
+CraneAux.s: CraneAux.cpp.s
+
+.PHONY : CraneAux.s
+
+# target to generate assembly for a file
+CraneAux.cpp.s:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/CraneAux.cpp.s
+.PHONY : CraneAux.cpp.s
+
+Simulation.obj: Simulation.cpp.obj
+
+.PHONY : Simulation.obj
+
+# target to build an object file
+Simulation.cpp.obj:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/Simulation.cpp.obj
+.PHONY : Simulation.cpp.obj
+
+Simulation.i: Simulation.cpp.i
+
+.PHONY : Simulation.i
+
+# target to preprocess a source file
+Simulation.cpp.i:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/Simulation.cpp.i
+.PHONY : Simulation.cpp.i
+
+Simulation.s: Simulation.cpp.s
+
+.PHONY : Simulation.s
+
+# target to generate assembly for a file
+Simulation.cpp.s:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/Simulation.cpp.s
+.PHONY : Simulation.cpp.s
 
 main.obj: main.cpp.obj
 
@@ -374,6 +509,12 @@ help:
 	@echo ... Simulation
 	@echo ... edit_cache
 	@echo ... rebuild_cache
+	@echo ... AlgorithmRegistration.obj
+	@echo ... AlgorithmRegistration.i
+	@echo ... AlgorithmRegistration.s
+	@echo ... Auxillary.obj
+	@echo ... Auxillary.i
+	@echo ... Auxillary.s
 	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.obj
 	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.i
 	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.s
@@ -395,9 +536,18 @@ help:
 	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.obj
 	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.i
 	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.s
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.obj
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.i
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.s
 	@echo ... Crane.obj
 	@echo ... Crane.i
 	@echo ... Crane.s
+	@echo ... CraneAux.obj
+	@echo ... CraneAux.i
+	@echo ... CraneAux.s
+	@echo ... Simulation.obj
+	@echo ... Simulation.i
+	@echo ... Simulation.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s

@@ -82,6 +82,9 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="C:/Projects/uni/adv topics cpp/ex2/Stowage/Algorithm/AlgorithmRegistration.h">
+			<Option target="Simulation"/>
+		</Unit>
 		<Unit filename="C:/Projects/uni/adv topics cpp/ex2/Stowage/Common/Container.cpp">
 			<Option target="Simulation"/>
 		</Unit>
@@ -124,10 +127,31 @@
 		<Unit filename="C:/Projects/uni/adv topics cpp/ex2/Stowage/Common/ShipRoute.h">
 			<Option target="Simulation"/>
 		</Unit>
+		<Unit filename="C:/Projects/uni/adv topics cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp">
+			<Option target="Simulation"/>
+		</Unit>
+		<Unit filename="C:/Projects/uni/adv topics cpp/ex2/Stowage/Common/WeightBalanceCalculator.h">
+			<Option target="Simulation"/>
+		</Unit>
+		<Unit filename="C:/Projects/uni/adv topics cpp/ex2/Stowage/Simulation/AlgorithmRegistration.cpp">
+			<Option target="Simulation"/>
+		</Unit>
+		<Unit filename="C:/Projects/uni/adv topics cpp/ex2/Stowage/Simulation/Auxillary.cpp">
+			<Option target="Simulation"/>
+		</Unit>
 		<Unit filename="C:/Projects/uni/adv topics cpp/ex2/Stowage/Simulation/Crane.cpp">
 			<Option target="Simulation"/>
 		</Unit>
 		<Unit filename="C:/Projects/uni/adv topics cpp/ex2/Stowage/Simulation/Crane.h">
+			<Option target="Simulation"/>
+		</Unit>
+		<Unit filename="C:/Projects/uni/adv topics cpp/ex2/Stowage/Simulation/CraneAux.cpp">
+			<Option target="Simulation"/>
+		</Unit>
+		<Unit filename="C:/Projects/uni/adv topics cpp/ex2/Stowage/Simulation/Simulation.cpp">
+			<Option target="Simulation"/>
+		</Unit>
+		<Unit filename="C:/Projects/uni/adv topics cpp/ex2/Stowage/Simulation/Simulation.h">
 			<Option target="Simulation"/>
 		</Unit>
 		<Unit filename="C:/Projects/uni/adv topics cpp/ex2/Stowage/Simulation/main.cpp">

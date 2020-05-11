@@ -1,4 +1,5 @@
 #include "NaiveAlgorithm.h"
+REGISTER_ALGORITHM (_208967075_a)
 
 int NaiveAlgorithm::readShipPlan(const string& full_path_and_file_name) {
     int readStatus = Reader::readShipPlan(full_path_and_file_name, _plan);

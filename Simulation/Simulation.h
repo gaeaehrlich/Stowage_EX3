@@ -9,7 +9,7 @@
 #include "../Common/ShipRoute.h"
 #include "../Algorithm/AbstractAlgorithm.h"
 #include "../Common/Reader.h"
-#include "../Common/AlgorithmRegistration.h"
+#include "../Algorithm/AlgorithmRegistration.h"
 #include "Crane.h"
 
 const string SUBDIR = "\\";
@@ -25,6 +25,8 @@ class Simulation {
     ShipPlan _plan;
     ShipRoute _route;
     Crane _crane;
+    static Simulation _instance;
+    vector<std::function<unique_ptr<AbstractAlgorithm>()>> algorithmFactory;
 
 public:
     void start(const string& travel_path, const string& algorithm_path, const string& output_path);
@@ -43,6 +45,9 @@ public:
     void writeResults(const string &path, const map<string, vector<int>>& results, const vector<string>& travels);
     int sumResults(const vector<int>& results, bool sumOrErr);
     string createTravelOutputFolder(const string& output_path, const string& alg_name, const string& travel_name);
+    void registerAlgorithm(std::function<unique_ptr<AbstractAlgorithm>()> algorithm);
+    static Simulation& getInstance();
+    vector<unique_ptr<AbstractAlgorithm>> getAlgorithms()const;
 };
 
 

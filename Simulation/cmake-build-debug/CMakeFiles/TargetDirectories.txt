@@ -1,0 +1,3 @@
+C:/Projects/uni/adv topics cpp/ex2/Stowage/Simulation/cmake-build-debug/CMakeFiles/Simulation.dir
+C:/Projects/uni/adv topics cpp/ex2/Stowage/Simulation/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Projects/uni/adv topics cpp/ex2/Stowage/Simulation/cmake-build-debug/CMakeFiles/rebuild_cache.dir
