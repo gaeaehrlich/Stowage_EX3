@@ -4,7 +4,6 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
-#include <io.h>
 #include "../Common/ShipPlan.h"
 #include "../Common/ShipRoute.h"
 #include "../Algorithm/AbstractAlgorithm.h"

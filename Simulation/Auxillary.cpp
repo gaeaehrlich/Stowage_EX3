@@ -12,8 +12,8 @@ string Simulation::getPath(const string& travel_dir, const string& search) {
 
 string Simulation::getCargoPath(const string &travel_dir, const string &port) {
     string pathName = travel_dir + SUBDIR + port + "_" + std::to_string(_route.getPortNumber()) + ".cargo_data";
-    std::filesystem::path path = pathName;
-    if(!std::filesystem::exists(path)) { // if cargo file doesn't exist, create an empty one
+    fs::path path = pathName;
+    if(!fs::exists(path)) { // if cargo file doesn't exist, create an empty one
         std::ofstream cargo_file (pathName);
         cargo_file.close();
     }

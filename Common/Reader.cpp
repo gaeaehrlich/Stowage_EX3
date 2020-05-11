@@ -181,8 +181,8 @@ bool Reader::readCargoLoad(const string &path, vector<unique_ptr<Container>>& li
 
 int Reader::readShipPlan(const string& path, ShipPlan& plan) {
     int errors = 0;
-    std::filesystem::path file_path = path;
-    if(path.empty() || !std::filesystem::exists(file_path)) {
+    fs::path file_path = path;
+    if(path.empty() || !fs::exists(file_path)) {
         errors += (2 ^ 3);
     }
     int x, y, num_floors;
@@ -215,8 +215,8 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
 }
 
 int Reader::readShipRoute(const string &path, ShipRoute& route) {
-    std::filesystem::path file_path = path;
-    if(path.empty() || !std::filesystem::exists(file_path)) {
+    fs::path file_path = path;
+    if(path.empty() || !fs::exists(file_path)) {
         std::cout << "No file" << std::endl;
         return false;
     }
@@ -241,8 +241,8 @@ int Reader::readShipRoute(const string &path, ShipRoute& route) {
 }
 
 bool Reader::checkDirPath(const string& pathName) {
-    std::filesystem::path path = pathName;
-    return std::filesystem::is_directory(path);
+    fs::path path = pathName;
+    return fs::is_directory(path);
 }
 
 vector<string> Reader::getTravels(const string &dir) {

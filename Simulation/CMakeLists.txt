@@ -22,10 +22,13 @@ set(COMMON_SRC
         ../Algorithm/AlgorithmRegistration.h
         )
 
-add_executable(Simulation
+add_executable(simulation
         main.cpp
         Crane.h Crane.cpp CraneAux.cpp
         Simulation.h Simulation.cpp Auxillary.cpp
         AlgorithmRegistration.cpp
         ${COMMON_SRC}
         )
+
+target_link_libraries(simulation stdc++fs)
+target_link_libraries(simulation ${CMAKE_DL_LIBS})
