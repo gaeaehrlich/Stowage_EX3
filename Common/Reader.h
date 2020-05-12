@@ -9,7 +9,7 @@
 #include <tuple>
 #include <memory>
 #include <map>
-#include <filesystem>
+#include <experimental/filesystem>
 #include <fstream>
 #include <regex>
 #include <cmath>
@@ -24,7 +24,7 @@ using std::string;
 using std::map;
 using std::unique_ptr;
 using std::make_unique;
-namespace fs = std::filesystem;
+namespace fs = std::experimental::filesystem;
 
 
 class Reader {
@@ -42,7 +42,7 @@ public:
     static int readShipPlan(const string& path, ShipPlan& plan);
     static int readShipRoute(const string& path, ShipRoute& route);
     static bool checkDirPath(const string& pathName);
-    static int getTravels(const string& dir);
+    static vector<string> getTravels(const string& dir);
     static vector<Operation> getInstructionsVector(const string &path);
 };
 

@@ -46,3 +46,11 @@ int ShipRoute::getPortNumber() {
     return count;
 }
 
+bool ShipRoute::isStopAfter(const string& port1, const string& port2) {
+    for(const string& stop: _route) {
+        if(stop == port1) { return false; }
+        if(stop == port2) { return true; }
+    }
+    return false; // shouldn't get here
+}
+

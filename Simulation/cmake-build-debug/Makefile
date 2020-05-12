@@ -38,19 +38,19 @@ cmake_force:
 SHELL = cmd.exe
 
 # The CMake executable.
-CMAKE_COMMAND = "C:\Program Files\JetBrains\CLion 2019.2.4\bin\cmake\win\bin\cmake.exe"
+CMAKE_COMMAND = "C:\Program Files\JetBrains\CLion 2019.3.5\bin\cmake\win\bin\cmake.exe"
 
 # The command to remove a file.
-RM = "C:\Program Files\JetBrains\CLion 2019.2.4\bin\cmake\win\bin\cmake.exe" -E remove -f
+RM = "C:\Program Files\JetBrains\CLion 2019.3.5\bin\cmake\win\bin\cmake.exe" -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "C:\Users\Chen Hendler\CLionProjects\Stowage_EX2\Simulation"
+CMAKE_SOURCE_DIR = "C:\Projects\uni\adv topics cpp\ex2\Stowage\Simulation"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "C:\Users\Chen Hendler\CLionProjects\Stowage_EX2\Simulation\cmake-build-debug"
+CMAKE_BINARY_DIR = "C:\Projects\uni\adv topics cpp\ex2\Stowage\Simulation\cmake-build-debug"
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -58,7 +58,7 @@ CMAKE_BINARY_DIR = "C:\Users\Chen Hendler\CLionProjects\Stowage_EX2\Simulation\c
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	"C:\Program Files\JetBrains\CLion 2019.2.4\bin\cmake\win\bin\cmake.exe" -E echo "No interactive CMake dialog available."
+	"C:\Program Files\JetBrains\CLion 2019.3.5\bin\cmake\win\bin\cmake.exe" -E echo "No interactive CMake dialog available."
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -69,7 +69,7 @@ edit_cache/fast: edit_cache
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	"C:\Program Files\JetBrains\CLion 2019.2.4\bin\cmake\win\bin\cmake.exe" -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	"C:\Program Files\JetBrains\CLion 2019.3.5\bin\cmake\win\bin\cmake.exe" -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : rebuild_cache
 
 # Special rule for the target rebuild_cache
@@ -79,9 +79,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Users\Chen Hendler\CLionProjects\Stowage_EX2\Simulation\cmake-build-debug\CMakeFiles" "C:\Users\Chen Hendler\CLionProjects\Stowage_EX2\Simulation\cmake-build-debug\CMakeFiles\progress.marks"
+	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Projects\uni\adv topics cpp\ex2\Stowage\Simulation\cmake-build-debug\CMakeFiles" "C:\Projects\uni\adv topics cpp\ex2\Stowage\Simulation\cmake-build-debug\CMakeFiles\progress.marks"
 	$(MAKE) -f CMakeFiles\Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Users\Chen Hendler\CLionProjects\Stowage_EX2\Simulation\cmake-build-debug\CMakeFiles" 0
+	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Projects\uni\adv topics cpp\ex2\Stowage\Simulation\cmake-build-debug\CMakeFiles" 0
 .PHONY : all
 
 # The main clean target
@@ -149,221 +149,248 @@ AlgorithmRegistration.cpp.s:
 	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/AlgorithmRegistration.cpp.s
 .PHONY : AlgorithmRegistration.cpp.s
 
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Container.obj: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Container.cpp.obj
+Auxillary.obj: Auxillary.cpp.obj
 
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Container.obj
-
-# target to build an object file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Container.cpp.obj:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Container.cpp.obj
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Container.cpp.obj
-
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Container.i: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Container.cpp.i
-
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Container.i
-
-# target to preprocess a source file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Container.cpp.i:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Container.cpp.i
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Container.cpp.i
-
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Container.s: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Container.cpp.s
-
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Container.s
-
-# target to generate assembly for a file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Container.cpp.s:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Container.cpp.s
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Container.cpp.s
-
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Floor.obj: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Floor.cpp.obj
-
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Floor.obj
+.PHONY : Auxillary.obj
 
 # target to build an object file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Floor.cpp.obj:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Floor.cpp.obj
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Floor.cpp.obj
+Auxillary.cpp.obj:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/Auxillary.cpp.obj
+.PHONY : Auxillary.cpp.obj
 
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Floor.i: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Floor.cpp.i
+Auxillary.i: Auxillary.cpp.i
 
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Floor.i
+.PHONY : Auxillary.i
 
 # target to preprocess a source file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Floor.cpp.i:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Floor.cpp.i
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Floor.cpp.i
+Auxillary.cpp.i:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/Auxillary.cpp.i
+.PHONY : Auxillary.cpp.i
 
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Floor.s: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Floor.cpp.s
+Auxillary.s: Auxillary.cpp.s
 
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Floor.s
+.PHONY : Auxillary.s
 
 # target to generate assembly for a file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Floor.cpp.s:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Floor.cpp.s
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Floor.cpp.s
+Auxillary.cpp.s:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/Auxillary.cpp.s
+.PHONY : Auxillary.cpp.s
 
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Operation.obj: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Operation.cpp.obj
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.obj: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.cpp.obj
 
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Operation.obj
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.obj
 
 # target to build an object file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Operation.cpp.obj:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Operation.cpp.obj
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Operation.cpp.obj
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.cpp.obj:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.cpp.obj
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.cpp.obj
 
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Operation.i: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Operation.cpp.i
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.i: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.cpp.i
 
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Operation.i
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.i
 
 # target to preprocess a source file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Operation.cpp.i:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Operation.cpp.i
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Operation.cpp.i
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.cpp.i:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.cpp.i
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.cpp.i
 
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Operation.s: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Operation.cpp.s
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.s: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.cpp.s
 
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Operation.s
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.s
 
 # target to generate assembly for a file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Operation.cpp.s:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Operation.cpp.s
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Operation.cpp.s
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.cpp.s:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.cpp.s
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.cpp.s
 
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Position.obj: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Position.cpp.obj
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Floor.obj: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Floor.cpp.obj
 
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Position.obj
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Floor.obj
 
 # target to build an object file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Position.cpp.obj:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Position.cpp.obj
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Position.cpp.obj
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Floor.cpp.obj:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Floor.cpp.obj
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Floor.cpp.obj
 
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Position.i: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Position.cpp.i
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Floor.i: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Floor.cpp.i
 
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Position.i
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Floor.i
 
 # target to preprocess a source file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Position.cpp.i:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Position.cpp.i
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Position.cpp.i
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Floor.cpp.i:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Floor.cpp.i
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Floor.cpp.i
 
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Position.s: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Position.cpp.s
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Floor.s: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Floor.cpp.s
 
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Position.s
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Floor.s
 
 # target to generate assembly for a file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Position.cpp.s:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Position.cpp.s
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Position.cpp.s
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Floor.cpp.s:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Floor.cpp.s
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Floor.cpp.s
 
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Reader.obj: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Reader.cpp.obj
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Operation.obj: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Operation.cpp.obj
 
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Reader.obj
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Operation.obj
 
 # target to build an object file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Reader.cpp.obj:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Reader.cpp.obj
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Reader.cpp.obj
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Operation.cpp.obj:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Operation.cpp.obj
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Operation.cpp.obj
 
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Reader.i: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Reader.cpp.i
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Operation.i: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Operation.cpp.i
 
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Reader.i
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Operation.i
 
 # target to preprocess a source file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Reader.cpp.i:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Reader.cpp.i
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Reader.cpp.i
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Operation.cpp.i:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Operation.cpp.i
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Operation.cpp.i
 
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Reader.s: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Reader.cpp.s
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Operation.s: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Operation.cpp.s
 
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Reader.s
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Operation.s
 
 # target to generate assembly for a file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Reader.cpp.s:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Reader.cpp.s
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Reader.cpp.s
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Operation.cpp.s:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Operation.cpp.s
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Operation.cpp.s
 
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipPlan.obj: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipPlan.cpp.obj
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Position.obj: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Position.cpp.obj
 
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipPlan.obj
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Position.obj
 
 # target to build an object file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipPlan.cpp.obj:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipPlan.cpp.obj
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipPlan.cpp.obj
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Position.cpp.obj:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Position.cpp.obj
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Position.cpp.obj
 
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipPlan.i: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipPlan.cpp.i
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Position.i: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Position.cpp.i
 
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipPlan.i
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Position.i
 
 # target to preprocess a source file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipPlan.cpp.i:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipPlan.cpp.i
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipPlan.cpp.i
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Position.cpp.i:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Position.cpp.i
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Position.cpp.i
 
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipPlan.s: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipPlan.cpp.s
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Position.s: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Position.cpp.s
 
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipPlan.s
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Position.s
 
 # target to generate assembly for a file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipPlan.cpp.s:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipPlan.cpp.s
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipPlan.cpp.s
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Position.cpp.s:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Position.cpp.s
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Position.cpp.s
 
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipRoute.obj: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipRoute.cpp.obj
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Reader.obj: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Reader.cpp.obj
 
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipRoute.obj
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Reader.obj
 
 # target to build an object file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipRoute.cpp.obj:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipRoute.cpp.obj
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipRoute.cpp.obj
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Reader.cpp.obj:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Reader.cpp.obj
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Reader.cpp.obj
 
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipRoute.i: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipRoute.cpp.i
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Reader.i: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Reader.cpp.i
 
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipRoute.i
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Reader.i
 
 # target to preprocess a source file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipRoute.cpp.i:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipRoute.cpp.i
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipRoute.cpp.i
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Reader.cpp.i:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Reader.cpp.i
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Reader.cpp.i
 
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipRoute.s: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipRoute.cpp.s
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Reader.s: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Reader.cpp.s
 
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipRoute.s
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Reader.s
 
 # target to generate assembly for a file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipRoute.cpp.s:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipRoute.cpp.s
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipRoute.cpp.s
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Reader.cpp.s:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Reader.cpp.s
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Reader.cpp.s
 
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/WeightBalanceCalculator.obj: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/WeightBalanceCalculator.cpp.obj
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipPlan.obj: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipPlan.cpp.obj
 
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/WeightBalanceCalculator.obj
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipPlan.obj
 
 # target to build an object file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/WeightBalanceCalculator.cpp.obj:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/WeightBalanceCalculator.cpp.obj
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/WeightBalanceCalculator.cpp.obj
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipPlan.cpp.obj:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipPlan.cpp.obj
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipPlan.cpp.obj
 
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/WeightBalanceCalculator.i: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/WeightBalanceCalculator.cpp.i
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipPlan.i: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipPlan.cpp.i
 
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/WeightBalanceCalculator.i
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipPlan.i
 
 # target to preprocess a source file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/WeightBalanceCalculator.cpp.i:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/WeightBalanceCalculator.cpp.i
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/WeightBalanceCalculator.cpp.i
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipPlan.cpp.i:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipPlan.cpp.i
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipPlan.cpp.i
 
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/WeightBalanceCalculator.s: C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/WeightBalanceCalculator.cpp.s
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipPlan.s: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipPlan.cpp.s
 
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/WeightBalanceCalculator.s
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipPlan.s
 
 # target to generate assembly for a file
-C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/WeightBalanceCalculator.cpp.s:
-	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/WeightBalanceCalculator.cpp.s
-.PHONY : C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/WeightBalanceCalculator.cpp.s
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipPlan.cpp.s:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipPlan.cpp.s
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipPlan.cpp.s
+
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.obj: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.cpp.obj
+
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.obj
+
+# target to build an object file
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.cpp.obj:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.cpp.obj
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.cpp.obj
+
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.i: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.cpp.i
+
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.i
+
+# target to preprocess a source file
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.cpp.i:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.cpp.i
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.cpp.i
+
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.s: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.cpp.s
+
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.s
+
+# target to generate assembly for a file
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.cpp.s:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.cpp.s
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.cpp.s
+
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.obj: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.obj
+
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.obj
+
+# target to build an object file
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.obj:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.obj
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.obj
+
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.i: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.i
+
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.i
+
+# target to preprocess a source file
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.i:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.i
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.i
+
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.s: C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.s
+
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.s
+
+# target to generate assembly for a file
+C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.s:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.s
+.PHONY : C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.cpp.s
 
 Crane.obj: Crane.cpp.obj
 
@@ -391,6 +418,33 @@ Crane.s: Crane.cpp.s
 Crane.cpp.s:
 	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/Crane.cpp.s
 .PHONY : Crane.cpp.s
+
+CraneAux.obj: CraneAux.cpp.obj
+
+.PHONY : CraneAux.obj
+
+# target to build an object file
+CraneAux.cpp.obj:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/CraneAux.cpp.obj
+.PHONY : CraneAux.cpp.obj
+
+CraneAux.i: CraneAux.cpp.i
+
+.PHONY : CraneAux.i
+
+# target to preprocess a source file
+CraneAux.cpp.i:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/CraneAux.cpp.i
+.PHONY : CraneAux.cpp.i
+
+CraneAux.s: CraneAux.cpp.s
+
+.PHONY : CraneAux.s
+
+# target to generate assembly for a file
+CraneAux.cpp.s:
+	$(MAKE) -f CMakeFiles\Simulation.dir\build.make CMakeFiles/Simulation.dir/CraneAux.cpp.s
+.PHONY : CraneAux.cpp.s
 
 Simulation.obj: Simulation.cpp.obj
 
@@ -458,33 +512,39 @@ help:
 	@echo ... AlgorithmRegistration.obj
 	@echo ... AlgorithmRegistration.i
 	@echo ... AlgorithmRegistration.s
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Container.obj
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Container.i
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Container.s
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Floor.obj
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Floor.i
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Floor.s
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Operation.obj
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Operation.i
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Operation.s
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Position.obj
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Position.i
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Position.s
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Reader.obj
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Reader.i
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/Reader.s
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipPlan.obj
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipPlan.i
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipPlan.s
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipRoute.obj
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipRoute.i
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/ShipRoute.s
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/WeightBalanceCalculator.obj
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/WeightBalanceCalculator.i
-	@echo ... C_/Users/Chen_Hendler/CLionProjects/Stowage_EX2/Common/WeightBalanceCalculator.s
+	@echo ... Auxillary.obj
+	@echo ... Auxillary.i
+	@echo ... Auxillary.s
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.obj
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.i
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Container.s
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Floor.obj
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Floor.i
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Floor.s
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Operation.obj
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Operation.i
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Operation.s
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Position.obj
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Position.i
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Position.s
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Reader.obj
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Reader.i
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/Reader.s
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipPlan.obj
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipPlan.i
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipPlan.s
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.obj
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.i
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/ShipRoute.s
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.obj
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.i
+	@echo ... C_/Projects/uni/adv_topics_cpp/ex2/Stowage/Common/WeightBalanceCalculator.s
 	@echo ... Crane.obj
 	@echo ... Crane.i
 	@echo ... Crane.s
+	@echo ... CraneAux.obj
+	@echo ... CraneAux.i
+	@echo ... CraneAux.s
 	@echo ... Simulation.obj
 	@echo ... Simulation.i
 	@echo ... Simulation.s

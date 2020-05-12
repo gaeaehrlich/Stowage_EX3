@@ -19,10 +19,10 @@ set(COMMON_SRC
         ../Common/Position.cpp
         ../Common/WeightBalanceCalculator.h
         ../Common/WeightBalanceCalculator.cpp
-        ../Common/AlgorithmRegistration.h
         )
 
 add_library(algorithm SHARED
+        ./AlgorithmRegistration.h
         ./AbstractAlgorithm.h
         ./NaiveAlgorithm.h
         ./NaiveAlgorithm.cpp

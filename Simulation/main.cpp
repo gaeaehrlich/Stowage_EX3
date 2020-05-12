@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include "Simulation.h"
 
 using std::string;
 
@@ -41,9 +42,9 @@ bool getPaths(int argc, char *argv[], string& travel_path, string& algorithm_pat
 }
 
 int main(int argc, char *argv[]) {
-    string travel_path, algorithm_path = ".\\", output_path = ".\\"; // TODO: which way the / \\ ?!
+    string travel_path, algorithm_path = "." + SUBDIR, output_path = "." + SUBDIR;
     if(!getPaths(argc, argv, travel_path, algorithm_path, output_path)) {
-        return -1;
+        return FAILURE;
     }
     std::cout << "Hello, World!" << std::endl;
     return 0;

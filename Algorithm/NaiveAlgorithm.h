@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include <filesystem>
+#include <experimental/filesystem>
 #include <iostream>
 #include <fstream>
 #include "../Common/Container.h"
@@ -18,16 +18,17 @@
 using std::unique_ptr;
 using std::string;
 using std::vector;
-namespace fs = std::filesystem;
+namespace fs = std::experimental::filesystem;
 
 class NaiveAlgorithm: public AbstractAlgorithm {
     // TODO : should be public?
     ShipPlan _plan;
     ShipRoute _route;
-    WeightBalanceCalculator _calc; // TODO: where to put weightbalance? common or algorithm?
+    WeightBalanceCalculator _calc;
     vector<unique_ptr<Container>> _cargo_load;
     vector<unique_ptr<Container>> _temporary_unloaded;
     bool _invalid_travel = false;
+    int _status = 0;
 
 public:
     //NaiveAlgorithm(ShipPlan plan, ShipRoute route, WeightBalanceCalculator calc);

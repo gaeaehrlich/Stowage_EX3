@@ -2,8 +2,8 @@
 
 #include <utility>
 
-Operation::Operation(char operation, string container_id, Position position):
-    _container_id(std::move(container_id)), _position(position){
+Operation::Operation(char operation, string container_id, Position position, Position move):
+    _container_id(std::move(container_id)), _position(position), _move(move){
     if(operation == 'L') {
         _operation = LOAD;
     }
@@ -12,6 +12,9 @@ Operation::Operation(char operation, string container_id, Position position):
     }
     else if (operation == 'R'){
         _operation = REJECT;
+    }
+    else if (operation == 'M') {
+        _operation = MOVE;
     }
     //else illegal operation
 }

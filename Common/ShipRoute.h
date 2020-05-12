@@ -21,6 +21,7 @@ public:
     void next();
     bool isLastStop();
     int getPortNumber();
+    bool isStopAfter(const string& port1, const string& port2);
 };
 
 

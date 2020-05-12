@@ -17,18 +17,18 @@ bool Floor::insert(int x, int y, std::unique_ptr<Container> container) {
     return true;
 }
 
-pair<int, unique_ptr<Container>> Floor::pop(int x, int y) {
+unique_ptr<Container> Floor::pop(int x, int y) {
     if(_map.find({x,y}) == _map.end()) {
         printf("Unavailable location for this floor");
-        return {LOCATION, nullptr};
+        return nullptr;
     }
     else if(_map[{x,y}] != nullptr) {
         unique_ptr<Container> container = std::move(_map[{x,y}]);
         _map[{x,y}] = nullptr; // TODO: will this delete container?
-        return {OK, std::move(container)};
+        return std::move(container);
     }
     printf("No container to pop");
-    return {CONTAINER, nullptr};
+    return nullptr;
 }
 
 bool Floor::isEmpty(int x, int y) {
@@ -79,7 +79,7 @@ bool Floor::isFloorFull() {
     return true;
 }
 
-bool Floor::hasContainer(string container_id) {
+bool Floor::hasContainer(const string& container_id) {
     for(const auto& element : _map) {
         if(element.second != nullptr && element.second->getId() == container_id) {
             return true;
@@ -94,3 +94,13 @@ string Floor::getContainerID(int x, int y) {
     }
     return _map[{x,y}] ? _map[{x,y}] -> getId() : "";
 }
+
+int Floor::getWeightById(const string& id) {
+    for(const auto& element : _map) {
+        if(element.second != nullptr && element.second -> getId() == id) {
+            return element.second -> getWeight();
+        }
+    }
+    return -1;
+}
+

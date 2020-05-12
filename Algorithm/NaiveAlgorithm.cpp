@@ -1,39 +1,42 @@
 #include "NaiveAlgorithm.h"
+//REGISTER_ALGORITHM (_208967075_a)
 
 int NaiveAlgorithm::readShipPlan(const string& full_path_and_file_name) {
     int readStatus = Reader::readShipPlan(full_path_and_file_name, _plan);
-    if((readStatus & 3) || (readStatus & 4)) _invalid_travel = true;
+    if((readStatus & (2^3)) || (readStatus & (2^4))) _invalid_travel = true;
+    _status |= readStatus;
     return readStatus;
 }
 
 int NaiveAlgorithm::readShipRoute(const string& full_path_and_file_name) {
     int readStatus = Reader::readShipRoute(full_path_and_file_name, _route);
     if((readStatus & 7) || (readStatus & 8)) _invalid_travel = true;
+    _status |= readStatus;
     return readStatus;
 }
 
-int NaiveAlgorithm::setWeightBalanceCalculator(WeightBalanceCalculator& calculator) { //TODO
+int NaiveAlgorithm::setWeightBalanceCalculator(WeightBalanceCalculator& calculator) {
+    _calc = calculator;
     return 0;
 }
 
 int NaiveAlgorithm::getInstructionsForCargo(const string &input_path, const string &output_path) {
     std::ofstream file;
     file.open(output_path, std::ios::trunc);
-    int status = 0;
     if(!_invalid_travel) {
         if(!Reader::readCargoLoad(input_path, _cargo_load)) {
-            status = 2^16;
+            _status |= 2^16;
         }
         else {
             unloadInstructions(file);
-            status = loadInstructions(file, _temporary_unloaded);
+            _status |= loadInstructions(file, _temporary_unloaded);
             sortCargoLoad();
-            status |= loadInstructions(file, _cargo_load);
+            _status |= loadInstructions(file, _cargo_load);
         }
     }
     //return _calc.balance(vector<Operation>()) == APPROVED; // TODO
     file.close();
-    return status;
+    return _status;
 }
 
 
@@ -53,22 +56,22 @@ void NaiveAlgorithm::unloadInstructions(std::ofstream& file) {
     vector<Position> unload = findContainersToUnload();
     for(const Position& pos: unload) {
         unloadContainersAbove(pos, file);
-        unique_ptr<Container> removed = std::move(_plan.getFloor(pos._floor).pop(pos._x, pos._y).second);
+        unique_ptr<Container> removed = std::move(_plan.getFloor(pos._floor).pop(pos._x, pos._y));
         file << instructionToString('U', removed -> getId(), pos);
     }
 }
 
 int NaiveAlgorithm::loadInstructions(std::ofstream& file, vector<unique_ptr<Container>>& list) {
     int rejectReason = 0;
-    for(int i = 0; i < list.size(); i++) {
-        rejectReason = rejectingContainer(list[i]);
+    for(auto & container : list) {
+        rejectReason = rejectingContainer(container);
         if(rejectReason != 0) {
-            file << instructionToString('R', list[i] -> getId(), Position(rejectReason, rejectReason, rejectReason));
+            file << instructionToString('R', container -> getId(), Position(rejectReason, rejectReason, rejectReason));
         }
         else {
             Position pos = findPosition();
-            file << instructionToString('L', list[i] -> getId(), pos);
-            _plan.getFloor(pos._floor).insert(pos._x, pos._y, std::move(list[i]));
+            file << instructionToString('L', container -> getId(), pos);
+            _plan.getFloor(pos._floor).insert(pos._x, pos._y, std::move(container));
         }
     }
     //list.clear(); // TODO: why?
@@ -136,7 +139,7 @@ void NaiveAlgorithm::unloadContainersAbove(Position pos, std::ofstream& file) {
     for(int i = _plan.numberOfFloors() - 1; i > pos._floor; i--) {
         if(!_plan.getFloor(i).isEmpty(pos._x, pos._y)) {
             if(_plan.getFloor(i).getContainerDest({pos._x, pos._y}) != _route.getCurrentPort()) {
-                unique_ptr<Container> removed = _plan.getFloor(i).pop(pos._x, pos._y).second;
+                unique_ptr<Container> removed = _plan.getFloor(i).pop(pos._x, pos._y);
                 file << instructionToString('U', removed -> getId(), Position(i, pos._x, pos._y));
                 _temporary_unloaded.emplace_back(std::move(removed));
             }
@@ -152,7 +155,7 @@ string NaiveAlgorithm::instructionToString(char instruction, const string& id, P
     return ss.str();
 }
 
-int NaiveAlgorithm::countContainersOnPort(const string& id ) {
+int NaiveAlgorithm::countContainersOnPort(const string& id) {
     int count = 0;
     for(auto& container: _cargo_load) {
         if(container -> getId() == id) {

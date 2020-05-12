@@ -189,8 +189,11 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
 }
 
 int Reader::readShipRoute(const string &path, ShipRoute& route) {
-    std::filesystem::path file_path = path;
-    if(path.empty() || !std::filesystem::exists(file_path)) { return pow2(7); }
+    fs::path file_path = path;
+    if(path.empty() || !fs::exists(file_path)) {
+        std::cout << "No file" << std::endl;
+        return pow2(7);
+    }
     int errors = 0;
     string curr_port, prev_port;
     vector<string> ports;
@@ -214,19 +217,19 @@ int Reader::readShipRoute(const string &path, ShipRoute& route) {
 }
 
 bool Reader::checkDirPath(const string& pathName) {
-    std::filesystem::path path = pathName;
-    return std::filesystem::is_directory(path);
+    fs::path path = pathName;
+    return fs::is_directory(path);
 }
 
-int Reader::getTravels(const string &dir) {
-    int travel = 0;
-    std::regex format("Travel_[1-9]+");
+vector<string> Reader::getTravels(const string &dir) {
+    vector<string> travels;
+    std::regex format("(.*)_travel");
     for(const auto & entry : fs::directory_iterator(dir)) {
         if(std::regex_match(entry.path().stem().string(), format)) {
-            travel++;
+            travels.emplace_back(entry.path().stem().string());
         }
     }
-    return travel;
+    return travels;
 }
 
 vector<Operation> Reader::getInstructionsVector(const string &path) {
