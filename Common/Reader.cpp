@@ -1,5 +1,7 @@
 #include "Reader.h"
 
+#define pow2(x) (int)pow(2, x)
+
 int Reader::splitLine(string& line, vector<string>& vec, int n) {
     std::stringstream ss(line);
     int i = 0;
@@ -92,7 +94,6 @@ bool Reader::splitInstructionLine(string& line, char& op, string& id, int& floor
     vector<int> int_vec(3);
     vector<string> sub_str_vec;
     std::copy(str_vec.begin() + 2, str_vec.end(), std::back_inserter(sub_str_vec));
-    int sign = op == 'R' ? - 1 : 1;
     if (convertVectorToInt(int_vec, sub_str_vec)) {
         floor = int_vec[0];
         x = int_vec[1];
@@ -100,18 +101,15 @@ bool Reader::splitInstructionLine(string& line, char& op, string& id, int& floor
     }
     return true;
 }
-// todo: use regex
+
 bool Reader::legalPortSymbol(string symbol) {
-    return symbol.size() == 5 &&
-           std::all_of(symbol.begin(), symbol.end(), [](unsigned char c){ return std::isupper(c); });
+    std::regex format("^[A-Z]{5}$");
+    return std::regex_match(symbol, format);
 }
 
 bool Reader::legalContainerId(string id) {
-    return id.size() == 11 &&
-           std::all_of(id.begin(), id.begin() + 3, [](unsigned char c){ return std::isupper(c); })
-           && (id[3] == 'U' || id[3] == 'J' || id[3] == 'Z')
-           && std::all_of(id.begin() + 4, id.end(), [](unsigned char c){ return std::isdigit(c); })
-           && legalCheckDigit(id);
+    std::regex format("^[A-Z]{3}[UJZ][0-9]{7}$");
+    return std::regex_match(id, format) && legalCheckDigit(id);
 }
 
 bool Reader::legalCheckDigit(string id) {
@@ -155,29 +153,29 @@ bool Reader::readCargoLoad(const string &path, vector<unique_ptr<Container>>& li
 int Reader::readShipPlan(const string& path, ShipPlan& plan) {
     int errors = 0, x, y, num_floors;;
     std::filesystem::path file_path = path;
-    if(path.empty() || !std::filesystem::exists(file_path)) { return  (2 ^ 3); }
+    if(path.empty() || !std::filesystem::exists(file_path)) { return  pow2(3); }
     std::string line; std::ifstream file(path);
-    if (!file || file.peek() == std::ifstream::traits_type::eof()) { return (2 ^ 3); }
+    if (!file || file.peek() == std::ifstream::traits_type::eof()) { return pow2(3); }
     vector<int> vec(3);
-    if (!std::getline(file, line) || !Reader::splitPlanLine(line, vec)) { return (2 ^ 3); }
+    if (!std::getline(file, line) || !Reader::splitPlanLine(line, vec)) { return pow2(3); }
     num_floors = vec[0]; x = vec[1]; y = vec[2];
     bool fatal = false;
     map< pair<int,int>, int > m_plan;
     while (std::getline(file, line)) {
         if(!Reader::splitPlanLine(line, vec)) { // wrong format
-            errors |= (2 ^ 2);
+            errors |= pow2(2);
             continue;
         }
         if (x < vec[0] || y < vec[1] || num_floors <= vec[2]) { // wrong values
-            errors |= (2 ^ 2);
+            errors |= pow2(2);
             continue;
         }
         if (m_plan.find({x, y}) != m_plan.end()) { // duplicate x,y appearance
             if (m_plan[{x, y}] == num_floors) { // same data
-                errors |= (2 ^ 2);
+                errors |= pow2(2);
             }
             else { // different data
-                errors |= (2 ^ 4);
+                errors |= pow2(4);
                 fatal = true;
             }
             continue; // todo: or just break? do we need to find ALL errors?
@@ -192,25 +190,25 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
 
 int Reader::readShipRoute(const string &path, ShipRoute& route) {
     std::filesystem::path file_path = path;
-    if(path.empty() || !std::filesystem::exists(file_path)) { return (2 ^ 7); }
+    if(path.empty() || !std::filesystem::exists(file_path)) { return pow2(7); }
     int errors = 0;
     string curr_port, prev_port;
     vector<string> ports;
     std::ifstream file(path);
-    if (!file || file.peek() == std::ifstream::traits_type::eof()) { return (2 ^ 7); }
+    if (!file || file.peek() == std::ifstream::traits_type::eof()) { return pow2(7); }
     while (std::getline(file, curr_port)) {
         if (curr_port == prev_port) {
-            errors |= ( 2 ^ 5);
+            errors |= pow2(5);
             continue;
         }
         if(!Reader::legalPortSymbol(curr_port)) {
-            errors |= (2 ^ 6);
+            errors |= pow2(6);
             continue;
         }
         ports.emplace_back(curr_port);
         prev_port = curr_port;
     }
-    if (ports.size() == 1) { errors |= (2 ^ 8); }
+    if (ports.size() == 1) { errors |= pow2(8); }
     else { route = ShipRoute(ports); }
     return errors;
 }
