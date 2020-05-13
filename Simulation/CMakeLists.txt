@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(Stowage)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(COMMON_SRC
         ../Common/Container.h
         ../Common/Container.cpp
@@ -27,6 +27,7 @@ add_executable(simulation
         Crane.h Crane.cpp CraneAux.cpp
         Simulation.h Simulation.cpp Auxillary.cpp
         AlgorithmRegistration.cpp
+        AlgorithmRegistrar.h
         ${COMMON_SRC}
         )
 

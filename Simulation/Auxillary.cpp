@@ -177,20 +177,3 @@ int Simulation::sumResults(const vector<int>& results, bool sumOrErr) {
     }
     return count;
 }
-
-//void Simulation::registerAlgorithm(std::function<unique_ptr<AbstractAlgorithm>()> algorithm) {
-//    algorithmFactory.push_back(algorithm);
-//}
-//
-//Simulation& Simulation::getInstance() {
-//    return _instance;
-//}
-//
-//vector<unique_ptr<AbstractAlgorithm>> Simulation::getAlgorithms() const {
-//    vector<unique_ptr<AbstractAlgorithm>> algorithms;
-//    for(const auto& algorithmFactoryFunc : algorithmFactory) {
-//        algorithms.push_back(algorithmFactoryFunc());
-//    }
-//    return algorithms;
-//}
-

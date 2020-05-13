@@ -1,5 +1,5 @@
-#ifndef STOWAGE_NAIVEALGORITHM_H
-#define STOWAGE_NAIVEALGORITHM_H
+#ifndef STOWAGE__208967075_A_H
+#define STOWAGE__208967075_A_H
 
 #include <string>
 #include <vector>
@@ -13,6 +13,7 @@
 #include "../Common/WeightBalanceCalculator.h"
 #include "../Common/Reader.h"
 #include "AbstractAlgorithm.h"
+#include "AlgorithmRegistration.h"
 
 
 using std::unique_ptr;
@@ -20,7 +21,7 @@ using std::string;
 using std::vector;
 namespace fs = std::experimental::filesystem;
 
-class NaiveAlgorithm: public AbstractAlgorithm {
+class _208967075_a: public AbstractAlgorithm {
     // TODO : should be public?
     ShipPlan _plan;
     ShipRoute _route;
@@ -31,7 +32,7 @@ class NaiveAlgorithm: public AbstractAlgorithm {
     int _status = 0;
 
 public:
-    //NaiveAlgorithm(ShipPlan plan, ShipRoute route, WeightBalanceCalculator calc);
+    //_208967075_a(ShipPlan plan, ShipRoute route, WeightBalanceCalculator calc);
     int readShipPlan(const string& full_path_and_file_name) override ;
     int readShipRoute(const string& full_path_and_file_name) override ;
     int setWeightBalanceCalculator(WeightBalanceCalculator& calculator) override;
@@ -50,4 +51,4 @@ public:
 };
 
 
-#endif //STOWAGE_NAIVEALGORITHM_H
+#endif //STOWAGE__208967075_A_H

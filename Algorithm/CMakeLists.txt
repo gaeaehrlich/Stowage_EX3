@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.15)
 project(Stowage)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
+include_directories(../Common)
 set(COMMON_SRC
         ../Common/Container.h
         ../Common/Container.cpp
@@ -21,10 +22,9 @@ set(COMMON_SRC
         ../Common/WeightBalanceCalculator.cpp
         )
 
-add_library(algorithm SHARED
+add_library(_208967075_a SHARED
         ./AlgorithmRegistration.h
         ./AbstractAlgorithm.h
-        ./NaiveAlgorithm.h
-        ./NaiveAlgorithm.cpp
-        ${COMMON_SRC}
+        _208967075_a.h
+        _208967075_a.cpp
         )
