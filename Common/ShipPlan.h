@@ -21,6 +21,7 @@ public:
     bool isLegalXY(Position position);
     string getIdAtPosition(Position position);
     int getWeightById(const string& id);
+    int getWeightByPosition(Position position);
 };
 
 

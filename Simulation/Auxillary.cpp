@@ -177,3 +177,33 @@ int Simulation::sumResults(const vector<int>& results, bool sumOrErr) {
     }
     return count;
 }
+
+
+void Simulation::scanTravelPath(const string &curr_travel_path, const string &error_path) {
+    map<string, int> occurrence;
+    std::unordered_set<string> files;
+    for(const string& port: _route.getRoute()) {
+        if(occurrence.count(port) == 0) {
+            occurrence[port] = 0;
+        }
+        occurrence[port]++;
+        files.insert(port + "_" + std::to_string(occurrence[port]) + ".cargo_data");
+    }
+    std::regex format("(.*)\\.cargo_data");
+    std::ofstream file;
+    for(const auto & entry : fs::directory_iterator(curr_travel_path)) {
+        if(std::regex_match(entry.path().stem().string(), format) && files.find(entry.path().stem().string()) == files.end()) {
+            file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
+            file << "WARNING: the travel folder "<< curr_travel_path << " has a cargo_data file that is not in use: " << entry.path().string() << "\n";
+        }
+    }
+}
+
+
+WeightBalanceCalculator& Simulation::setWeightBalanceCalculator(unique_ptr<AbstractAlgorithm> &algorithm,  const string& travel_path) {
+    string plan_path = getPath(travel_path, "ship_plan");
+    WeightBalanceCalculator calculator;
+    calculator.readShipPlan(plan_path);
+    algorithm -> setWeightBalanceCalculator(calculator);
+    return calculator;
+}

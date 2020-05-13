@@ -85,3 +85,8 @@ int ShipPlan::getWeightById(const string& id) {
     }
     return -1;
 }
+
+int ShipPlan::getWeightByPosition(Position position) {
+    return _floors[position._floor].getWeightByPosition(position._x, position._y);
+}
+

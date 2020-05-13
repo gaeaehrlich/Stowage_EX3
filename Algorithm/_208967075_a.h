@@ -42,7 +42,7 @@ public:
     void sortCargoLoad();
     void unloadInstructions(std::ofstream& file);
     int loadInstructions(std::ofstream& file, vector<unique_ptr<Container>>& list);
-    Position findPosition();
+    Position findPosition(int weight);
     int rejectingContainer(unique_ptr<Container>& container);
     vector<Position> findContainersToUnload();
     void unloadContainersAbove(Position position, std::ofstream& file);

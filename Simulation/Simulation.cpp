@@ -112,14 +112,4 @@ void Simulation::start(const string &travel_path, const string &algorithm_path, 
     writeResults(results_path, alg_results, travels);
 }
 
-WeightBalanceCalculator& Simulation::setWeightBalanceCalculator(unique_ptr<AbstractAlgorithm> &algorithm,  const string& travel_path) {
-    string plan_path = getPath(travel_path, "ship_plan");
-    WeightBalanceCalculator calculator;
-    calculator.readShipPlan(plan_path);
-    algorithm -> setWeightBalanceCalculator(calculator);
-    return calculator;
-}
 
-void Simulation::scanTravelPath(const string &curr_travel_path, const string &error_path) {
-    //TODO : go over all directories to find unnecessary files
-}
