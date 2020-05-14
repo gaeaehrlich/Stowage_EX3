@@ -24,7 +24,6 @@ set(COMMON_SRC
 
 add_library(_208967075_a SHARED
         ./AlgorithmRegistration.h
-        ./AbstractAlgorithm.h
         _208967075_a.h
         _208967075_a.cpp
         ${COMMON_SRC}
