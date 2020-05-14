@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 2.8.9)
 project(Stowage)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -25,6 +25,7 @@ add_executable(simulation
         main.cpp
         Crane.h Crane.cpp CraneAux.cpp
         Simulation.h Simulation.cpp Auxillary.cpp
+        ../Algorithm/AbstractAlgorithm.h
         ../Algorithm/AlgorithmRegistration.h AlgorithmRegistration.cpp
         AlgorithmRegistrar.h
         ${COMMON_SRC}
