@@ -1,6 +1,6 @@
 #include "../Algorithm/AlgorithmRegistration.h"
 #include "AlgorithmRegistrar.h"
 
-AlgorithmRegistration::AlgorithmRegistration(std::function<unique_ptr<AbstractAlgorithm>()> algorithmFactory) {
+AlgorithmRegistration::AlgorithmRegistration(std::function<std::unique_ptr<AbstractAlgorithm>()> algorithmFactory) {
     AlgorithmRegistrar::getInstance().registerAlgorithm(algorithmFactory);
 }

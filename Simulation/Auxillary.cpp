@@ -198,12 +198,3 @@ void Simulation::scanTravelPath(const string &curr_travel_path, const string &er
         }
     }
 }
-
-
-WeightBalanceCalculator& Simulation::setWeightBalanceCalculator(unique_ptr<AbstractAlgorithm> &algorithm,  const string& travel_path) {
-    string plan_path = getPath(travel_path, "ship_plan");
-    WeightBalanceCalculator calculator;
-    calculator.readShipPlan(plan_path);
-    algorithm -> setWeightBalanceCalculator(calculator);
-    return calculator;
-}

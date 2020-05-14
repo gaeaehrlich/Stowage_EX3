@@ -11,8 +11,9 @@ vector<void*> Simulation::openAlgorithms(const string& dir_path) {
     }
     vector<void*> open_alg(alg_path.size());
     for(const string& path: alg_path) {
-        std::cout << "path: " << path << std::endl;
+        std::cout << "path: " << path.data() << std::endl;
         void* status = dlopen(path.data() , RTLD_LAZY);
+        std::cout << "error: " <<  dlerror() << std::endl;
         std::cout << "alg addr: " << status << std::endl;
         open_alg.emplace_back(status);
     }
@@ -76,7 +77,10 @@ int Simulation::sail(unique_ptr<AbstractAlgorithm> &algorithm, const string& alg
     int results = 0;
     bool failed = false;
     string travel_output_path = createTravelOutputFolder(output_path, alg_name, travel_name);
-    WeightBalanceCalculator calculator = setWeightBalanceCalculator(algorithm, travel_path);
+    string plan_path = getPath(travel_path, "ship_plan");
+    WeightBalanceCalculator calculator;
+    calculator.readShipPlan(plan_path);
+    algorithm -> setWeightBalanceCalculator(calculator);
     for(const string& port: _route.getRoute()) {
         string cargoPath = getCargoPath(travel_path, port);
         vector<unique_ptr<Container>> containersAtPort;

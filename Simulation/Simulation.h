@@ -48,7 +48,6 @@ public:
     vector<pair<string, unique_ptr<AbstractAlgorithm>>> getAlgorithms(const string& path);
     vector<void*> openAlgorithms(const string& dir_path);
     void closeAlgorithms(vector<void*> open_alg);
-    WeightBalanceCalculator& setWeightBalanceCalculator(unique_ptr<AbstractAlgorithm>& algorithm, const string& travel_path);
     void scanTravelPath(const string& curr_travel_path, const string& error_path);
 
 };

@@ -19,14 +19,13 @@ set(COMMON_SRC
         ../Common/Position.cpp
         ../Common/WeightBalanceCalculator.h
         ../Common/WeightBalanceCalculator.cpp
-        ../Algorithm/AlgorithmRegistration.h
         )
 
 add_executable(simulation
         main.cpp
         Crane.h Crane.cpp CraneAux.cpp
         Simulation.h Simulation.cpp Auxillary.cpp
-        AlgorithmRegistration.cpp
+        ../Algorithm/AlgorithmRegistration.h AlgorithmRegistration.cpp
         AlgorithmRegistrar.h
         ${COMMON_SRC}
         )
