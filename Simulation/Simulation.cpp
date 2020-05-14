@@ -12,12 +12,13 @@ vector<void*> Simulation::openAlgorithms(const string& dir_path) {
     vector<void*> open_alg(alg_path.size());
     for(const string& path: alg_path) {
         std::cout << "path: " << path << std::endl;
-        auto status = dlopen(path.data() , RTLD_LAZY);
+        void* status = dlopen(path.data() , RTLD_LAZY);
         std::cout << "alg addr: " << status << std::endl;
         open_alg.emplace_back(status);
     }
     return open_alg;
 }
+
 
 void Simulation::closeAlgorithms(vector<void *> open_alg) {
     for(void* alg: open_alg) {

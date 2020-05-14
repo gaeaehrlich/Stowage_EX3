@@ -27,4 +27,7 @@ add_library(_208967075_a SHARED
         ./AbstractAlgorithm.h
         _208967075_a.h
         _208967075_a.cpp
+        ${COMMON_SRC}
         )
+
+set_property(TARGET _208967075_a PROPERTY POSITION_INDEPENDENT_CODE ON)
