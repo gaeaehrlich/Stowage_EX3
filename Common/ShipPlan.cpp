@@ -77,6 +77,13 @@ string ShipPlan::getIdAtPosition(Position position) {
     return _floors[position._floor].getContainerID(position._x, position._y);
 }
 
+string ShipPlan::getDestAtPosition(Position position) {
+    if(!isLegalLocation(position)) {
+        return "";
+    }
+    return _floors[position._floor].getContainerDest(position._x, position._y);
+}
+
 int ShipPlan::getWeightById(const string& id) {
     for(auto& floor: _floors) {
         if(floor.hasContainer(id)) {

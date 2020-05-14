@@ -1,6 +1,7 @@
 #include "ShipRoute.h"
 
 #include <utility>
+#include <algorithm>
 
 ShipRoute::ShipRoute() {
     _pos = 0;
@@ -52,5 +53,10 @@ bool ShipRoute::isStopAfter(const string& port1, const string& port2) {
         if(stop == port2) { return true; }
     }
     return false; // shouldn't get here
+}
+
+int ShipRoute::portDistance(const string port) {
+    auto it = std::find(_route.begin() + _pos, _route.end(), port);
+    return it != _route.end() ? std::distance(_route.begin() + _pos, it) : -1;
 }
 

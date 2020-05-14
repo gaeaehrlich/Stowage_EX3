@@ -3,28 +3,21 @@
 #define pow2(x) (int)pow(2, x)
 
 int Reader::splitLine(string& line, vector<string>& vec, int n) {
-    std::stringstream ss(line);
     int i = 0;
-    string str, left;
-    while (ss.good() && i < n){
-        ss >> str;
-        str.erase(std::remove_if(str.begin(), str.end(), [](unsigned char x){return std::isspace(x);}), str.end());
+    std::regex r("\\S+");
+    std::sregex_iterator s;
+    for (s = std::sregex_iterator(line.begin(), line.end(), r);
+                                        i < n && s != std::sregex_iterator();
+                                        s++, i++) {
+        string str = s -> str();
         if (i != n - 1) {
-            if (str[str.length() - 1] != ',') {
-                return false;
-            }
+            if (str.length() < 2 || str[str.length() - 1] != ',') { return false; }
             str.pop_back();
         }
         vec[i] = str;
-        i++;
     }
-    while (ss.good()) {
-        ss >> left;
-        if (!std::all_of(left.begin(),left.end(),[](unsigned char x){return std::iscntrl(x);})) { // good?
-            return false;
-        }
-    }
-    return i == n;
+
+    return (i == n) && (s == std::sregex_iterator());
 }
 
 bool Reader::convertVectorToInt(vector<int>& int_vec, vector<string>& str_vec) {
@@ -39,35 +32,27 @@ bool Reader::convertVectorToInt(vector<int>& int_vec, vector<string>& str_vec) {
     }
     return true;
 }
-// relevant for this ex???
-bool Reader::ignoreLine(string& str) {
-    for (char c : str) {
-        if (c == '#') { return true; }
-        else if (!std::isspace(c)) { return false; }
-    }
-    return true;
+
+bool Reader::ignoreLine(string& line) {
+    std::regex format("^#.*|^\\s*$");
+    return std::regex_match(line, format);
 }
 
-bool Reader::splitCargoLine(string& line, string& id, int& weight, string& destination) {
-    vector<string> str_vec(3);
-    if(!splitLine(line, str_vec, 3)) {
-        return false;
-    }
-
-    id = str_vec[0];
+int Reader::splitCargoLine(string& line, string& id, int& weight, string& destination) {
+    vector<string> vec(3);
+    int errors = 0;
+    splitLine(line, vec, 3);
+    id = vec[0];
+    if (id == "") { errors |= pow2(14);}
+    else if (!legalContainerId(id)) { errors |= pow2(15); id = ""; }
     try {
-        weight = stoi(str_vec[1]);
-        if (weight < 0) {
-            std::cout << "WARNING: invalid argument for container weight. This line will be ignored" << std::endl;
-            return false;
-        }
+        weight = stoi(vec[1]);
+        if (weight < 0) { errors |= pow2(12); weight = -1; }
     }
-    catch (std::invalid_argument const &e) {
-        std::cout << "WARNING: invalid argument for container weight. This line will be ignored" << std::endl;
-        return false;
-    }
-    destination = str_vec[2];
-    return true;
+    catch (std::invalid_argument const &e) { errors |= pow2(12); weight = -1; }
+    destination = vec[2];
+    if (!legalPortSymbol(destination)) { errors |= pow2(13); destination = ""; }
+    return errors;
 }
 
 bool Reader::splitPlanLine(string& line, vector<int>& vec) {
@@ -81,38 +66,31 @@ bool Reader::splitPlanLine(string& line, vector<int>& vec) {
 bool Reader::splitInstructionLine(string& line, char& op, string& id, int& floor, int& x, int& y) {
     vector<string> str_vec(5);
     if (!splitLine(line, str_vec, 5)) { return false; }
-    if (str_vec[0].size() != 1) {
-        std::cout << "WARNING: operation should be represented by a single char. This line will be ignored" << std::endl;
-        return false;
-    }
+    if (str_vec[0] != "L" && str_vec[0] != "U" && str_vec[0] != "R") { return false; }
     op = str_vec[0][0];
-    if (op != 'L' && op != 'U' && op != 'R') {
-        std::cout << "WARNING: operation is illegal. This line will be ignored" << std::endl;
-        return false;
-    }
+    if(!legalContainerId(str_vec[1])) { return false; }
     id = str_vec[1];
     vector<int> int_vec(3);
     vector<string> sub_str_vec;
     std::copy(str_vec.begin() + 2, str_vec.end(), std::back_inserter(sub_str_vec));
-    if (convertVectorToInt(int_vec, sub_str_vec)) {
-        floor = int_vec[0];
-        x = int_vec[1];
-        y = int_vec[2];
-    }
+    if (!convertVectorToInt(int_vec, sub_str_vec)) { return false; }
+    floor = int_vec[0];
+    x = int_vec[1];
+    y = int_vec[2];
     return true;
 }
 
-bool Reader::legalPortSymbol(string symbol) {
+bool Reader::legalPortSymbol(const string& symbol) {
     std::regex format("^[A-Z]{5}$");
     return std::regex_match(symbol, format);
 }
 
-bool Reader::legalContainerId(string id) {
+bool Reader::legalContainerId(const string& id) {
     std::regex format("^[A-Z]{3}[UJZ][0-9]{7}$");
     return std::regex_match(id, format) && legalCheckDigit(id);
 }
 
-bool Reader::legalCheckDigit(string id) {
+bool Reader::legalCheckDigit(const string& id) {
     int sum = 0, i = 0, temp;
     for(char ch : id) {
         if (i <= 3) {
@@ -130,38 +108,45 @@ bool Reader::legalCheckDigit(string id) {
     return sum % 10 == (id[10] - '0');
 }
 
-bool Reader::readCargoLoad(const string &path, vector<unique_ptr<Container>>& list) {
+int Reader::readCargoLoad(const string &path, vector<unique_ptr<Container>>& list) {
     //TODO: if weight or port don't exist, put -1/"". these are the cases to handle:
 //    2^12 - containers at port: bad line format, missing or bad weight (ID rejected) - put -1
 //    2^13 - containers at port: bad line format, missing or bad port dest (ID rejected) - put ""
 //    2^14 - containers at port: bad line format, ID cannot be read (ignored) - put ""
 //    2^16 - containers at port: file cannot be read altogether (assuming no cargo to be loaded at this port) - return false;
     vector<unique_ptr<Container>> cargo;
-    string line, destination,  id;
-    int weight;
+    std::string line, destination,  id;
+    int weight, errors = 0;
+    fs::path file_path = path;
+    if(path.empty() || !fs::exists(file_path)) { return  pow2(16); }
     std::ifstream file(path);
     while (std::getline(file, line)) {
-        if (Reader::ignoreLine(line)) { continue; }
-        if (Reader::splitCargoLine(line, id, weight, destination)) {
-            unique_ptr<Container> container = make_unique<Container>(weight, destination, id);
-            list.emplace_back(std::move(container));
-        }
+        if (ignoreLine(line)) { continue; }
+        errors |= splitCargoLine(line, id, weight, destination);
+        unique_ptr<Container> container = make_unique<Container>(weight, destination, id);
+        list.emplace_back(std::move(container));
     }
-    return true;
+    return errors;
 }
 
 int Reader::readShipPlan(const string& path, ShipPlan& plan) {
     int errors = 0, x, y, num_floors;;
-    std::filesystem::path file_path = path;
-    if(path.empty() || !std::filesystem::exists(file_path)) { return  pow2(3); }
-    std::string line; std::ifstream file(path);
+    fs::path file_path = path;
+    if(path.empty() || !fs::exists(file_path)) { return  pow2(3); }
+    std::string line; std::ifstream file(path); // todo: file_path or path?
     if (!file || file.peek() == std::ifstream::traits_type::eof()) { return pow2(3); }
     vector<int> vec(3);
-    if (!std::getline(file, line) || !Reader::splitPlanLine(line, vec)) { return pow2(3); }
+    do {
+        if (!std::getline(file, line) || !Reader::splitPlanLine(line, vec)) {
+            return pow2(3);
+        }
+    }
+    while (ignoreLine(line));
     num_floors = vec[0]; x = vec[1]; y = vec[2];
     bool fatal = false;
     map< pair<int,int>, int > m_plan;
     while (std::getline(file, line)) {
+        if (ignoreLine(line)) { continue; }
         if(!Reader::splitPlanLine(line, vec)) { // wrong format
             errors |= pow2(2);
             continue;
@@ -200,6 +185,7 @@ int Reader::readShipRoute(const string &path, ShipRoute& route) {
     std::ifstream file(path);
     if (!file || file.peek() == std::ifstream::traits_type::eof()) { return pow2(7); }
     while (std::getline(file, curr_port)) {
+        if (ignoreLine(curr_port)) { continue; }
         if (curr_port == prev_port) {
             errors |= pow2(5);
             continue;

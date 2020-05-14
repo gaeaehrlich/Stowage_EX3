@@ -31,14 +31,14 @@ class Reader {
 public:
     static bool splitInstructionLine(string& line, char& op, string& id, int& floor, int& x, int& y);
     static bool splitPlanLine(string& line, vector<int>& vec);
-    static bool splitCargoLine(string& line, string& id, int& weight, string& destination);
+    static int splitCargoLine(string& line, string& id, int& weight, string& destination);
     static int splitLine(string& line, vector<string>& vec, int n);
     static bool convertVectorToInt(vector<int>& int_vec, vector<string>& str_vec);
     static bool ignoreLine(string& str);
-    static bool legalPortSymbol(string symbol);
-    static bool legalContainerId(string id);
-    static bool legalCheckDigit(string id);
-    static bool readCargoLoad(const string& path, vector<unique_ptr<Container>>& list);
+    static bool legalPortSymbol(const string& symbol);
+    static bool legalContainerId(const string& id);
+    static bool legalCheckDigit(const string& id);
+    static int readCargoLoad(const string& path, vector<unique_ptr<Container>>& list);
     static int readShipPlan(const string& path, ShipPlan& plan);
     static int readShipRoute(const string& path, ShipRoute& route);
     static bool checkDirPath(const string& pathName);

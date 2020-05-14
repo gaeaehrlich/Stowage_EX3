@@ -10,6 +10,7 @@ public:
     int _y;
 
 public:
+    Position();
     Position(int floor, int x, int y);
 };
 

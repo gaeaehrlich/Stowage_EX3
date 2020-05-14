@@ -22,6 +22,7 @@ public:
     bool isLastStop();
     int getPortNumber();
     bool isStopAfter(const string& port1, const string& port2);
+    int portDistance(const string port);
 };
 
 

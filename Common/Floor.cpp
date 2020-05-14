@@ -95,6 +95,13 @@ string Floor::getContainerID(int x, int y) {
     return _map[{x,y}] ? _map[{x,y}] -> getId() : "";
 }
 
+string Floor::getContainerDest(int x, int y) {
+    if(!isLegalLocation(x, y)) {
+        return "";
+    }
+    return _map[{x,y}] ? _map[{x,y}] -> getDest() : "";
+}
+
 int Floor::getWeightById(const string& id) {
     for(const auto& element : _map) {
         if(element.second != nullptr && element.second -> getId() == id) {

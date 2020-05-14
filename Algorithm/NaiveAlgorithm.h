@@ -21,15 +21,16 @@ using std::vector;
 namespace fs = std::experimental::filesystem;
 
 class NaiveAlgorithm: public AbstractAlgorithm {
-    // TODO : should be public?
-    ShipPlan _plan;
-    ShipRoute _route;
     WeightBalanceCalculator _calc;
     vector<unique_ptr<Container>> _cargo_load;
     vector<unique_ptr<Container>> _temporary_unloaded;
     bool _invalid_travel = false;
     int _status = 0;
 
+protected:
+    ShipRoute _route;
+    ShipPlan _plan;
+// TODO : should be public?
 public:
     //NaiveAlgorithm(ShipPlan plan, ShipRoute route, WeightBalanceCalculator calc);
     int readShipPlan(const string& full_path_and_file_name) override ;
@@ -41,6 +42,7 @@ public:
     void sortCargoLoad();
     void unloadInstructions(std::ofstream& file);
     int loadInstructions(std::ofstream& file, vector<unique_ptr<Container>>& list);
+    virtual Position findPosition(const string& new_dest);
     Position findPosition();
     int rejectingContainer(unique_ptr<Container>& container);
     vector<Position> findContainersToUnload();

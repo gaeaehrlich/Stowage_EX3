@@ -20,6 +20,7 @@ public:
     bool isLegalFloor(Position position);
     bool isLegalXY(Position position);
     string getIdAtPosition(Position position);
+    string getDestAtPosition(Position position);
     int getWeightById(const string& id);
 };
 

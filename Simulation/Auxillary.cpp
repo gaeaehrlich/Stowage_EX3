@@ -104,7 +104,7 @@ bool Simulation::writeShipRouteErrors(const string &error_path, int errors, cons
     return !fatal;
 }
 
-bool Simulation::writeCargoErrors(const string &error_path, int errors) {
+bool Simulation::writeCargoErrors(const string &error_path, int errors) { // todo: what
     if(errors == 0) {
         return true;
     }
