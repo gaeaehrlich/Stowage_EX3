@@ -7,7 +7,7 @@
 // Idea: from bottom to top, looks for position above container with smallest diff in destination
 // favor pos without a container bellow it
 Position NaiveAlgorithm1::findPosition(const string& new_dest) {
-    int  diff = _route.getRoute().size() + 1;
+    int  diff = -1;
     int new_dist = _route.portDistance(new_dest);
     Position best;
     for(int i = 0; i < _plan.numberOfFloors(); ++i) {
@@ -23,6 +23,10 @@ Position NaiveAlgorithm1::findPosition(const string& new_dest) {
                 }
                 if (old_dist - new_dist  < diff && old_dist >= new_dist) {
                     diff = old_dist - new_dist;
+                    best = Position(i, location.first, location.second);
+                }
+                else if (diff == -1) { // in case every position sucks
+                    diff = _route.getRoute().size() + 1;
                     best = Position(i, location.first, location.second);
                 }
                 if (diff == 0) { break; }
