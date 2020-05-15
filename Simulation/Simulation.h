@@ -26,7 +26,6 @@ class Simulation {
     ShipPlan _plan;
     ShipRoute _route;
     Crane _crane;
-    vector<std::function<unique_ptr<AbstractAlgorithm>()>> algorithmFactory;
 
 public:
     void start(const string& travel_path, const string& algorithm_path, const string& output_path);
@@ -46,8 +45,6 @@ public:
     int sumResults(const vector<int>& results, bool sumOrErr);
     string createTravelOutputFolder(const string& output_path, const string& alg_name, const string& travel_name);
     vector<pair<string, unique_ptr<AbstractAlgorithm>>> getAlgorithms(const string& path);
-    vector<void*> openAlgorithms(const string& dir_path);
-    void closeAlgorithms(vector<void*> open_alg);
     void scanTravelPath(const string& curr_travel_path, const string& error_path);
 
 };

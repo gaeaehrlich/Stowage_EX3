@@ -155,11 +155,11 @@ void Simulation::writeResults(const string &path, const map<string, vector<int>>
         return std::get<3>(res1) < std::get<3>(res2);
     });
     std::ofstream file(path);
-    file << "RESULTS,";
+    file << "RESULTS, ";
     for(const string& travel: travels) {
-        file << travel << ",";
+        file << travel << ", ";
     }
-    file << "Sum,\nNum Errors\n";
+    file << "Sum, Num Errors\n";
     for(auto& alg_result: res_vec) {
         file << std::get<0>(alg_result) << ","; // algorithm name
         for(auto& travel_result: std::get<1>(alg_result)) { // iterating over each travel result

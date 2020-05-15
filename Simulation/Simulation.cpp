@@ -1,32 +1,5 @@
 #include "Simulation.h"
 
-
-vector<void*> Simulation::openAlgorithms(const string& dir_path) {
-    vector<string> alg_path;
-    std::regex format("(.*)\\.so");
-    for(const auto & entry : fs::directory_iterator(dir_path)) {
-        if(std::regex_match(entry.path().string(), format)) {
-            alg_path.emplace_back(entry.path().string());
-        }
-    }
-    vector<void*> open_alg(alg_path.size());
-    for(const string& path: alg_path) {
-        std::cout << "path: " << path.data() << std::endl;
-        void* status = dlopen(path.data() , RTLD_LAZY);
-        std::cout << "error: " <<  dlerror() << std::endl;
-        std::cout << "alg addr: " << status << std::endl;
-        open_alg.emplace_back(status);
-    }
-    return open_alg;
-}
-
-
-void Simulation::closeAlgorithms(vector<void *> open_alg) {
-    for(void* alg: open_alg) {
-        dlclose(alg);
-    }
-}
-
 vector<pair<string, unique_ptr<AbstractAlgorithm>>> Simulation::getAlgorithms(const string& path) {
     AlgorithmRegistrar& registrar = AlgorithmRegistrar::getInstance();
     if(registrar.size() == 0) {
@@ -98,10 +71,13 @@ int Simulation::sail(unique_ptr<AbstractAlgorithm> &algorithm, const string& alg
 
 void Simulation::start(const string &travel_path, const string &algorithm_path, const string &output_path) {
     if(!checkDirectories(travel_path, algorithm_path, output_path)) { return; }
-    vector<void*> open_algorithms = openAlgorithms(algorithm_path);
     string error_path = output_path + SUBDIR + "simulation.errors";
     string results_path = output_path + SUBDIR + "simulation.results";
     vector<string> travels = Reader::getTravels(travel_path);
+    vector<std::function<unique_ptr<AbstractAlgorithm>()>> algorithmFactories;
+    auto& registrar = AlgorithmRegistrar::getInstance();
+    registrar.loadAlgorithmFromFile(algorithm_path, error_path);
+    std::cout << "hello";
     map<string, vector<int>> alg_results;
     for(const auto& travel_name : travels) {
         string curr_travel_path = travel_path + SUBDIR + travel_name;
@@ -113,8 +89,5 @@ void Simulation::start(const string &travel_path, const string &algorithm_path, 
             alg_results[alg.first].emplace_back(sail(alg.second, alg.first, curr_travel_path, travel_name, output_path, error_path));
         }
     }
-    closeAlgorithms(open_algorithms);
     writeResults(results_path, alg_results, travels);
 }
-
-
