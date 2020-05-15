@@ -155,11 +155,11 @@ void Simulation::writeResults(const string &path, const map<string, vector<int>>
         return std::get<3>(res1) < std::get<3>(res2);
     });
     std::ofstream file(path);
-    file << "RESULTS,";
+    file << "RESULTS, ";
     for(const string& travel: travels) {
-        file << travel << ",";
+        file << travel << ", ";
     }
-    file << "Sum,\nNum Errors\n";
+    file << "Sum, Num Errors\n";
     for(auto& alg_result: res_vec) {
         file << std::get<0>(alg_result) << ","; // algorithm name
         for(auto& travel_result: std::get<1>(alg_result)) { // iterating over each travel result
@@ -178,19 +178,23 @@ int Simulation::sumResults(const vector<int>& results, bool sumOrErr) {
     return count;
 }
 
-//void Simulation::registerAlgorithm(std::function<unique_ptr<AbstractAlgorithm>()> algorithm) {
-//    algorithmFactory.push_back(algorithm);
-//}
-//
-//Simulation& Simulation::getInstance() {
-//    return _instance;
-//}
-//
-//vector<unique_ptr<AbstractAlgorithm>> Simulation::getAlgorithms() const {
-//    vector<unique_ptr<AbstractAlgorithm>> algorithms;
-//    for(const auto& algorithmFactoryFunc : algorithmFactory) {
-//        algorithms.push_back(algorithmFactoryFunc());
-//    }
-//    return algorithms;
-//}
 
+void Simulation::scanTravelPath(const string &curr_travel_path, const string &error_path) {
+    map<string, int> occurrence;
+    std::unordered_set<string> files;
+    for(const string& port: _route.getRoute()) {
+        if(occurrence.count(port) == 0) {
+            occurrence[port] = 0;
+        }
+        occurrence[port]++;
+        files.insert(port + "_" + std::to_string(occurrence[port]) + ".cargo_data");
+    }
+    std::regex format("(.*)\\.cargo_data");
+    std::ofstream file;
+    for(const auto & entry : fs::directory_iterator(curr_travel_path)) {
+        if(std::regex_match(entry.path().stem().string(), format) && files.find(entry.path().stem().string()) == files.end()) {
+            file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
+            file << "WARNING: the travel folder "<< curr_travel_path << " has a cargo_data file that is not in use: " << entry.path().string() << "\n";
+        }
+    }
+}

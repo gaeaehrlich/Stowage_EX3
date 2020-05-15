@@ -47,5 +47,7 @@ int main(int argc, char *argv[]) {
         return FAILURE;
     }
     std::cout << "Hello, World!" << std::endl;
+    Simulation simulation;
+    simulation.start(travel_path, algorithm_path, output_path);
     return 0;
 }

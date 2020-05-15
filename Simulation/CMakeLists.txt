@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 2.8.9)
 project(Stowage)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(COMMON_SRC
         ../Common/Container.h
         ../Common/Container.cpp
@@ -19,14 +19,15 @@ set(COMMON_SRC
         ../Common/Position.cpp
         ../Common/WeightBalanceCalculator.h
         ../Common/WeightBalanceCalculator.cpp
-        ../Algorithm/AlgorithmRegistration.h
-        )
+        AlgorithmRegistrar.cpp)
 
 add_executable(simulation
         main.cpp
         Crane.h Crane.cpp CraneAux.cpp
         Simulation.h Simulation.cpp Auxillary.cpp
-        AlgorithmRegistration.cpp
+        ../Algorithm/AbstractAlgorithm.h
+        ../Algorithm/AlgorithmRegistration.h AlgorithmRegistration.cpp
+        AlgorithmRegistrar.h AlgorithmRegistrar.cpp
         ${COMMON_SRC}
         )
 

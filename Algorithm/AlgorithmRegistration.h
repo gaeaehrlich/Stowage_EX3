@@ -6,6 +6,8 @@
 #include <functional>
 #include <memory>
 #include "AbstractAlgorithm.h"
+#include "../Simulation/AlgorithmRegistrar.h"
+
 
 class AlgorithmRegistration {
 public:

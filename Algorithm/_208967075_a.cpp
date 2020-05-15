@@ -56,8 +56,10 @@ void NaiveAlgorithm::unloadInstructions(std::ofstream& file) {
     vector<Position> unload = findContainersToUnload();
     for(const Position& pos: unload) {
         unloadContainersAbove(pos, file);
-        unique_ptr<Container> removed = std::move(_plan.getFloor(pos._floor).pop(pos._x, pos._y));
-        file << instructionToString('U', removed -> getId(), pos);
+        if(_calc.tryOperation(UNLOAD, _plan.getWeightByPosition(pos), pos._x, pos._y) ==  WeightBalanceCalculator::APPROVED) {
+            unique_ptr<Container> removed = std::move(_plan.getFloor(pos._floor).pop(pos._x, pos._y));
+            file << instructionToString('U', removed -> getId(), pos);
+        }
     }
 }
 
@@ -69,7 +71,7 @@ int NaiveAlgorithm::loadInstructions(std::ofstream& file, vector<unique_ptr<Cont
             file << instructionToString('R', container -> getId(), Position(rejectReason, rejectReason, rejectReason));
         }
         else {
-            Position pos = findPosition(container ->getDest());
+            Position pos = findPosition(container -> getWeight());
             file << instructionToString('L', container -> getId(), pos);
             _plan.getFloor(pos._floor).insert(pos._x, pos._y, std::move(container));
         }
@@ -78,11 +80,11 @@ int NaiveAlgorithm::loadInstructions(std::ofstream& file, vector<unique_ptr<Cont
     return rejectReason;
 }
 
-Position NaiveAlgorithm::findPosition() {
+Position NaiveAlgorithm::findPosition(int weight) {
     for(int i = 0; i < _plan.numberOfFloors(); ++i) {
         Floor& floor = _plan.getFloor(i);
         for(pair<int,int> location: floor.getLegalLocations()) {
-            if(floor.isEmpty(location)) {
+            if(floor.isEmpty(location) && _calc.tryOperation(LOAD, weight, location.first, location.second) == WeightBalanceCalculator::APPROVED) {
                 return Position(i, location.first, location.second); // TODO: what is the scope of retrun value ?
             }
         }
@@ -139,9 +141,11 @@ void NaiveAlgorithm::unloadContainersAbove(Position pos, std::ofstream& file) {
     for(int i = _plan.numberOfFloors() - 1; i > pos._floor; i--) {
         if(!_plan.getFloor(i).isEmpty(pos._x, pos._y)) {
             if(_plan.getFloor(i).getContainerDest({pos._x, pos._y}) != _route.getCurrentPort()) {
-                unique_ptr<Container> removed = _plan.getFloor(i).pop(pos._x, pos._y);
-                file << instructionToString('U', removed -> getId(), Position(i, pos._x, pos._y));
-                _temporary_unloaded.emplace_back(std::move(removed));
+                if(_calc.tryOperation(UNLOAD, _plan.getWeightByPosition(pos), pos._x, pos._y) ==  WeightBalanceCalculator::APPROVED) {
+                    unique_ptr<Container> removed = _plan.getFloor(i).pop(pos._x, pos._y);
+                    file << instructionToString('U', removed->getId(), Position(i, pos._x, pos._y));
+                    _temporary_unloaded.emplace_back(std::move(removed));
+                }
             }
         }
     }

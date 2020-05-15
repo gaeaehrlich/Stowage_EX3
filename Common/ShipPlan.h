@@ -22,6 +22,7 @@ public:
     string getIdAtPosition(Position position);
     string getDestAtPosition(Position position);
     int getWeightById(const string& id);
+    int getWeightByPosition(Position position);
 };
 
 

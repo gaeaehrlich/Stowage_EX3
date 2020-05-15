@@ -111,3 +111,6 @@ int Floor::getWeightById(const string& id) {
     return -1;
 }
 
+int Floor::getWeightByPosition(int x, int y) {
+    return _map[{x, y}] ? _map[{x, y}] -> getWeight() : -1;
+}
