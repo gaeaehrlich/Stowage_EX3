@@ -1,12 +1,9 @@
-//
-// Created by Chen Hendler on 5/14/2020.
-//
-
-#include "NaiveAlgorithm2.h"
+#include "_208967075_b.h"
+REGISTER_ALGORITHM(_208967075_b)
 
 // Idea: from top to bottom, looks for position above container with smallest diff in destination
 // does not favor pos without a container bellow it
-Position NaiveAlgorithm2::findPosition(const string& new_dest) {
+Position _208967075_b::findPosition(const string& new_dest) {
         int max = _route.getRoute().size() + 1, diff = -1;
         int new_dist = _route.portDistance(new_dest);
         Position best;
