@@ -22,13 +22,13 @@ using std::vector;
 namespace fs = std::experimental::filesystem;
 
 class NaiveAlgorithm: public AbstractAlgorithm {
-    WeightBalanceCalculator _calc;
     vector<unique_ptr<Container>> _cargo_load;
     vector<unique_ptr<Container>> _temporary_unloaded;
     bool _invalid_travel = false;
     int _status = 0;
 
 protected:
+    WeightBalanceCalculator _calc;
     ShipRoute _route;
     ShipPlan _plan;
 // TODO : should be public?
@@ -43,8 +43,7 @@ public:
     void sortCargoLoad();
     void unloadInstructions(std::ofstream& file);
     int loadInstructions(std::ofstream& file, vector<unique_ptr<Container>>& list);
-    Position findPosition(int weight);
-    virtual Position findPosition(const string& new_dest);
+    virtual Position findPosition(const Container& container);
     int rejectingContainer(unique_ptr<Container>& container);
     vector<Position> findContainersToUnload();
     void unloadContainersAbove(Position position, std::ofstream& file);
