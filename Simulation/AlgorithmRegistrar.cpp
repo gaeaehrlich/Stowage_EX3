@@ -51,7 +51,4 @@ void AlgorithmRegistrar::loadAlgorithmFromFile(const string &dir_path, const str
             _names.push_back(path.second);
         }
     }
-    for(auto& h : _handles) {
-        std::cout << "in load from file " << h.get() << std::endl;
-    }
 }

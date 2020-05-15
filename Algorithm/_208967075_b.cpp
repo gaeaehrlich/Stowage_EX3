@@ -8,7 +8,7 @@ Position _208967075_b::findPosition(const Container& container) {
         Floor& floor = _plan.getFloor(i);
         for(pair<int,int> location: floor.getLegalLocations()) {
             if(floor.isEmpty(location) && _calc.tryOperation(LOAD, weight, location.first, location.second) == WeightBalanceCalculator::APPROVED) {
-                return Position(i, location.first, location.second); // TODO: what is the scope of retrun value ?
+                return Position(i, location.first, location.second);
             }
         }
     }

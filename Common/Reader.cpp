@@ -176,7 +176,6 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
 int Reader::readShipRoute(const string &path, ShipRoute& route) {
     fs::path file_path = path;
     if(path.empty() || !fs::exists(file_path)) {
-        std::cout << "No file" << std::endl;
         return pow2(7);
     }
     int errors = 0;

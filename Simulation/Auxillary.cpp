@@ -3,7 +3,7 @@
 string Simulation::getPath(const string& travel_dir, const string& search) {
     std::regex format("(.*)\\." + search);
     for(const auto & entry : fs::directory_iterator(travel_dir)) {
-        if(std::regex_match(entry.path().stem().string(), format)) {
+        if(std::regex_match(entry.path().string(), format)) {
             return entry.path().string();
         }
     }
@@ -71,7 +71,7 @@ bool Simulation::writeShipPlanErrors(const string &error_path, int errors, const
         fatal = true;
     }
     if(errors & (2^4)) {
-        file << "ship plan: travel error - duplicate x,y appearance with different data (cannot run this travel)";
+        file << "ship plan: travel error - duplicate x,y appearance with different data (cannot run this travel)\n";
         fatal = true;
     }
     file.close();

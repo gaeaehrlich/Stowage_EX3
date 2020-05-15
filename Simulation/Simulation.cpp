@@ -56,7 +56,6 @@ void Simulation::start(const string &travel_path, const string &algorithm_path, 
     vector<std::function<unique_ptr<AbstractAlgorithm>()>> algorithmFactories;
     auto& registrar = AlgorithmRegistrar::getInstance();
     registrar.loadAlgorithmFromFile(algorithm_path, error_path);
-    std::cout << "after load" << std::endl;
     string results_path = createResultsFile(output_path, travels);
     map<string, vector<int>> alg_results;
     for(const auto& travel_name : travels) {
