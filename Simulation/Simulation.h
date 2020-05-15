@@ -44,9 +44,8 @@ public:
     void writeResults(const string &path, const map<string, vector<int>>& results, const vector<string>& travels);
     int sumResults(const vector<int>& results, bool sumOrErr);
     string createTravelOutputFolder(const string& output_path, const string& alg_name, const string& travel_name);
-    vector<pair<string, unique_ptr<AbstractAlgorithm>>> getAlgorithms(const string& path);
     void scanTravelPath(const string& curr_travel_path, const string& error_path);
-
+    string createResultsFile(const string& output_path, vector<string> travels);
 };
 
 

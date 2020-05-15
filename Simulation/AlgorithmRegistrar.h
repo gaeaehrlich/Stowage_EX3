@@ -15,6 +15,7 @@
 
 using std::vector;
 using std::string;
+using std::pair;
 using std::unique_ptr;
 namespace fs = std::experimental::filesystem;
 
@@ -25,9 +26,9 @@ class AlgorithmRegistrar {
         }
     };
 
-    static AlgorithmRegistrar _instance;
     vector<std::function<unique_ptr<AbstractAlgorithm>()>> _algorithmFactory;
     vector<unique_ptr<void, DlCloser>> _handles;
+    vector<string> _names;
 
     AlgorithmRegistrar() = default;
     ~AlgorithmRegistrar();
@@ -36,7 +37,7 @@ class AlgorithmRegistrar {
 public:
     friend struct AlgorithmRegistration;
 
-    vector<unique_ptr<AbstractAlgorithm>> getAlgorithms() const;
+    vector<pair<string, unique_ptr<AbstractAlgorithm>>> getAlgorithms() const;
     size_t size() const;
     static AlgorithmRegistrar& getInstance();
     void loadAlgorithmFromFile(const string& dir_path, const string& error_path);

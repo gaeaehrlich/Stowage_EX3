@@ -1,25 +1,5 @@
 #include "Simulation.h"
 
-vector<pair<string, unique_ptr<AbstractAlgorithm>>> Simulation::getAlgorithms(const string& path) {
-    AlgorithmRegistrar& registrar = AlgorithmRegistrar::getInstance();
-    if(registrar.size() == 0) {
-        std::cout << "No algorithms loaded.\n" << std::endl;
-        return vector<pair<string, unique_ptr<AbstractAlgorithm>>>();
-    }
-    std::regex format("(.*)\\.so");
-    auto algorithms = registrar.getAlgorithms();
-    vector<string> names;
-    for(const auto & entry : fs::directory_iterator(path)) {
-        if(std::regex_match(entry.path().stem().string(), format)) {
-            names.emplace_back(entry.path().stem().string());
-        }
-    }
-    vector<pair<string, unique_ptr<AbstractAlgorithm>>> result;
-    for(int i = 0; i < algorithms.size(); i++) {
-        result.push_back({names[i], std::move(algorithms[i])});
-    }
-    return result;
-}
 
 bool Simulation::readShipPlan(const string& error_path, const string& travel_path, const string& travel, unique_ptr<AbstractAlgorithm>& algorithm) {
     string plan_path = getPath(travel_path, "ship_plan");
@@ -72,17 +52,17 @@ int Simulation::sail(unique_ptr<AbstractAlgorithm> &algorithm, const string& alg
 void Simulation::start(const string &travel_path, const string &algorithm_path, const string &output_path) {
     if(!checkDirectories(travel_path, algorithm_path, output_path)) { return; }
     string error_path = output_path + SUBDIR + "simulation.errors";
-    string results_path = output_path + SUBDIR + "simulation.results";
     vector<string> travels = Reader::getTravels(travel_path);
     vector<std::function<unique_ptr<AbstractAlgorithm>()>> algorithmFactories;
     auto& registrar = AlgorithmRegistrar::getInstance();
     registrar.loadAlgorithmFromFile(algorithm_path, error_path);
-    std::cout << "hello";
+    std::cout << "after load" << std::endl;
+    string results_path = createResultsFile(output_path, travels);
     map<string, vector<int>> alg_results;
     for(const auto& travel_name : travels) {
         string curr_travel_path = travel_path + SUBDIR + travel_name;
         scanTravelPath(curr_travel_path, error_path);
-        auto algorithms = getAlgorithms(algorithm_path);
+        auto algorithms = registrar.getAlgorithms();
         if(algorithms.empty()) { return; }
         for(auto& alg: algorithms) {
             if(!readShipPlan(error_path, curr_travel_path, travel_name, alg.second) || !readShipRoute(error_path, curr_travel_path, travel_name, alg.second)) { continue; }
@@ -91,3 +71,4 @@ void Simulation::start(const string &travel_path, const string &algorithm_path, 
     }
     writeResults(results_path, alg_results, travels);
 }
+

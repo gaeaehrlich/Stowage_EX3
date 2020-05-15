@@ -143,8 +143,22 @@ bool Simulation::writeCargoErrors(const string &error_path, int errors) { // tod
 }
 
 
+string Simulation::createResultsFile(const string &output_path, vector<string> travels) {
+    string results_path = output_path + SUBDIR + "simulation.results";
+    std::ofstream file(results_path);
+    file << "RESULTS, ";
+    for(const string& travel: travels) {
+        file << travel << ", ";
+    }
+    file << "Sum, Num Errors\n";
+    file.close();
+    return results_path;
+}
+
 void Simulation::writeResults(const string &path, const map<string, vector<int>>& results, const vector<string>& travels) {
-    vector<tuple<string, vector<int>, int, int>> res_vec;
+    vector<tuple<string, vector<int>, int, int>> res_vec(results.size());
+    std::ofstream file;
+    file.open(path, std::ios_base::app);
     for(auto& alg_res: results) {
         res_vec.emplace_back(alg_res.first, alg_res.second, sumResults(alg_res.second, true), sumResults(alg_res.second, false));
     }
@@ -154,12 +168,6 @@ void Simulation::writeResults(const string &path, const map<string, vector<int>>
         }
         return std::get<3>(res1) < std::get<3>(res2);
     });
-    std::ofstream file(path);
-    file << "RESULTS, ";
-    for(const string& travel: travels) {
-        file << travel << ", ";
-    }
-    file << "Sum, Num Errors\n";
     for(auto& alg_result: res_vec) {
         file << std::get<0>(alg_result) << ","; // algorithm name
         for(auto& travel_result: std::get<1>(alg_result)) { // iterating over each travel result
