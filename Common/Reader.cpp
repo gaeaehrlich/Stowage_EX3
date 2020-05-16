@@ -130,7 +130,7 @@ int Reader::readCargoLoad(const string &path, vector<unique_ptr<Container>>& lis
 }
 
 int Reader::readShipPlan(const string& path, ShipPlan& plan) {
-    int errors = 0, x, y, num_floors;;
+    int errors = 0, x, x1, y, y1, num_floors, num_floors1;
     fs::path file_path = path;
     if(path.empty() || !fs::exists(file_path)) { return  pow2(3); }
     std::string line; std::ifstream file(path); // todo: file_path or path?
@@ -142,7 +142,7 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
         }
     }
     while (ignoreLine(line));
-    num_floors = vec[0]; x = vec[1]; y = vec[2];
+    x = vec[0]; y = vec[1]; num_floors = vec[2];
     bool fatal = false;
     map< pair<int,int>, int > m_plan;
     while (std::getline(file, line)) {
@@ -151,12 +151,13 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
             errors |= pow2(2);
             continue;
         }
-        if (x < vec[0] || y < vec[1] || num_floors <= vec[2]) { // wrong values
+        x1 = vec[0]; y1 = vec[1]; num_floors1 = vec[2];
+        if (x < x1 || y < y1 || num_floors <= num_floors1) { // wrong values
             errors |= pow2(2);
             continue;
         }
-        if (m_plan.find({x, y}) != m_plan.end()) { // duplicate x,y appearance
-            if (m_plan[{x, y}] == num_floors) { // same data
+        if (m_plan.find({x1, y1}) != m_plan.end()) { // duplicate x,y appearance
+            if (m_plan[{x1, y1}] == num_floors1) { // same data
                 errors |= pow2(2);
             }
             else { // different data
@@ -165,7 +166,7 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
             }
             continue; // todo: or just break? do we need to find ALL errors?
         }
-        m_plan[{vec[0], vec[1]}] = vec[2];
+        m_plan[{x1, y1}] = num_floors1;
     }
     if (!fatal) {
         plan = ShipPlan(num_floors, std::move(m_plan)); // why not?
