@@ -33,7 +33,6 @@ int NaiveAlgorithm::getInstructionsForCargo(const string &input_path, const stri
             _status |= loadInstructions(file, _cargo_load);
         }
     }
-    //return _calc.balance(vector<Operation>()) == APPROVED; // TODO
     file.close();
     return _status;
 }

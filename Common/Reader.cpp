@@ -44,7 +44,7 @@ int Reader::splitCargoLine(string& line, string& id, int& weight, string& destin
     splitLine(line, vec, 3);
     id = vec[0];
     if (id == "") { errors |= pow2(14);}
-    else if (!legalContainerId(id)) { errors |= pow2(15); id = ""; }
+    else if (!legalContainerId(id)) { errors |= pow2(15); } //TODO: changed
     try {
         weight = stoi(vec[1]);
         if (weight < 0) { errors |= pow2(12); weight = -1; }
@@ -68,7 +68,7 @@ bool Reader::splitInstructionLine(string& line, char& op, string& id, int& floor
     if (!splitLine(line, str_vec, 5)) { return false; }
     if (str_vec[0] != "L" && str_vec[0] != "U" && str_vec[0] != "R") { return false; }
     op = str_vec[0][0];
-    if(!legalContainerId(str_vec[1])) { return false; }
+    //if(!legalContainerId(str_vec[1])) { return false; } // TODO: changed
     id = str_vec[1];
     vector<int> int_vec(3);
     vector<string> sub_str_vec;

@@ -58,7 +58,7 @@ bool Floor::isLegalLocation(int x, int y) {
 }
 
 string Floor::getContainerDest(pair<int, int> location) {
-    return _map[location] -> getDest();
+    return _map[location] ? _map[location] -> getDest() : "";
 }
 
 bool Floor::isFloorEmpty() {
