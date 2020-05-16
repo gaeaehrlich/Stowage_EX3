@@ -142,7 +142,7 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
         }
     }
     while (ignoreLine(line));
-    x = vec[0]; y = vec[1]; num_floors = vec[2];
+    num_floors = vec[0]; x = vec[1]; y = vec[2];
     bool fatal = false;
     map< pair<int,int>, int > m_plan;
     while (std::getline(file, line)) {
