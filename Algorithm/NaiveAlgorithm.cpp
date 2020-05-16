@@ -22,11 +22,15 @@ int NaiveAlgorithm::setWeightBalanceCalculator(WeightBalanceCalculator& calculat
 int NaiveAlgorithm::getInstructionsForCargo(const string &input_path, const string &output_path) {
     std::ofstream file;
     file.open(output_path, std::ios::trunc);
+    std::cout << "getting instructions" << std::endl;
     if(!_invalid_travel) {
-        if(!Reader::readCargoLoad(input_path, _cargo_load)) {
-            _status |= 2^16;
+        _status |= Reader::readCargoLoad(input_path, _cargo_load);
+        if(_status & (2^16)) {
+            std::cout << "no cargo" << std::endl; //TODO
         }
         else {
+            std::cout << "cargo load is:" << std::endl;
+            for(auto& c : _cargo_load) std::cout << c->getId() << std::endl;
             unloadInstructions(file);
             _status |= loadInstructions(file, _temporary_unloaded);
             sortCargoLoad();

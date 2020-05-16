@@ -35,6 +35,7 @@ int Simulation::sail(unique_ptr<AbstractAlgorithm> &algorithm, const string& alg
     calculator.readShipPlan(plan_path);
     algorithm -> setWeightBalanceCalculator(calculator);
     for(const string& port: _route.getRoute()) {
+        std::cout << "entering port: " << port << std::endl;
         string cargoPath = getCargoPath(travel_path, port);
         vector<unique_ptr<Container>> containersAtPort;
         string port_output_path = createPortOutputFile(travel_output_path, port);
