@@ -3,9 +3,9 @@ REGISTER_ALGORITHM(_208967075_a)
 
 // Idea: from bottom to top, looks for position above container with smallest diff in destination
 // favor pos without a container bellow it
-Position _208967075_a::findPosition(const Container& container) {
-    int diff = -1, weight = container.getWeight();
-    string new_dest = container.getDest();
+Position _208967075_a::findPosition(const unique_ptr<Container>& container) {
+    int diff = -1, weight = container -> getWeight();
+    string new_dest = container -> getDest();
     int new_dist = _route.portDistance(new_dest);
     Position best;
     for(int i = 0; i < _plan.numberOfFloors(); ++i) {

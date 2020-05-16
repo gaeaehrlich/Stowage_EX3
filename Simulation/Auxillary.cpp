@@ -173,7 +173,7 @@ void Simulation::writeResults(const string &path, const map<string, vector<int>>
         for(auto& travel_result: std::get<1>(alg_result)) { // iterating over each travel result
             file << travel_result << ",";
         }
-        file << std::get<2>(alg_result) << "," << std::get<3>(alg_result) << "\n";
+        file << std::get<2>(alg_result) << "," << std::get<3>(alg_result) << "\n"; //TODO this is the lines in the beggining
     }
 }
 

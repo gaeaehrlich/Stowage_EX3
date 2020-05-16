@@ -62,7 +62,7 @@ void Crane::writeInstructionError(const string &instruction, const string &id, b
     std::ofstream file;
     file.open(_error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
     string exec = executed ? "still" : "not";
-    file << _sail_info << "ERROR: Algorithm is making a mistake with container " << id << ". " << instruction << " was " << exec << "executed.\n";
+    file << _sail_info << "ERROR: Algorithm is making a mistake with container " << id << ". " << instruction << " was " << exec << " executed.\n";
     file.close();
 }
 

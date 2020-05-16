@@ -4,7 +4,7 @@
 #include "NaiveAlgorithm.h"
 
 class _208967075_a : public NaiveAlgorithm {
-    Position findPosition(const Container& container) override;
+    Position findPosition(const unique_ptr<Container>& container) override;
 };
 
 

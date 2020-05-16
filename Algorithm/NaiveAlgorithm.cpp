@@ -70,7 +70,7 @@ int NaiveAlgorithm::loadInstructions(std::ofstream& file, vector<unique_ptr<Cont
             file << instructionToString('R', container -> getId(), Position(rejectReason, rejectReason, rejectReason));
         }
         else {
-            Position pos = findPosition(*container);
+            Position pos = findPosition(container);
             file << instructionToString('L', container -> getId(), pos);
             _plan.getFloor(pos._floor).insert(pos._x, pos._y, std::move(container));
         }
