@@ -119,7 +119,7 @@ bool Crane::checkWronglyUnloaded(ShipPlan& plan, ShipRoute& route) {
     bool flag = true;
     for(auto& element : _container_data) {
         unique_ptr<Container>& container = element.second[0]; // should be only one container in vector
-        if ((container -> getDest() != _port) && (!plan.isFull() || shouldPrioritize(container -> getDest(), route))) {
+        if (container -> getDest() != _port && !shouldReject(container, plan, route) && shouldPrioritize(container -> getDest(), route)) {
             writeLeftAtPortError(container -> getId(), "should have been loaded");
             flag = false;
         }
