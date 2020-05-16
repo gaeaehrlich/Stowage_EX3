@@ -36,6 +36,7 @@ void AlgorithmRegistrar::loadAlgorithmFromFile(const string &dir_path, const str
             alg_path.emplace_back(entry.path().string(), entry.path().stem().string());
         }
     }
+    int registered = 0;
     for(auto& path: alg_path) {
         unique_ptr<void, DlCloser> handle(dlopen(path.first.data(), RTLD_LAZY));
         if(!handle) {
@@ -47,8 +48,17 @@ void AlgorithmRegistrar::loadAlgorithmFromFile(const string &dir_path, const str
             file.close();
         }
         else {
-            _handles.push_back(std::move(handle));
-            _names.push_back(path.second);
+            registered++;
+            if(registered != _algorithmFactory.size()) {
+                std::ofstream file;
+                file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
+                file << "ERROR: couldn't open algorithm at path: " << path.first << " . The algorithm did not register\n";
+                file.close();
+            }
+            else{
+                _handles.push_back(std::move(handle));
+                _names.push_back(path.second);
+            }
         }
     }
 }
