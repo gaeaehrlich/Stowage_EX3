@@ -2,6 +2,7 @@
 
 #include <utility>
 #include <algorithm>
+#include <iostream>
 
 ShipRoute::ShipRoute() {
     _pos = 0;

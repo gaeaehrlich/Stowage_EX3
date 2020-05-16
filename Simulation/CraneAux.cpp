@@ -18,7 +18,7 @@ int Crane::shouldReject(unique_ptr<Container>& container, ShipPlan& plan, ShipRo
         if(write) { writeLoadError(container -> getId(), "The ship plan already has a container with this ID.\n"); }
         errors++;
     }
-    if(container -> getWeight() < 0) {
+    if(container -> getWeight() <= 0) {
         if(write) { writeLoadError(container -> getId(), "The container's weight is illegal.\n"); }
         errors++;
     }
@@ -43,7 +43,7 @@ int Crane::shouldReject(unique_ptr<Container>& container, ShipPlan& plan, ShipRo
         if(write) { writeLoadError(container -> getId(), "The container's destination port is not in route.\n"); }
         errors++;
     }
-    if(container-> getDest() == _port) {
+    if(container -> getDest() == _port) {
         if(write) { writeLoadError(container -> getId(), "The container's destination port is this port.\n"); }
         errors++;
     }
@@ -87,7 +87,7 @@ bool Crane::isErrorLoad(unique_ptr<Container> &container, ShipPlan& plan, ShipRo
 bool Crane::isErrorUnload(const string& id, ShipPlan &plan, Position pos, bool& fatal) {
     bool isLegalLocation = plan.isLegalLocation(pos);
     Position aboveFloor = Position(pos._floor + 1, pos._x, pos._y);
-    bool cellAboveNull = pos._floor + 1 == plan.numberOfFloors() ? true : plan.isLegalFloor(aboveFloor) && !plan.isEmptyPosition(aboveFloor);
+    bool cellAboveNull = pos._floor + 1 == plan.numberOfFloors() ? true : plan.isLegalFloor(aboveFloor) && plan.isEmptyPosition(aboveFloor);
 
     if(!plan.hasContainer(id) || !isLegalLocation || !cellAboveNull
        || !_container_data[id].empty() || _temporary_unloaded.find(id) != _temporary_unloaded.end()) {

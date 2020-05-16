@@ -39,10 +39,10 @@ bool ShipPlan::hasContainer(const string& container_id) {
 bool ShipPlan::isFull() {
     for(auto & _floor : _floors) {
         if(!_floor.isFloorFull()) {
-            return true;
+            return false;
         }
     }
-    return false;
+    return true;
 }
 
 bool ShipPlan::isEmpty() {

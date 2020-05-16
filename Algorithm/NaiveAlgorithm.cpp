@@ -1,5 +1,12 @@
 #include "NaiveAlgorithm.h"
 
+void NaiveAlgorithm::clear() {
+    _cargo_load.clear();
+    _temporary_unloaded.clear();
+    _invalid_travel = false;
+    _status = 0;
+}
+
 int NaiveAlgorithm::readShipPlan(const string& full_path_and_file_name) {
     int readStatus = Reader::readShipPlan(full_path_and_file_name, _plan);
     if((readStatus & (2^3)) || (readStatus & (2^4))) _invalid_travel = true;
@@ -29,15 +36,19 @@ int NaiveAlgorithm::getInstructionsForCargo(const string &input_path, const stri
             std::cout << "no cargo" << std::endl; //TODO
         }
         else {
-            std::cout << "cargo load is:" << std::endl;
-            for(auto& c : _cargo_load) std::cout << c->getId() << std::endl;
+            std::cout << "cargo load is: "; for(auto& c : _cargo_load) std::cout << c->getId() << " "; std::cout << std::endl;
+            std::cout << "unloading" << std::endl;
             unloadInstructions(file);
+            std::cout << "loading temp" << std::endl;
             _status |= loadInstructions(file, _temporary_unloaded);
             sortCargoLoad();
+            std::cout << "loading cargo" << std::endl;
             _status |= loadInstructions(file, _cargo_load);
         }
     }
     file.close();
+    clear();
+    _route.next();
     return _status;
 }
 
@@ -74,23 +85,24 @@ int NaiveAlgorithm::loadInstructions(std::ofstream& file, vector<unique_ptr<Cont
         }
         else {
             Position pos = findPosition(container);
-            file << instructionToString('L', container -> getId(), pos);
+            const string& id = container -> getId();
+            file << instructionToString('L', id, pos);
             _plan.getFloor(pos._floor).insert(pos._x, pos._y, std::move(container));
         }
     }
-    //list.clear(); // TODO: why?
     return rejectReason;
 }
 
 int NaiveAlgorithm::rejectingContainer(unique_ptr<Container>& container) {
     int reasons = 0;
-    if(countContainersOnPort(container ->getId()) > 0) { //containers at port: duplicate ID on port (ID rejected)
+    std::cout << "checking if should reject container: " << container->getId() << " going to " << container -> getDest()<< std::endl;
+    if(countContainersOnPort(container ->getId()) > 1) { //containers at port: duplicate ID on port (ID rejected)
         if(!(reasons & 10)) reasons += 2^10;
     }
     if(_plan.hasContainer(container ->getId())) { //containers at port: ID already on ship (ID rejected)
         reasons += 2^11;
     }
-    if(container -> getWeight() < 0) { //containers at port: bad line format, missing or bad weight (ID rejected)
+    if(container -> getWeight() <= 0) { //containers at port: bad line format, missing or bad weight (ID rejected)
         reasons += 2^12;
     }
     // TODO: should the 2 last reasons for 13 be here?
@@ -152,12 +164,12 @@ string NaiveAlgorithm::instructionToString(char instruction, const string& id, P
 int NaiveAlgorithm::countContainersOnPort(const string& id) {
     int count = 0;
     for(auto& container: _cargo_load) {
-        if(container -> getId() == id) {
+        if(container != nullptr && container -> getId() == id) {
             count++;
         }
     }
     for(auto& container: _temporary_unloaded) {
-        if(container -> getId() == id) {
+        if(container != nullptr && container -> getId() == id) {
             count++;
         }
     }

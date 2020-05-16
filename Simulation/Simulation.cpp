@@ -41,7 +41,9 @@ int Simulation::sail(unique_ptr<AbstractAlgorithm> &algorithm, const string& alg
         string port_output_path = createPortOutputFile(travel_output_path, port);
         getInstructionForCargo(cargoPath, port_output_path, error_path, containersAtPort, algorithm);
         string sail_info = "Algorithm: " + alg_name + ", Travel: " + travel_name + " Port: " + port + "  : \n";
+        std::cout << "before crane"<< std::endl;
         int num_op = sendInstructionsToCrane(std::move(containersAtPort), calculator, port_output_path, error_path, sail_info);
+        std::cout << "after crane" << std::endl;
         if(num_op == FAILURE) { failed = true; }
         results += num_op;
         _route.next();

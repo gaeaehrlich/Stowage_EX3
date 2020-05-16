@@ -34,6 +34,7 @@ protected:
 // TODO : should be public?
 public:
     //NaiveAlgorithm(ShipPlan plan, ShipRoute route, WeightBalanceCalculator calc);
+    void clear();
     int readShipPlan(const string& full_path_and_file_name) override ;
     int readShipRoute(const string& full_path_and_file_name) override ;
     int setWeightBalanceCalculator(WeightBalanceCalculator& calculator) override;

@@ -30,10 +30,12 @@ int Crane::start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calc
     set_error_path(error_path);
     set_sail_info(sail_info);
     set_calculator(calculator);
+    _port = route.getCurrentPort();
     int sum_operations = 0;
     bool flag = false;
     for(Operation& op : _operations) {
         // TODO: is legal operation
+        std::cout << "in port "<< _port<<" trying op: " << op._operation << " "<< op._container_id << " "<< op._position._floor<<op._position._x<<op._position._y << std::endl;
         switch(op._operation) {
             case LOAD:
                 if(!load(op._container_id, op._position, plan, route)) { flag = true; }
@@ -48,7 +50,7 @@ int Crane::start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calc
                 break;
             case MOVE:
                 // TODO : check
-                if(!unload(op._container_id, op._position, plan) || !load(op._container_id, op._move, plan, route)) { flag = true; }
+                if(!unload(op._container_id, op._position, plan) || !load(op._container_id, op._move, plan, route)) {  flag = true; }
                 sum_operations++;
                 break;
         }
@@ -90,7 +92,7 @@ bool Crane::load(const string& id, Position pos, ShipPlan& plan, ShipRoute& rout
     plan.getFloor(pos._floor).insert(pos._x, pos._y, std::move(container));
     std::cout << "Loading container " << id << " to position: floor: " << pos._floor << ", x: " << pos._x << ", y: " << pos._y << std::endl;
     _container_data.erase(id);
-    return isError;
+    return !isError;
 }
 
 bool Crane::unload(const string& id, Position pos, ShipPlan& plan) {
@@ -106,7 +108,7 @@ bool Crane::unload(const string& id, Position pos, ShipPlan& plan) {
     }
     std::cout << "Unloading container " << id << " from position: floor: " << pos._floor << ", x: " << pos._x << ", y: " << pos._y << std::endl;
     _container_data[removed -> getId()].emplace_back(std::move(removed));
-    return isError;
+    return !isError;
 }
 
 bool Crane::reject(const string& id, ShipPlan& plan, ShipRoute& route) {

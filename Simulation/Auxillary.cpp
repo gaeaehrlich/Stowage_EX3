@@ -156,7 +156,7 @@ string Simulation::createResultsFile(const string &output_path, vector<string> t
 }
 
 void Simulation::writeResults(const string &path, const map<string, vector<int>>& results, const vector<string>& travels) {
-    vector<tuple<string, vector<int>, int, int>> res_vec(results.size());
+    vector<tuple<string, vector<int>, int, int>> res_vec;
     std::ofstream file;
     file.open(path, std::ios_base::app);
     for(auto& alg_res: results) {
