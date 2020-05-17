@@ -13,7 +13,7 @@ AlgorithmRegistrar::~AlgorithmRegistrar() {
 
 vector<pair<string, unique_ptr<AbstractAlgorithm>>> AlgorithmRegistrar::getAlgorithms() const {
     vector<pair<string, unique_ptr<AbstractAlgorithm>>> algorithms;
-    for(int i = 0; i < _algorithmFactory.size(); i++) {
+    for(long unsigned int i = 0; i < _algorithmFactory.size(); i++) {
         algorithms.push_back({_names[i], _algorithmFactory[i]()});
     }
     return algorithms;
@@ -36,7 +36,7 @@ void AlgorithmRegistrar::loadAlgorithmFromFile(const string &dir_path, const str
             alg_path.emplace_back(entry.path().string(), entry.path().stem().string());
         }
     }
-    int registered = 0;
+    long unsigned int registered = 0;
     for(auto& path: alg_path) {
         unique_ptr<void, DlCloser> handle(dlopen(path.first.data(), RTLD_LAZY));
         if(!handle) {
