@@ -70,6 +70,11 @@ bool ShipPlan::isEmptyPosition(Position position) {
     return isLegalFloor(position) && _floors[position._floor].isEmpty(position._x, position._y);
 }
 
+bool ShipPlan::isLegalLoadPosition(Position position) {
+    Position below = Position(position._floor - 1, position._x, position._y);
+    return isLegalLocation(position) && (isLegalLocation(below) ? !isEmptyPosition(below) : true);
+}
+
 string ShipPlan::getIdAtPosition(Position position) {
     if(!isLegalLocation(position)) {
         return "";
