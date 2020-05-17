@@ -60,7 +60,7 @@ bool Reader::splitPlanLine(string& line, vector<int>& vec) {
     if(!splitLine(line, str_vec, 3)) {
         return false;
     }
-    return convertVectorToInt(vec, str_vec) && vec[0] > 0 && vec[1] > 0 && vec[2] > 0;
+    return convertVectorToInt(vec, str_vec) && vec[0] >= 0 && vec[1] >= 0 && vec[2] >= 0;
 }
 
 bool Reader::splitInstructionLine(string& line, char& op, string& id, int& floor, int& x, int& y) {
