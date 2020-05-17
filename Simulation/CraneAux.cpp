@@ -68,10 +68,7 @@ void Crane::writeInstructionError(const string &instruction, const string &id, b
 
 
 bool Crane::isErrorLoad(unique_ptr<Container> &container, ShipPlan& plan, ShipRoute& route, Position pos, bool& fatal) {
-    Position lowerFloor = Position(pos._floor - 1, pos._x, pos._y);
-    bool isLegalLocation = plan.isLegalLocation(pos) && plan.isEmptyPosition(pos);
-    bool cellBelowNull = pos._floor > 0 ? (plan.isLegalLocation(lowerFloor) && plan.isEmptyPosition(lowerFloor)) : false;
-    if(!isLegalLocation || cellBelowNull) {
+    if(!plan.isLegalLoadPosition(pos)) {
         writeInstructionError("Load", container -> getId(), false);
         fatal = true;
         return true;

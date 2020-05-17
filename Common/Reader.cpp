@@ -1,7 +1,5 @@
 #include "Reader.h"
 
-#define pow2(x) (int)pow(2, x)
-
 int Reader::splitLine(string& line, vector<string>& vec, int n) {
     int i = 0;
     std::regex r("\\S+");

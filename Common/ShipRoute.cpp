@@ -56,7 +56,7 @@ bool ShipRoute::isStopAfter(const string& port1, const string& port2) {
     return false; // shouldn't get here
 }
 
-int ShipRoute::portDistance(const string port) {
+int ShipRoute::portDistance(const string& port) {
     auto it = std::find(_route.begin() + _pos, _route.end(), port);
     return it != _route.end() ? std::distance(_route.begin() + _pos, it) : -1;
 }

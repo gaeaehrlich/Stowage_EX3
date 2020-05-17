@@ -57,20 +57,20 @@ bool Simulation::writeShipPlanErrors(const string &error_path, int errors, const
     std::ofstream file;
     file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
     file << "SHIP PLAN ERRORS FOR TRAVEL: " << travel << "\n";
-    if(errors & (2^0)) {
+    if(errors & pow2(0)) {
         file << "ship plan: a position has an equal number of floors, or more, than the number of floors provided in the first line (ignored)\n";
     }
-    if(errors & (2^1)) {
+    if(errors & pow2(1)) {
         file << "ship plan: a given position exceeds the X/Y ship limits (ignored)\n";
     }
-    if(errors & (2^2)) {
+    if(errors & pow2(2)) {
         file << "ship plan: bad line format after first line (ignored)\n";
     }
-    if(errors & (2^3)) {
+    if(errors & pow2(3)) {
         file << "ship plan: travel error - bad first line or file cannot be read altogether (cannot run this travel)\n";
         fatal = true;
     }
-    if(errors & (2^4)) {
+    if(errors & pow2(4)) {
         file << "ship plan: travel error - duplicate x,y appearance with different data (cannot run this travel)\n";
         fatal = true;
     }
@@ -86,17 +86,17 @@ bool Simulation::writeShipRouteErrors(const string &error_path, int errors, cons
     std::ofstream file;
     file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
     file << "SHIP PLAN ERRORS FOR TRAVEL: " << travel << "\n";
-    if(errors & (2^5)) {
+    if(errors & pow2(5)) {
         file << "travel route: a port appears twice or more consecutively (ignored)\n";
     }
-    if(errors & (2^6)) {
+    if(errors & pow2(6)) {
         file << "travel route: bad port symbol format (ignored)\n";
     }
-    if(errors & (2^7)) {
+    if(errors & pow2(7)) {
         file << "travel route: travel error - empty file or file cannot be read altogether (cannot run this travel)\n";
         fatal = true;
     }
-    if(errors & (2^8)) {
+    if(errors & pow2(8)) {
         file << "travel route: travel error - file with only a single valid port (cannot run this travel)\n";
         fatal = true;
     }
@@ -131,19 +131,19 @@ bool Simulation::writeCargoErrors(const string &error_path, int errors, vector<u
             file << "containers at port: ID already on ship (ID rejected). ID number: " << container -> getId() << "\n";
         }
     }
-    if(errors & (2^12)) {
+    if(errors & pow2(12)) {
         file << "containers at port: bad line format, missing or bad weight (ID rejected)\n";
     }
-    if(errors & (2^13)) {
+    if(errors & pow2(13)) {
         file << "containers at port: bad line format, missing or bad port dest (ID rejected)\n";
     }
-    if(errors & (2^14)) {
+    if(errors & pow2(14)) {
         file << "containers at port: bad line format, ID cannot be read (ignored)\n";
     }
-    if(errors & (2^15)) {
+    if(errors & pow2(15)) {
         file << "containers at port: illegal ID check ISO 6346 (ID rejected)\n";
     }
-    if(errors & (2^16)) {
+    if(errors & pow2(16)) {
         file << "containers at port: file cannot be read altogether (assuming no cargo to be loaded at this port)\n";
     }
     if(_route.isLastStop() && !containersAtPort.empty()) {
@@ -187,7 +187,7 @@ void Simulation::writeResults(const string &path, const map<string, vector<int>>
         for(auto& travel_result: std::get<1>(alg_result)) { // iterating over each travel result
             file << travel_result << ",";
         }
-        file << std::get<2>(alg_result) << "," << std::get<3>(alg_result) << "\n"; //TODO this is the lines in the beggining
+        file << std::get<2>(alg_result) << "," << std::get<3>(alg_result) << "\n";
     }
 }
 
@@ -214,9 +214,10 @@ void Simulation::scanTravelPath(const string &curr_travel_path, const string &er
     std::regex format("(.*)\\.cargo_data");
     std::ofstream file;
     for(const auto & entry : fs::directory_iterator(curr_travel_path)) {
-        if(std::regex_match(entry.path().stem().string(), format) && files.find(entry.path().stem().string()) == files.end()) {
+        if(std::regex_match(entry.path().string(), format) && files.find((entry.path().stem().string().append(".cargo_data"))) == files.end()) {
             file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
             file << "WARNING: the travel folder "<< curr_travel_path << " has a cargo_data file that is not in use: " << entry.path().string() << "\n";
+            file.close();
         }
     }
 }

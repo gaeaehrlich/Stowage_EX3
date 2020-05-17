@@ -26,6 +26,7 @@ using std::unique_ptr;
 using std::make_unique;
 namespace fs = std::experimental::filesystem;
 
+#define pow2(x) (int)pow(2, x)
 
 class Reader {
 public:

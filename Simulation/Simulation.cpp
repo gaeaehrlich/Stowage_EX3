@@ -29,6 +29,7 @@ int Simulation::sendInstructionsToCrane(vector<unique_ptr<Container>> containers
 int Simulation::sail(unique_ptr<AbstractAlgorithm> &algorithm, const string& alg_name, const string &travel_path, const string& travel_name, const string& output_path, const string& error_path) {
     int results = 0;
     bool failed = false;
+    scanTravelPath(travel_path, error_path);
     string travel_output_path = createTravelOutputFolder(output_path, alg_name, travel_name);
     string plan_path = getPath(travel_path, "ship_plan");
     WeightBalanceCalculator calculator;
@@ -63,7 +64,6 @@ void Simulation::start(const string &travel_path, const string &algorithm_path, 
     map<string, vector<int>> alg_results;
     for(const auto& travel_name : travels) {
         string curr_travel_path = travel_path + SUBDIR + travel_name;
-        scanTravelPath(curr_travel_path, error_path);
         auto algorithms = registrar.getAlgorithms();
         if(algorithms.empty()) { return; }
         for(auto& alg: algorithms) {

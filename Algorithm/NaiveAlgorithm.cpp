@@ -9,14 +9,14 @@ void NaiveAlgorithm::clear() {
 
 int NaiveAlgorithm::readShipPlan(const string& full_path_and_file_name) {
     int readStatus = Reader::readShipPlan(full_path_and_file_name, _plan);
-    if((readStatus & (2^3)) || (readStatus & (2^4))) _invalid_travel = true;
+    if((readStatus & pow2(3)) || (readStatus & pow2(4))) _invalid_travel = true;
     _status |= readStatus;
     return readStatus;
 }
 
 int NaiveAlgorithm::readShipRoute(const string& full_path_and_file_name) {
     int readStatus = Reader::readShipRoute(full_path_and_file_name, _route);
-    if((readStatus & 7) || (readStatus & 8)) _invalid_travel = true;
+    if((readStatus & pow2(7)) || (readStatus & pow2(8))) _invalid_travel = true;
     _status |= readStatus;
     return readStatus;
 }
@@ -32,8 +32,8 @@ int NaiveAlgorithm::getInstructionsForCargo(const string &input_path, const stri
     std::cout << "getting instructions" << std::endl;
     if(!_invalid_travel) {
         _status |= Reader::readCargoLoad(input_path, _cargo_load);
-        if(_status & (2^16)) {
-            std::cout << "no cargo" << std::endl; //TODO
+        if(_status & pow2(16)) {
+            std::cout << "no cargo" << std::endl; //TODO ?
         }
         else {
             std::cout << "cargo load is: "; for(auto& c : _cargo_load) std::cout << c->getId() << " "; std::cout << std::endl;
@@ -97,31 +97,30 @@ int NaiveAlgorithm::rejectingContainer(unique_ptr<Container>& container) {
     int reasons = 0;
     std::cout << "checking if should reject container: " << container->getId() << " going to " << container -> getDest()<< std::endl;
     if(countContainersOnPort(container ->getId()) > 1) { //containers at port: duplicate ID on port (ID rejected)
-        if(!(reasons & 10)) reasons += 2^10;
+        if(!(reasons & pow2(10))) reasons |= pow2(10);
     }
     if(_plan.hasContainer(container ->getId())) { //containers at port: ID already on ship (ID rejected)
-        reasons += 2^11;
+        reasons |= pow2(11);
     }
     if(container -> getWeight() <= 0) { //containers at port: bad line format, missing or bad weight (ID rejected)
-        reasons += 2^12;
+        reasons |= pow2(12);
     }
-    // TODO: should the 2 last reasons for 13 be here?
     if(!Reader::legalPortSymbol(container -> getDest())
                          || !_route.portInRoute(container -> getDest())
                          || (container-> getDest() == _route.getCurrentPort())) { //containers at port: bad line format, missing or bad port dest (ID rejected)
-        reasons += 2^13;
+        reasons |= pow2(13);
     }
-    if(container -> getId().empty()){ // containers at port: bad line format, ID cannot be read (ignored)
-        reasons += 2^14;
+    if(container -> getId().empty()) { // containers at port: bad line format, ID cannot be read (ignored)
+        reasons |= pow2(14);
     }
     if(!Reader::legalContainerId(container ->getId())) { //containers at port: illegal ID check ISO 6346 (ID rejected)
-        reasons += 2^15;
+        reasons |= pow2(15);
     }
     if(_route.isLastStop()) { //containers at port: last port has waiting containers (ignored)
-        reasons += 2^17;
+        reasons |= pow2(17);
     }
     if(_plan.isFull()) { //containers at port: total containers amount exceeds ship capacity (rejecting far containers)
-        reasons += 2^18;
+        reasons |= pow2(18);
     }
     return reasons;
 }

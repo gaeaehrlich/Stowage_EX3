@@ -71,8 +71,10 @@ bool ShipPlan::isEmptyPosition(Position position) {
 }
 
 bool ShipPlan::isLegalLoadPosition(Position position) {
-    Position below = Position(position._floor - 1, position._x, position._y);
-    return isLegalLocation(position) && (isLegalLocation(below) ? !isEmptyPosition(below) : true);
+    Position lowerFloor = Position(position._floor - 1, position._x, position._y);
+    bool isLegalPosition =  isLegalLocation(position) && isEmptyPosition(position);
+    bool cellBelowNull = position._floor > 0 ? (this -> isLegalLocation(lowerFloor) && isEmptyPosition(lowerFloor)) : false;
+    return isLegalPosition && !cellBelowNull;
 }
 
 string ShipPlan::getIdAtPosition(Position position) {
