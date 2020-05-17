@@ -23,6 +23,7 @@ public:
     string getDestAtPosition(Position position);
     int getWeightById(const string& id);
     int getWeightByPosition(Position position);
+    int numberOfEmptyCells();
 };
 
 

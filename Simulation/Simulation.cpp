@@ -18,7 +18,7 @@ bool Simulation::readShipRoute(const string& error_path, const string& travel_pa
 void Simulation::getInstructionForCargo(const string &cargoPath, const string &output_path, const string &error_path, vector<unique_ptr<Container>>& containersAtPort, unique_ptr<AbstractAlgorithm> &algorithm) {
     int errors = Reader::readCargoLoad(cargoPath, containersAtPort);
     algorithm -> getInstructionsForCargo(cargoPath, output_path);
-    writeCargoErrors(error_path, errors); // void because no fatal errors
+    writeCargoErrors(error_path, errors, containersAtPort); // void because no fatal errors
 }
 
 int Simulation::sendInstructionsToCrane(vector<unique_ptr<Container>> containers, WeightBalanceCalculator& calculator, const string &instructions_path, const string &error_path, const string &sail_info) {
@@ -67,8 +67,12 @@ void Simulation::start(const string &travel_path, const string &algorithm_path, 
         auto algorithms = registrar.getAlgorithms();
         if(algorithms.empty()) { return; }
         for(auto& alg: algorithms) {
-            if(!readShipPlan(error_path, curr_travel_path, travel_name, alg.second) || !readShipRoute(error_path, curr_travel_path, travel_name, alg.second)) { continue; }
-            alg_results[alg.first].emplace_back(sail(alg.second, alg.first, curr_travel_path, travel_name, output_path, error_path));
+            if(!readShipPlan(error_path, curr_travel_path, travel_name, alg.second) || !readShipRoute(error_path, curr_travel_path, travel_name, alg.second)) {
+                alg_results[alg.first].push_back(0);
+            }
+            else {
+                alg_results[alg.first].emplace_back(sail(alg.second, alg.first, curr_travel_path, travel_name, output_path, error_path));
+            }
         }
     }
     writeResults(results_path, alg_results, travels);

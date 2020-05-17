@@ -31,6 +31,7 @@ public:
     string getContainerDest(int x, int y);
     int getWeightById(const string& id);
     int getWeightByPosition(int x, int y);
+    int numberOfEmptyCells();
 };
 
 

@@ -114,3 +114,13 @@ int Floor::getWeightById(const string& id) {
 int Floor::getWeightByPosition(int x, int y) {
     return _map[{x, y}] ? _map[{x, y}] -> getWeight() : -1;
 }
+
+int Floor::numberOfEmptyCells() {
+    int count = 0;
+    for(const auto& element : _map) {
+        if(element.second != nullptr) {
+            count++;
+        }
+    }
+    return count;
+}

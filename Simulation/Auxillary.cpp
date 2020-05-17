@@ -104,38 +104,52 @@ bool Simulation::writeShipRouteErrors(const string &error_path, int errors, cons
     return !fatal;
 }
 
-bool Simulation::writeCargoErrors(const string &error_path, int errors) { // todo: what
+
+int Simulation::countContainersOnPort(const string& id, vector<unique_ptr<Container>>& containersAtPort) {
+    int count = 0;
+    for(auto& container: containersAtPort) {
+        if(container != nullptr && container -> getId() == id) {
+            count++;
+        }
+    }
+    return count;
+}
+
+
+bool Simulation::writeCargoErrors(const string &error_path, int errors, vector<unique_ptr<Container>>& containersAtPort) {
     if(errors == 0) {
         return true;
     }
     bool fatal = false;
     std::ofstream file;
     file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
-    if(errors & (2^10)) { //countContainersOnPort(container ->getId()) > 0
-        file << "containers at port: duplicate ID on port (ID rejected)\n";
+    for(const auto& container: containersAtPort) {
+        if(countContainersOnPort(container -> getId(), containersAtPort) > 1) { // 2^10
+            file << "containers at port: duplicate ID on port (ID rejected). ID number: " << container -> getId() << "\n";
+        }
+        if(_plan.hasContainer(container -> getId())) { // 2^11
+            file << "containers at port: ID already on ship (ID rejected). ID number: " << container -> getId() << "\n";
+        }
     }
-    if(errors & (2^11)) { //_plan.hasContainer(container ->getId())
-        file << "containers at port: ID already on ship (ID rejected)\n";
-    }
-    if(errors & (2^12)) { // container -> getWeight() <= 0
+    if(errors & (2^12)) {
         file << "containers at port: bad line format, missing or bad weight (ID rejected)\n";
     }
-    if(errors & (2^13)) { // !Reader::legalPortSymbol(container -> getDest())
+    if(errors & (2^13)) {
         file << "containers at port: bad line format, missing or bad port dest (ID rejected)\n";
     }
-    if(errors & (2^14)) { // container -> getId().empty()
+    if(errors & (2^14)) {
         file << "containers at port: bad line format, ID cannot be read (ignored)\n";
     }
-    if(errors & (2^15)) { // !Reader::legalContainerId(container ->getId())
+    if(errors & (2^15)) {
         file << "containers at port: illegal ID check ISO 6346 (ID rejected)\n";
     }
     if(errors & (2^16)) {
         file << "containers at port: file cannot be read altogether (assuming no cargo to be loaded at this port)\n";
     }
-    if(errors & (2^17)) { // _route.isLastStop()
+    if(_route.isLastStop() && !containersAtPort.empty()) {
         file << "containers at port: last port has waiting containers (ignored)\n";
     }
-    if(errors & (2^18)) { // _plan.isFull()
+    if(_plan.numberOfEmptyCells() < containersAtPort.size()) {
         file << "containers at port: total containers amount exceeds ship capacity (rejecting far containers)\n";
     }
     file.close();

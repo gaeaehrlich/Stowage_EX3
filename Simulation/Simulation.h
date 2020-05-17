@@ -38,7 +38,7 @@ public:
     bool writeShipRouteErrors(const string& error_path, int errors, const string& travel);
     string getPath(const string &travel_dir, const string &search);
     void getInstructionForCargo(const string &cargoPath, const string &output_path, const string &error_path, vector<unique_ptr<Container>>& containersAtPort, unique_ptr<AbstractAlgorithm> &algorithm);
-    bool writeCargoErrors(const string& error_path, int errors);
+    bool writeCargoErrors(const string& error_path, int errors, vector<unique_ptr<Container>>& containersAtPort);
     string createPortOutputFile(const string& output_path, const string& port);
     int sendInstructionsToCrane(vector<unique_ptr<Container>> containers, WeightBalanceCalculator& calculator, const string& instructions_path, const string &error_path, const string &sail_info);
     void writeResults(const string &path, const map<string, vector<int>>& results, const vector<string>& travels);
@@ -46,6 +46,7 @@ public:
     string createTravelOutputFolder(const string& output_path, const string& alg_name, const string& travel_name);
     void scanTravelPath(const string& curr_travel_path, const string& error_path);
     string createResultsFile(const string& output_path, vector<string> travels);
+    int countContainersOnPort(const string& id, vector<unique_ptr<Container>>& containersAtPort);
 };
 
 

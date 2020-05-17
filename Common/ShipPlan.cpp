@@ -97,3 +97,11 @@ int ShipPlan::getWeightByPosition(Position position) {
     return _floors[position._floor].getWeightByPosition(position._x, position._y);
 }
 
+int ShipPlan::numberOfEmptyCells() {
+    int count = 0;
+    for(auto & _floor : _floors) {
+        count += _floor.numberOfEmptyCells();
+    }
+    return count;
+}
+
