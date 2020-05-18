@@ -44,9 +44,9 @@ public:
             const std::string& output_full_path_and_file_name) override;
     void sortCargoLoad();
     void unloadInstructions(std::ofstream& file);
-    void loadInstructions(std::ofstream& file, int cargoReadStatus, vector<unique_ptr<Container>>& list);
+    void loadInstructions(std::ofstream& file, vector<unique_ptr<Container>>& list);
     virtual Position findPosition(const unique_ptr<Container>& container) = 0;
-    bool rejectingContainer(unique_ptr<Container>& container, int cargoReadStatus);
+    bool rejectingContainer(unique_ptr<Container>& container);
     void unloadContainersAbove(Position position, std::ofstream& file);
     string instructionToString(char instruction, const string& id, Position pos);
     int countContainersOnPort(const string& id);
