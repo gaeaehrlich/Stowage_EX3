@@ -2,20 +2,15 @@
 
 int Reader::splitLine(string& line, vector<string>& vec, int n) {
     int i = 0;
-    std::regex r("\\S+");
-    std::sregex_iterator s;
-    for (s = std::sregex_iterator(line.begin(), line.end(), r);
-                                        i < n && s != std::sregex_iterator();
-                                        s++, i++) {
+    std::regex r("\\s*,\\s*");
+    line = std::regex_replace(line, std::regex("^\\s+"), "");
+    std::sregex_token_iterator s(line.begin(), line.end(), r, -1), end;
+    for (;i < n && s != end; s++, i++) {
         string str = s -> str();
-        if (i != n - 1) {
-            if (str.length() < 2 || str[str.length() - 1] != ',') { return false; }
-            str.pop_back();
-        }
         vec[i] = str;
     }
 
-    return (i == n) && (s == std::sregex_iterator());
+    return (i == n) && (s == end);
 }
 
 bool Reader::convertVectorToInt(vector<int>& int_vec, vector<string>& str_vec) {
@@ -61,20 +56,21 @@ bool Reader::splitPlanLine(string& line, vector<int>& vec) {
     return convertVectorToInt(vec, str_vec) && vec[0] >= 0 && vec[1] >= 0 && vec[2] >= 0;
 }
 
-bool Reader::splitInstructionLine(string& line, char& op, string& id, int& floor, int& x, int& y) {
-    vector<string> str_vec(5);
-    if (!splitLine(line, str_vec, 5)) { return false; }
+bool Reader::splitInstructionLine(string& line, char& op, string& id, Position& position, Position& move) {
+    int n = std::regex_match(line, std::regex("^\\s*M.*")) ? 8 : 5;
+    vector<string> str_vec(n);
+    if (!splitLine(line, str_vec, n)) { return false; }
     if (str_vec[0] != "L" && str_vec[0] != "U" && str_vec[0] != "R" && str_vec[0] != "M") { return false; }
     op = str_vec[0][0];
-    //if(!legalContainerId(str_vec[1])) { return false; } // TODO: changed
     id = str_vec[1];
-    vector<int> int_vec(3);
+    vector<int> int_vec(n - 2);
     vector<string> sub_str_vec;
     std::copy(str_vec.begin() + 2, str_vec.end(), std::back_inserter(sub_str_vec));
     if (!convertVectorToInt(int_vec, sub_str_vec)) { return false; }
-    floor = int_vec[0];
-    x = int_vec[1];
-    y = int_vec[2];
+    position = Position(int_vec[0], int_vec[1], int_vec[2]);
+    if (n == 8) {
+        move = Position(int_vec[3], int_vec[4], int_vec[5]);
+    }
     return true;
 }
 
@@ -103,7 +99,6 @@ bool Reader::legalCheckDigit(const string& id) {
         i++;
     }
     sum -= 11 * (int)floor((double)sum / 11);
-    if (sum % 10 != (id[10] - '0')) { std::cout << id << std::endl; }
     return sum % 10 == (id[10] - '0');
 }
 
@@ -126,6 +121,7 @@ int Reader::readCargoLoad(const string &path, vector<unique_ptr<Container>>& lis
 int Reader::readShipPlan(const string& path, ShipPlan& plan) {
     int errors = 0, x, x1, y, y1, num_floors, num_floors1;
     fs::path file_path = path;
+    std::cout << path << std::endl;
     if(path.empty() || !fs::exists(file_path)) { return  pow2(3); }
     std::string line; std::ifstream file(path); // todo: file_path or path?
     if (!file || file.peek() == std::ifstream::traits_type::eof()) { return pow2(3); }
@@ -216,12 +212,13 @@ vector<Operation> Reader::getInstructionsVector(const string &path) {
     vector<Operation> ops;
     char op_char;
     int floor, x, y;
+    Position position, move;
     string line, id;
     std::ifstream file(path);
     while (std::getline(file, line)) {
         if (Reader::ignoreLine(line)) { continue; }
-        if (Reader::splitInstructionLine(line, op_char, id, floor, x, y)) {
-            Operation op = Operation(op_char, id, Position(floor, x, y));
+        if (Reader::splitInstructionLine(line, op_char, id, position, move)) {
+            Operation op = Operation(op_char, id, position, move);
             ops.push_back(op);
         }
     }

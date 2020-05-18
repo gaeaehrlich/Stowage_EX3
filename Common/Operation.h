@@ -14,7 +14,7 @@ public:
     Position _move;
 
 public:
-    Operation(char operation, string container_id, Position position, Position move = Position(-1, -1, -1));
+    Operation(char operation, string container_id, Position position, Position move = Position());
 };
 
 #endif //STOWAGE_OPERATION_H
