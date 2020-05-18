@@ -4,7 +4,7 @@ OBJS = Position.o Container.o Operation.o Floor.o ShipPlan.o ShipRoute.o WeightB
 #The executabel filename DON'T CHANGE
 
 #The shared objects filename
-SHARED_OBJS  = _208967075_a.so _208967075_b.so
+SHARED_OBJS  = _208967075_a.so _208967075_b.so _208967075_c.so
 
 COMMON = ../Common/
 ALGORITHM = ./
@@ -39,10 +39,15 @@ _208967075_a.o: $(ALGORITHM)_208967075_a.cpp $(ALGORITHM)_208967075_a.h $(ALGORI
 	$(COMP) $(CPP_COMP_FLAG) -c $(ALGORITHM)$*.cpp
 _208967075_b.o: $(ALGORITHM)_208967075_b.cpp $(ALGORITHM)_208967075_b.h $(ALGORITHM)NaiveAlgorithm.h
 	$(COMP) $(CPP_COMP_FLAG) -c $(ALGORITHM)$*.cpp
+_208967075_c.o: $(ALGORITHM)_208967075_c.cpp $(ALGORITHM)_208967075_c.h $(ALGORITHM)AbstractAlgorithm.h $(ALGORITHM)AlgorithmRegistration.h
+	$(COMP) $(CPP_COMP_FLAG) -c $(ALGORITHM)$*.cpp
+
 _208967075_a.so: $(ALGORITHM)_208967075_a.o NaiveAlgorithm.o $(OBJS)
 	$(COMP) $(CPP_LINK_FLAG) -o $@ $^
 _208967075_b.so: $(ALGORITHM)_208967075_b.o NaiveAlgorithm.o $(OBJS)
 	$(COMP) $(CPP_LINK_FLAG) -o $@ $^
+_208967075_c.so: $(ALGORITHM)_208967075_c.o $(OBJS)
+	$(COMP) $(CPP_LINK_FLAG) -o $@ $^
 
 clean:
-	rm -f $(OBJS) _208967075_a.o _208967075_b.o
+	rm -f $(OBJS) _208967075_a.o _208967075_b.o _208967075_c.o

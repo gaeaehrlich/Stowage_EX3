@@ -30,10 +30,10 @@ namespace fs = std::experimental::filesystem;
 
 class Reader {
 public:
-    static bool splitInstructionLine(string& line, char& op, string& id, int& floor, int& x, int& y);
+    static bool splitInstructionLine(string& line, char& op, string& id, Position& position, Position& move);
     static bool splitPlanLine(string& line, vector<int>& vec);
     static int splitCargoLine(string& line, string& id, int& weight, string& destination);
-    static int splitLine(string& line, vector<string>& vec, int n);
+    static int splitLine(string& line, vector<string>& vec, int n, bool exact = true);
     static bool convertVectorToInt(vector<int>& int_vec, vector<string>& str_vec);
     static bool ignoreLine(string& str);
     static bool legalPortSymbol(const string& symbol);
