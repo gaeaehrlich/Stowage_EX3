@@ -1,6 +1,6 @@
 #include "Reader.h"
 
-int Reader::splitLine(string& line, vector<string>& vec, int n) {
+int Reader::splitLine(string& line, vector<string>& vec, int n, bool exact) {
     int i = 0;
     std::regex r("\\s*,\\s*");
     line = std::regex_replace(line, std::regex("^\\s+"), "");
@@ -10,7 +10,7 @@ int Reader::splitLine(string& line, vector<string>& vec, int n) {
         vec[i] = str;
     }
 
-    return (i == n) && (s == end);
+    return (!exact || s == end) && (i == n);
 }
 
 bool Reader::convertVectorToInt(vector<int>& int_vec, vector<string>& str_vec) {
@@ -57,18 +57,21 @@ bool Reader::splitPlanLine(string& line, vector<int>& vec) {
 }
 
 bool Reader::splitInstructionLine(string& line, char& op, string& id, Position& position, Position& move) {
-    int n = std::regex_match(line, std::regex("^\\s*M.*")) ? 8 : 5;
+    bool rejecting = std::regex_match(line, std::regex("^\\s*R.*"));
+    bool moving = std::regex_match(line, std::regex("^\\s*M.*"));
+    int n = moving ? 8 : (rejecting ? 2 : 5);
     vector<string> str_vec(n);
-    if (!splitLine(line, str_vec, n)) { return false; }
+    if (!splitLine(line, str_vec, n, !rejecting)) { return false; }
     if (str_vec[0] != "L" && str_vec[0] != "U" && str_vec[0] != "R" && str_vec[0] != "M") { return false; }
     op = str_vec[0][0];
     id = str_vec[1];
+    if (rejecting) { return true; }
     vector<int> int_vec(n - 2);
     vector<string> sub_str_vec;
     std::copy(str_vec.begin() + 2, str_vec.end(), std::back_inserter(sub_str_vec));
     if (!convertVectorToInt(int_vec, sub_str_vec)) { return false; }
     position = Position(int_vec[0], int_vec[1], int_vec[2]);
-    if (n == 8) {
+    if (moving) {
         move = Position(int_vec[3], int_vec[4], int_vec[5]);
     }
     return true;
