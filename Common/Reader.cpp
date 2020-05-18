@@ -103,7 +103,6 @@ bool Reader::legalCheckDigit(const string& id) {
         i++;
     }
     sum -= 11 * (int)floor((double)sum / 11);
-    if (sum % 10 != (id[10] - '0')) { std::cout << id << std::endl; }
     return sum % 10 == (id[10] - '0');
 }
 

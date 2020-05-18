@@ -40,13 +40,13 @@ int NaiveAlgorithm::getInstructionsForCargo(const string &input_path, const stri
     if(!_invalid_travel) {
         port_status = readCargoLoad(input_path);
         unloadInstructions(file);
-        loadInstructions(file, port_status, _temporary_unloaded);
+        loadInstructions(file, _temporary_unloaded);
         sortCargoLoad();
-        loadInstructions(file, port_status, _cargo_load);
+        loadInstructions(file, _cargo_load);
     }
     file.close();
     finishedPort();
-    return _status |= port_status;
+    return _status | port_status;
 }
 
 
@@ -73,9 +73,9 @@ void NaiveAlgorithm::unloadInstructions(std::ofstream& file) {
     }
 }
 
-void NaiveAlgorithm::loadInstructions(std::ofstream& file, int cargoReadStatus,  vector<unique_ptr<Container>>& list) {
+void NaiveAlgorithm::loadInstructions(std::ofstream& file,  vector<unique_ptr<Container>>& list) {
     for(auto & container : list) {
-        if(rejectingContainer(container, cargoReadStatus)) {
+        if(rejectingContainer(container)) {
             file << instructionToString('R', container -> getId(), Position(-1, -1, -1));
         }
         else {
@@ -87,7 +87,7 @@ void NaiveAlgorithm::loadInstructions(std::ofstream& file, int cargoReadStatus, 
     }
 }
 
-bool NaiveAlgorithm::rejectingContainer(unique_ptr<Container>& container,  int cargoReadStatus) {
+bool NaiveAlgorithm::rejectingContainer(unique_ptr<Container>& container) {
     if(countContainersOnPort(container ->getId()) > 1) { return true; }//containers at port: duplicate ID on port (ID rejected)
     if(_plan.hasContainer(container ->getId())) { return true; } //containers at port: ID already on ship (ID rejected)
     if(container -> getWeight() <= 0) { return true; } //containers at port: bad line format, missing or bad weight (ID rejected)

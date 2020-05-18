@@ -52,7 +52,7 @@ bool Simulation::checkDirectories(const string &travel_path, const string &algor
 void Simulation::writeReaderErrors(std::ofstream& file, int simulation_errors, int alg_errors, vector<string> error_msg, const string& alg_name, int index) {
     for(int i = 0; i < error_msg.size(); i++) {
         if(simulation_errors & pow2(i + index)) {
-            file << error_msg[i];
+            file << "INPUT FILE ERROR: " << error_msg[i];
             if(!alg_errors & pow2(i + index)) {
                 file << "ALGORITHM WARNING: algorithm did not alert this problem\n";
             }
@@ -65,12 +65,13 @@ void Simulation::writeReaderErrors(std::ofstream& file, int simulation_errors, i
 
 
 bool Simulation::writeShipErrors(const string &error_path, int simulation_errors, int alg_errors, const string& travel, const string& alg_name) {
-    if(simulation_errors == 0) {
+    if(simulation_errors == 0 && alg_errors == 0) {
         return true;
     }
     std::ofstream file;
     file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
-    file << "FILE ERRORS FOR TRAVEL: " << travel << "\n";
+    file << "---------------------------------------------------------------------\n";
+    file << "***** ALGORITHM: " << alg_name << ", TRAVEL: " << travel << " *****\n";
     vector<string> error_msg;
     error_msg.emplace_back("ship plan: a position has an equal number of floors, or more, than the number of floors provided in the first line (ignored)\n");
     error_msg.emplace_back("ship plan: a given position exceeds the X/Y ship limits (ignored)\n");
@@ -99,12 +100,13 @@ int Simulation::countContainersOnPort(const string& id, vector<unique_ptr<Contai
 
 
 void Simulation::writeCargoErrors(const string &error_path, int simulation_errors, int alg_errors, vector<unique_ptr<Container>>& containersAtPort, const string& travel_name, const string& alg_name) {
-    if(simulation_errors == 0) {
+    if(simulation_errors == 0 && alg_errors == 0) {
         return;
     }
     std::ofstream file;
     file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
-    file << "WARNING: the following warnings occurred in cargo file of port: " << _route.getCurrentPort() << " in travel: " << travel_name << ":\n";
+    file << "---------------------------------------------------------------------\n";
+    file << "***** ALGORITHM: " << alg_name << ", TRAVEL: " << travel_name << ", PORT: " << _route.getCurrentPort() <<" *****\n";
     vector<string> error_msg;
     error_msg.emplace_back("containers at port: duplicate ID on port (ID rejected)\n");
     error_msg.emplace_back("containers at port: ID already on ship (ID rejected)\n");

@@ -34,7 +34,6 @@ int Crane::start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calc
     int sum_operations = 0;
     bool flag = false;
     for(Operation& op : _operations) {
-        std::cout << "in port "<< _port<<" trying op: " << op._operation << " "<< op._container_id << " "<< op._position._floor<<op._position._x<<op._position._y << std::endl;
         switch(op._operation) {
             case LOAD:
                 if(!load(op._container_id, op._position, plan, route)) { flag = true; }
@@ -129,6 +128,7 @@ bool Crane::reject(const string& id, ShipPlan& plan, ShipRoute& route) {
         writeInstructionError("Reject", container -> getId(), true);
         return false;
     }
+    std::cout << "Rejecting container " << id << std::endl;
     return true;
 }
 
