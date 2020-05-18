@@ -50,7 +50,7 @@ bool Simulation::checkDirectories(const string &travel_path, const string &algor
 }
 
 void Simulation::writeReaderErrors(std::ofstream& file, int simulation_errors, int alg_errors, vector<string> error_msg, const string& alg_name, int index) {
-    for(int i = 0; i < error_msg.size(); i++) {
+    for(long unsigned int i = 0; i < error_msg.size(); i++) {
         if(simulation_errors & pow2(i + index)) {
             file << "INPUT FILE ERROR: " << error_msg[i];
             if(!(alg_errors & pow2(i + index))) {
@@ -151,7 +151,7 @@ string Simulation::createResultsFile(const string &output_path, vector<string> t
     return results_path;
 }
 
-void Simulation::writeResults(const string &path, const map<string, vector<int>>& results, const vector<string>& travels) {
+void Simulation::writeResults(const string &path, const map<string, vector<int>>& results) {
     vector<tuple<string, vector<int>, int, int>> res_vec;
     std::ofstream file;
     file.open(path, std::ios_base::app);

@@ -214,7 +214,6 @@ vector<string> Reader::getTravels(const string &dir) {
 vector<Operation> Reader::getInstructionsVector(const string &path) {
     vector<Operation> ops;
     char op_char;
-    int floor, x, y;
     Position position, move;
     string line, id;
     std::ifstream file(path);

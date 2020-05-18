@@ -68,5 +68,5 @@ void Simulation::start(const string &travel_path, const string &algorithm_path, 
             }
         }
     }
-    writeResults(results_path, alg_results, travels);
+    writeResults(results_path, alg_results);
 }
