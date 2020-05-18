@@ -54,6 +54,7 @@ void AlgorithmRegistrar::loadAlgorithmFromFile(const string &dir_path, const str
                 file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
                 file << "ERROR: couldn't open algorithm at path: " << path.first << " . The algorithm did not register\n";
                 file.close();
+                registered--;
             }
             else{
                 _handles.push_back(std::move(handle));
