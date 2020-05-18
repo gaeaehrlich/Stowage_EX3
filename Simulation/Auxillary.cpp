@@ -49,93 +49,41 @@ bool Simulation::checkDirectories(const string &travel_path, const string &algor
     return travel && algorithm && output;
 }
 
-void Simulation::writeReaderError(std::ofstream& file, const string& error_msg, bool algorithm) {
-    file << error_msg;
-    if(algorithm) {
-        file << "WARNING: algorithm did not alert this problem\n";
+void Simulation::writeReaderErrors(std::ofstream& file, int simulation_errors, int alg_errors, vector<string> error_msg, const string& alg_name, int index) {
+    for(int i = 0; i < error_msg.size(); i++) {
+        if(simulation_errors & pow2(i + index)) {
+            file << error_msg[i];
+            if(!alg_errors & pow2(i + index)) {
+                file << "ALGORITHM WARNING: algorithm did not alert this problem\n";
+            }
+        }
+        else if(alg_errors & pow2(i + index)) {
+            file << "ALGORITHM WARNING: algorithm " << alg_name << " reports a problem the simulation did not find: " << error_msg[i];
+        }
     }
 }
 
-bool Simulation::writeShipPlanErrors(const string &error_path, int simulation_errors, int alg_errors, const string& travel) {
-    if(simulation_errors == 0) {
-        return true;
-    }
-    bool fatal = false;
-    std::ofstream file;
-    file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
-    file << "SHIP PLAN ERRORS FOR TRAVEL: " << travel << "\n";
-    if(simulation_errors & pow2(0)) {
-        writeReaderError(file,  "ship plan: a position has an equal number of floors, or more, than the number of floors provided in the first line (ignored)\n", !alg_errors & pow2(0));
-    }
-    else if(alg_errors & pow2(0)) {
-        file << "WARNING: algorithm reports a problem the simulation did not find. This will be ignored\n";
-    }
-    if(simulation_errors & pow2(1)) {
-        writeReaderError(file, "ship plan: a given position exceeds the X/Y ship limits (ignored)\n", !alg_errors & pow2(1));
-    }
-    else if(alg_errors & pow2(1)) {
-        file << "WARNING: algorithm reports a problem the simulation did not find. This will be ignored\n";
-    }
-    if(simulation_errors & pow2(2)) {
-        writeReaderError(file, "ship plan: bad line format after first line (ignored)\n", !alg_errors & pow2(2));
-    }
-    else if(alg_errors & pow2(2)) {
-        file << "WARNING: algorithm reports a problem the simulation did not find. This will be ignored\n";
-    }
-    if(simulation_errors & pow2(3)) {
-        writeReaderError(file, "ship plan: travel error - bad first line or file cannot be read altogether (cannot run this travel)\n", !alg_errors & pow2(3));
-        fatal = true;
-    }
-    else if(alg_errors & pow2(3)) {
-        file << "WARNING: algorithm reports a problem the simulation did not find. This will be ignored\n";
-    }
-    if(simulation_errors & pow2(4)) {
-        writeReaderError(file, "ship plan: travel error - duplicate x,y appearance with different data (cannot run this travel)\n", !alg_errors & pow2(4));
-        fatal = true;
-    }
-    else if(alg_errors & pow2(4)) {
-        file << "WARNING: algorithm reports a problem the simulation did not find. This will be ignored\n";
-    }
-    file.close();
-    return !fatal;
-}
 
-bool Simulation::writeShipRouteErrors(const string &error_path, int simulation_errors, int alg_errors, const string& travel) {
+bool Simulation::writeShipErrors(const string &error_path, int simulation_errors, int alg_errors, const string& travel, const string& alg_name) {
     if(simulation_errors == 0) {
         return true;
     }
-    bool fatal = false;
     std::ofstream file;
     file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
-    file << "SHIP PLAN ERRORS FOR TRAVEL: " << travel << "\n";
-    if(simulation_errors & pow2(5)) {
-        writeReaderError(file, "travel route: a port appears twice or more consecutively (ignored)\n", !(alg_errors & pow2(5)));
-    }
-    else if(alg_errors & pow2(5)) {
-        file << "WARNING: algorithm reports a problem the simulation did not find. This will be ignored\n";
-    }
-    if(simulation_errors & pow2(6)) {
-        writeReaderError(file, "travel route: bad port symbol format (ignored)\n", !alg_errors & pow2(6));
-    }
-    else if(alg_errors & pow2(6)) {
-        file << "WARNING: algorithm reports a problem the simulation did not find. This will be ignored\n";
-    }
-    if(simulation_errors & pow2(7)) {
-        writeReaderError(file, "travel route: travel error - empty file or file cannot be read altogether (cannot run this travel)\n", !alg_errors & pow2(7));
-        fatal = true;
-    }
-    else if(alg_errors & pow2(7)) {
-        file << "WARNING: algorithm reports a problem the simulation did not find. This will be ignored\n";
-    }
-    if(simulation_errors & pow2(8)) {
-        writeReaderError(file, "travel route: travel error - file with only a single valid port (cannot run this travel)\n", !alg_errors & pow2(8));
-        fatal = true;
-    }
-    else if(alg_errors & pow2(8)) {
-        file << "WARNING: algorithm reports a problem the simulation did not find. This will be ignored\n";
-    }
+    file << "FILE ERRORS FOR TRAVEL: " << travel << "\n";
+    vector<string> error_msg;
+    error_msg.emplace_back("ship plan: a position has an equal number of floors, or more, than the number of floors provided in the first line (ignored)\n");
+    error_msg.emplace_back("ship plan: a given position exceeds the X/Y ship limits (ignored)\n");
+    error_msg.emplace_back("ship plan: bad line format after first line (ignored)\n");
+    error_msg.emplace_back("ship plan: travel error - bad first line or file cannot be read altogether (cannot run this travel)\n");
+    error_msg.emplace_back("ship plan: travel error - duplicate x,y appearance with different data (cannot run this travel)\n");
+    error_msg.emplace_back("travel route: a port appears twice or more consecutively (ignored)\n");
+    error_msg.emplace_back("travel route: bad port symbol format (ignored)\n");
+    error_msg.emplace_back("travel route: travel error - empty file or file cannot be read altogether (cannot run this travel)\n");
+    error_msg.emplace_back("travel route: travel error - file with only a single valid port (cannot run this travel)\n");
+    writeReaderErrors(file, simulation_errors, alg_errors, error_msg, alg_name);
     file.close();
-    return !fatal;
+    return simulation_errors & pow2(3) || simulation_errors & pow2(4) || simulation_errors & pow2(7) || simulation_errors & pow2(8);
 }
 
 
@@ -150,41 +98,41 @@ int Simulation::countContainersOnPort(const string& id, vector<unique_ptr<Contai
 }
 
 
-void Simulation::writeCargoErrors(const string &error_path, int errors, vector<unique_ptr<Container>>& containersAtPort) {
-    if(errors == 0) {
+void Simulation::writeCargoErrors(const string &error_path, int simulation_errors, int alg_errors, vector<unique_ptr<Container>>& containersAtPort, const string& travel_name, const string& alg_name) {
+    if(simulation_errors == 0) {
         return;
     }
     std::ofstream file;
     file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
+    file << "WARNING: the following warnings occurred in cargo file of port: " << _route.getCurrentPort() << " in travel: " << travel_name << ":\n";
+    vector<string> error_msg;
+    error_msg.emplace_back("containers at port: duplicate ID on port (ID rejected)\n");
+    error_msg.emplace_back("containers at port: ID already on ship (ID rejected)\n");
+    error_msg.emplace_back("containers at port: bad line format, missing or bad weight (ID rejected)\n");
+    error_msg.emplace_back("containers at port: bad line format, missing or bad port dest (ID rejected)\n");
+    error_msg.emplace_back("containers at port: bad line format, ID cannot be read (ignored)\n");
+    error_msg.emplace_back("containers at port: illegal ID check ISO 6346 (ID rejected)\n");
+    error_msg.emplace_back("containers at port: file cannot be read altogether (assuming no cargo to be loaded at this port)\n");
+    error_msg.emplace_back("containers at port: last port has waiting containers (ignored)\n");
+    error_msg.emplace_back("containers at port: total containers amount exceeds ship capacity (rejecting far containers)\n");
     for(const auto& container: containersAtPort) {
         if(countContainersOnPort(container -> getId(), containersAtPort) > 1) { // 2^10
-            file << "containers at port: duplicate ID on port (ID rejected). ID number: " << container -> getId() << "\n";
+            if(!simulation_errors & pow2(10)) { error_msg[0].append("The duplicated containers: "); }
+            simulation_errors |= pow2(10);
+            error_msg[0].append(container -> getId());
         }
         if(_plan.hasContainer(container -> getId())) { // 2^11
+            if(!simulation_errors & pow2(11)) { error_msg[1].append("The container: "); }
+            simulation_errors |= pow2(11);
+            error_msg[1].append(container -> getId());
             file << "containers at port: ID already on ship (ID rejected). ID number: " << container -> getId() << "\n";
         }
     }
-    if(errors & pow2(12)) {
-        file << "containers at port: bad line format, missing or bad weight (ID rejected)\n";
-    }
-    if(errors & pow2(13)) {
-        file << "containers at port: bad line format, missing or bad port dest (ID rejected)\n";
-    }
-    if(errors & pow2(14)) {
-        file << "containers at port: bad line format, ID cannot be read (ignored)\n";
-    }
-    if(errors & pow2(15)) {
-        file << "containers at port: illegal ID check ISO 6346 (ID rejected)\n";
-    }
-    if(errors & pow2(16)) {
-        file << "containers at port: file cannot be read altogether (assuming no cargo to be loaded at this port)\n";
-    }
-    if(_route.isLastStop() && !containersAtPort.empty()) {
-        file << "containers at port: last port has waiting containers (ignored)\n";
-    }
-    if(_plan.numberOfEmptyCells() < containersAtPort.size()) {
-        file << "containers at port: total containers amount exceeds ship capacity (rejecting far containers)\n";
-    }
+    if(simulation_errors & pow2(10 )) { error_msg[0].append("\n"); }
+    if(simulation_errors & pow2(11 )) { error_msg[1].append("\n"); }
+    if(_route.isLastStop() && !containersAtPort.empty()) { simulation_errors |= pow2(17); }
+    if(_plan.numberOfEmptyCells() + _plan.findContainersToUnload(_route.getCurrentPort()).size() < containersAtPort.size()) { simulation_errors |= pow2(18); }
+    writeReaderErrors(file, simulation_errors, alg_errors, error_msg, alg_name, 10);
     file.close();
 }
 

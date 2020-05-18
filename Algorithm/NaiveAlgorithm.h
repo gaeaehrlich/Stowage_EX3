@@ -34,7 +34,7 @@ protected:
 
 public:
     ~NaiveAlgorithm() override;
-    void clear();
+    void finishedPort();
     int readCargoLoad(const string& full_path_and_file_name);
     int readShipPlan(const string& full_path_and_file_name) override ;
     int readShipRoute(const string& full_path_and_file_name) override ;
@@ -47,7 +47,6 @@ public:
     void loadInstructions(std::ofstream& file, int cargoReadStatus, vector<unique_ptr<Container>>& list);
     virtual Position findPosition(const unique_ptr<Container>& container) = 0;
     bool rejectingContainer(unique_ptr<Container>& container, int cargoReadStatus);
-    vector<Position> findContainersToUnload();
     void unloadContainersAbove(Position position, std::ofstream& file);
     string instructionToString(char instruction, const string& id, Position pos);
     int countContainersOnPort(const string& id);

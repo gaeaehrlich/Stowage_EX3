@@ -8,9 +8,10 @@ NaiveAlgorithm::~NaiveAlgorithm() {
 }
 
 
-void NaiveAlgorithm::clear() {
+void NaiveAlgorithm::finishedPort() {
     _cargo_load.clear();
     _temporary_unloaded.clear();
+    _route.next();
 }
 
 int NaiveAlgorithm::readShipPlan(const string& full_path_and_file_name) {
@@ -35,22 +36,16 @@ int NaiveAlgorithm::setWeightBalanceCalculator(WeightBalanceCalculator& calculat
 int NaiveAlgorithm::getInstructionsForCargo(const string &input_path, const string &output_path) {
     std::ofstream file;
     file.open(output_path, std::ios::trunc);
-    std::cout << "getting instructions" << std::endl;
     int port_status = 0;
     if(!_invalid_travel) {
         port_status = readCargoLoad(input_path);
-        std::cout << "cargo load is: "; for(auto& c : _cargo_load) std::cout << c->getId() << " "; std::cout << std::endl;
-        std::cout << "unloading" << std::endl;
         unloadInstructions(file);
-        std::cout << "loading temp" << std::endl;
         loadInstructions(file, port_status, _temporary_unloaded);
         sortCargoLoad();
-        std::cout << "loading cargo" << std::endl;
         loadInstructions(file, port_status, _cargo_load);
     }
     file.close();
-    clear();
-    _route.next();
+    finishedPort();
     return _status |= port_status;
 }
 
@@ -68,7 +63,7 @@ void NaiveAlgorithm::sortCargoLoad() {
 
 
 void NaiveAlgorithm::unloadInstructions(std::ofstream& file) {
-    vector<Position> unload = findContainersToUnload();
+    vector<Position> unload = _plan.findContainersToUnload(_route.getCurrentPort());
     for(const Position& pos: unload) {
         unloadContainersAbove(pos, file);
         if(_calc.tryOperation(UNLOAD, _plan.getWeightByPosition(pos), pos._x, pos._y) ==  WeightBalanceCalculator::APPROVED) {
@@ -93,7 +88,6 @@ void NaiveAlgorithm::loadInstructions(std::ofstream& file, int cargoReadStatus, 
 }
 
 bool NaiveAlgorithm::rejectingContainer(unique_ptr<Container>& container,  int cargoReadStatus) {
-    std::cout << "checking if should reject container: " << container->getId() << " going to " << container -> getDest()<< std::endl;
     if(countContainersOnPort(container ->getId()) > 1) { return true; }//containers at port: duplicate ID on port (ID rejected)
     if(_plan.hasContainer(container ->getId())) { return true; } //containers at port: ID already on ship (ID rejected)
     if(container -> getWeight() <= 0) { return true; } //containers at port: bad line format, missing or bad weight (ID rejected)
@@ -107,18 +101,6 @@ bool NaiveAlgorithm::rejectingContainer(unique_ptr<Container>& container,  int c
     return false;
 }
 
-vector<Position> NaiveAlgorithm::findContainersToUnload() {
-    vector<Position> unload;
-    for(int i = _plan.numberOfFloors() - 1; i >= 0 ; i--) {
-        Floor& floor = _plan.getFloor(i);
-        for(pair<int,int> location: floor.getLegalLocations()) {
-            if(!floor.isEmpty(location) && floor.getContainerDest(location) == _route.getCurrentPort()) {
-                unload.emplace_back(Position(i, location.first, location.second));
-            }
-        }
-    }
-    return unload;
-}
 
 void NaiveAlgorithm::unloadContainersAbove(Position pos, std::ofstream& file) {
     for(int i = _plan.numberOfFloors() - 1; i > pos._floor; i--) {
@@ -165,6 +147,6 @@ int NaiveAlgorithm::readCargoLoad(const string &input_path) {
         if(_plan.hasContainer(container -> getId())) { readStatus |= pow2(11); }
     }
     if(_route.isLastStop() && !_cargo_load.empty()) { readStatus |= pow2(17); }
-    if(_plan.numberOfEmptyCells() < _cargo_load.size()) { readStatus |= pow2(18); }
+    if(_plan.numberOfEmptyCells() + _plan.findContainersToUnload(_route.getCurrentPort()).size() < _cargo_load.size()) { readStatus |= pow2(18); }
     return readStatus;
 }

@@ -112,3 +112,16 @@ int ShipPlan::numberOfEmptyCells() {
     return count;
 }
 
+vector<Position> ShipPlan::findContainersToUnload(const string& port) {
+    vector<Position> unload;
+    for(int i = numberOfFloors() - 1; i >= 0 ; i--) {
+        Floor& floor = getFloor(i);
+        for(pair<int,int> location: floor.getLegalLocations()) {
+            if(!floor.isEmpty(location) && floor.getContainerDest(location) == port) {
+                unload.emplace_back(Position(i, location.first, location.second));
+            }
+        }
+    }
+    return unload;
+}
+

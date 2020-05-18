@@ -25,6 +25,7 @@ public:
     int getWeightById(const string& id);
     int getWeightByPosition(Position position);
     int numberOfEmptyCells();
+    vector<Position> findContainersToUnload(const string& port);
 };
 
 
