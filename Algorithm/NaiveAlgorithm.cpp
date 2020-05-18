@@ -88,8 +88,7 @@ void NaiveAlgorithm::loadInstructions(std::ofstream& file,  vector<unique_ptr<Co
 }
 
 bool NaiveAlgorithm::rejectingContainer(unique_ptr<Container>& container) {
-    if(countContainersOnPort(container ->getId()) > 1) { return true; }//containers at port: duplicate ID on port (ID rejected)
-    if(_plan.hasContainer(container ->getId())) { return true; } //containers at port: ID already on ship (ID rejected)
+    if(_plan.hasContainer(container -> getId())) { return true; } //containers at port: ID already on ship (ID rejected)
     if(container -> getWeight() <= 0) { return true; } //containers at port: bad line format, missing or bad weight (ID rejected)
     if(!Reader::legalPortSymbol(container -> getDest())) { return true; } //containers at port: bad line format, missing or bad port dest (ID rejected)
     if(!_route.portInRoute(container -> getDest())) { return true; }

@@ -29,6 +29,7 @@ add_library(_208967075_a SHARED
         _208967075_a.h _208967075_a.cpp
         ${COMMON_SRC}
         )
+
 add_library(_208967075_b SHARED
         AlgorithmRegistration.h
         AbstractAlgorithm.h
@@ -36,5 +37,14 @@ add_library(_208967075_b SHARED
         _208967075_b.h _208967075_b.cpp
         ${COMMON_SRC}
         )
+
+add_library(_208967075_c SHARED
+        AlgorithmRegistration.h
+        AbstractAlgorithm.h
+        _208967075_c.h _208967075_c.cpp
+        ${COMMON_SRC}
+        )
+
 set_property(TARGET _208967075_a PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property(TARGET _208967075_b PROPERTY POSITION_INDEPENDENT_CODE ON)
+set_property(TARGET _208967075_c PROPERTY POSITION_INDEPENDENT_CODE ON)

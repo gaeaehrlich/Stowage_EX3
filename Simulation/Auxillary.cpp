@@ -53,7 +53,7 @@ void Simulation::writeReaderErrors(std::ofstream& file, int simulation_errors, i
     for(int i = 0; i < error_msg.size(); i++) {
         if(simulation_errors & pow2(i + index)) {
             file << "INPUT FILE ERROR: " << error_msg[i];
-            if(!alg_errors & pow2(i + index)) {
+            if(!(alg_errors & pow2(i + index))) {
                 file << "ALGORITHM WARNING: algorithm did not alert this problem\n";
             }
         }

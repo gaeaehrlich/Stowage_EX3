@@ -4,8 +4,6 @@ REGISTER_ALGORITHM(_208967075_a)
 // Idea: from bottom to top, looks for position above container with smallest diff in destination
 // favor pos without a container bellow it
 
-
-
 Position _208967075_a::findPosition(const unique_ptr<Container>& container) {
     int diff = -_route.getRoute().size(), weight = container -> getWeight();
     int new_dist = _route.portDistance(container -> getDest());
