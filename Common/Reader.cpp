@@ -64,7 +64,7 @@ bool Reader::splitPlanLine(string& line, vector<int>& vec) {
 bool Reader::splitInstructionLine(string& line, char& op, string& id, int& floor, int& x, int& y) {
     vector<string> str_vec(5);
     if (!splitLine(line, str_vec, 5)) { return false; }
-    if (str_vec[0] != "L" && str_vec[0] != "U" && str_vec[0] != "R") { return false; }
+    if (str_vec[0] != "L" && str_vec[0] != "U" && str_vec[0] != "R" && str_vec[0] != "M") { return false; }
     op = str_vec[0][0];
     //if(!legalContainerId(str_vec[1])) { return false; } // TODO: changed
     id = str_vec[1];
@@ -103,6 +103,7 @@ bool Reader::legalCheckDigit(const string& id) {
         i++;
     }
     sum -= 11 * (int)floor((double)sum / 11);
+    if (sum % 10 != (id[10] - '0')) { std::cout << id << std::endl; }
     return sum % 10 == (id[10] - '0');
 }
 
