@@ -37,7 +37,7 @@ int Reader::splitCargoLine(string& line, string& id, int& weight, string& destin
     splitLine(line, vec, 3);
     id = vec[0];
     if (id == "") { errors |= pow2(14);}
-    else if (!legalContainerId(id)) { errors |= pow2(15); } //TODO: changed
+    else if (!legalContainerId(id)) { errors |= pow2(15); }
     try {
         weight = stoi(vec[1]);
         if (weight < 0) { errors |= pow2(12); weight = -1; }
@@ -126,7 +126,7 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
     fs::path file_path = path;
     std::cout << path << std::endl;
     if(path.empty() || !fs::exists(file_path)) { return  pow2(3); }
-    std::string line; std::ifstream file(path); // todo: file_path or path?
+    std::string line; std::ifstream file(path);
     if (!file || file.peek() == std::ifstream::traits_type::eof()) { return pow2(3); }
     vector<int> vec(3);
     do {
@@ -157,7 +157,7 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
                 errors |= pow2(4);
                 fatal = true;
             }
-            continue; // todo: or just break? do we need to find ALL errors?
+            continue;
         }
         m_plan[{x1, y1}] = num_floors1;
     }
