@@ -4,7 +4,7 @@
 #include "Container.h"
 #include "Position.h"
 
-enum Op { LOAD = 'L', UNLOAD = 'U', REJECT = 'R' , MOVE = 'M' };
+enum Op { LOAD = 'L', UNLOAD = 'U', REJECT = 'R' , MOVE = 'M' , ERROR};
 
 class Operation {
 public:

@@ -49,56 +49,90 @@ bool Simulation::checkDirectories(const string &travel_path, const string &algor
     return travel && algorithm && output;
 }
 
-bool Simulation::writeShipPlanErrors(const string &error_path, int errors, const string& travel) {
-    if(errors == 0) {
+void Simulation::writeReaderError(std::ofstream& file, const string& error_msg, bool algorithm) {
+    file << error_msg;
+    if(algorithm) {
+        file << "WARNING: algorithm did not alert this problem\n";
+    }
+}
+
+bool Simulation::writeShipPlanErrors(const string &error_path, int simulation_errors, int alg_errors, const string& travel) {
+    if(simulation_errors == 0) {
         return true;
     }
     bool fatal = false;
     std::ofstream file;
     file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
     file << "SHIP PLAN ERRORS FOR TRAVEL: " << travel << "\n";
-    if(errors & pow2(0)) {
-        file << "ship plan: a position has an equal number of floors, or more, than the number of floors provided in the first line (ignored)\n";
+    if(simulation_errors & pow2(0)) {
+        writeReaderError(file,  "ship plan: a position has an equal number of floors, or more, than the number of floors provided in the first line (ignored)\n", !alg_errors & pow2(0));
     }
-    if(errors & pow2(1)) {
-        file << "ship plan: a given position exceeds the X/Y ship limits (ignored)\n";
+    else if(alg_errors & pow2(0)) {
+        file << "WARNING: algorithm reports a problem the simulation did not find. This will be ignored\n";
     }
-    if(errors & pow2(2)) {
-        file << "ship plan: bad line format after first line (ignored)\n";
+    if(simulation_errors & pow2(1)) {
+        writeReaderError(file, "ship plan: a given position exceeds the X/Y ship limits (ignored)\n", !alg_errors & pow2(1));
     }
-    if(errors & pow2(3)) {
-        file << "ship plan: travel error - bad first line or file cannot be read altogether (cannot run this travel)\n";
+    else if(alg_errors & pow2(1)) {
+        file << "WARNING: algorithm reports a problem the simulation did not find. This will be ignored\n";
+    }
+    if(simulation_errors & pow2(2)) {
+        writeReaderError(file, "ship plan: bad line format after first line (ignored)\n", !alg_errors & pow2(2));
+    }
+    else if(alg_errors & pow2(2)) {
+        file << "WARNING: algorithm reports a problem the simulation did not find. This will be ignored\n";
+    }
+    if(simulation_errors & pow2(3)) {
+        writeReaderError(file, "ship plan: travel error - bad first line or file cannot be read altogether (cannot run this travel)\n", !alg_errors & pow2(3));
         fatal = true;
     }
-    if(errors & pow2(4)) {
-        file << "ship plan: travel error - duplicate x,y appearance with different data (cannot run this travel)\n";
+    else if(alg_errors & pow2(3)) {
+        file << "WARNING: algorithm reports a problem the simulation did not find. This will be ignored\n";
+    }
+    if(simulation_errors & pow2(4)) {
+        writeReaderError(file, "ship plan: travel error - duplicate x,y appearance with different data (cannot run this travel)\n", !alg_errors & pow2(4));
         fatal = true;
+    }
+    else if(alg_errors & pow2(4)) {
+        file << "WARNING: algorithm reports a problem the simulation did not find. This will be ignored\n";
     }
     file.close();
     return !fatal;
 }
 
-bool Simulation::writeShipRouteErrors(const string &error_path, int errors, const string& travel) {
-    if(errors == 0) {
+bool Simulation::writeShipRouteErrors(const string &error_path, int simulation_errors, int alg_errors, const string& travel) {
+    if(simulation_errors == 0) {
         return true;
     }
     bool fatal = false;
     std::ofstream file;
     file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
     file << "SHIP PLAN ERRORS FOR TRAVEL: " << travel << "\n";
-    if(errors & pow2(5)) {
-        file << "travel route: a port appears twice or more consecutively (ignored)\n";
+    if(simulation_errors & pow2(5)) {
+        writeReaderError(file, "travel route: a port appears twice or more consecutively (ignored)\n", !(alg_errors & pow2(5)));
     }
-    if(errors & pow2(6)) {
-        file << "travel route: bad port symbol format (ignored)\n";
+    else if(alg_errors & pow2(5)) {
+        file << "WARNING: algorithm reports a problem the simulation did not find. This will be ignored\n";
     }
-    if(errors & pow2(7)) {
-        file << "travel route: travel error - empty file or file cannot be read altogether (cannot run this travel)\n";
+    if(simulation_errors & pow2(6)) {
+        writeReaderError(file, "travel route: bad port symbol format (ignored)\n", !alg_errors & pow2(6));
+    }
+    else if(alg_errors & pow2(6)) {
+        file << "WARNING: algorithm reports a problem the simulation did not find. This will be ignored\n";
+    }
+    if(simulation_errors & pow2(7)) {
+        writeReaderError(file, "travel route: travel error - empty file or file cannot be read altogether (cannot run this travel)\n", !alg_errors & pow2(7));
         fatal = true;
     }
-    if(errors & pow2(8)) {
-        file << "travel route: travel error - file with only a single valid port (cannot run this travel)\n";
+    else if(alg_errors & pow2(7)) {
+        file << "WARNING: algorithm reports a problem the simulation did not find. This will be ignored\n";
+    }
+    if(simulation_errors & pow2(8)) {
+        writeReaderError(file, "travel route: travel error - file with only a single valid port (cannot run this travel)\n", !alg_errors & pow2(8));
         fatal = true;
+    }
+    else if(alg_errors & pow2(8)) {
+        file << "WARNING: algorithm reports a problem the simulation did not find. This will be ignored\n";
     }
     file.close();
     return !fatal;
@@ -116,11 +150,10 @@ int Simulation::countContainersOnPort(const string& id, vector<unique_ptr<Contai
 }
 
 
-bool Simulation::writeCargoErrors(const string &error_path, int errors, vector<unique_ptr<Container>>& containersAtPort) {
+void Simulation::writeCargoErrors(const string &error_path, int errors, vector<unique_ptr<Container>>& containersAtPort) {
     if(errors == 0) {
-        return true;
+        return;
     }
-    bool fatal = false;
     std::ofstream file;
     file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
     for(const auto& container: containersAtPort) {
@@ -153,7 +186,6 @@ bool Simulation::writeCargoErrors(const string &error_path, int errors, vector<u
         file << "containers at port: total containers amount exceeds ship capacity (rejecting far containers)\n";
     }
     file.close();
-    return !fatal;
 }
 
 

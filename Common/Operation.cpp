@@ -16,5 +16,7 @@ Operation::Operation(char operation, string container_id, Position position, Pos
     else if (operation == 'M') {
         _operation = MOVE;
     }
-    //else illegal operation
+    else {
+        _operation = ERROR;
+    }
 }

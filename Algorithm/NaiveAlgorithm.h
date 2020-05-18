@@ -31,10 +31,11 @@ protected:
     WeightBalanceCalculator _calc;
     ShipRoute _route;
     ShipPlan _plan;
-// TODO : should be public?
+
 public:
-    //NaiveAlgorithm(ShipPlan plan, ShipRoute route, WeightBalanceCalculator calc);
+    ~NaiveAlgorithm() override;
     void clear();
+    int readCargoLoad(const string& full_path_and_file_name);
     int readShipPlan(const string& full_path_and_file_name) override ;
     int readShipRoute(const string& full_path_and_file_name) override ;
     int setWeightBalanceCalculator(WeightBalanceCalculator& calculator) override;
@@ -43,9 +44,9 @@ public:
             const std::string& output_full_path_and_file_name) override;
     void sortCargoLoad();
     void unloadInstructions(std::ofstream& file);
-    int loadInstructions(std::ofstream& file, vector<unique_ptr<Container>>& list);
+    void loadInstructions(std::ofstream& file, int cargoReadStatus, vector<unique_ptr<Container>>& list);
     virtual Position findPosition(const unique_ptr<Container>& container) = 0;
-    int rejectingContainer(unique_ptr<Container>& container);
+    bool rejectingContainer(unique_ptr<Container>& container, int cargoReadStatus);
     vector<Position> findContainersToUnload();
     void unloadContainersAbove(Position position, std::ofstream& file);
     string instructionToString(char instruction, const string& id, Position pos);

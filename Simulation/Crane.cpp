@@ -34,7 +34,6 @@ int Crane::start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calc
     int sum_operations = 0;
     bool flag = false;
     for(Operation& op : _operations) {
-        // TODO: is legal operation
         std::cout << "in port "<< _port<<" trying op: " << op._operation << " "<< op._container_id << " "<< op._position._floor<<op._position._x<<op._position._y << std::endl;
         switch(op._operation) {
             case LOAD:
@@ -49,9 +48,14 @@ int Crane::start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calc
                 if(!reject(op._container_id, plan, route)) { flag = true; }
                 break;
             case MOVE:
-                // TODO : check
                 if(!unload(op._container_id, op._position, plan) || !load(op._container_id, op._move, plan, route)) {  flag = true; }
                 sum_operations++;
+                break;
+            case ERROR:
+                std::ofstream file;
+                file.open(_error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
+                file << _sail_info << "ERROR: Algorithm trying an illegal operation.\n";
+                file.close();
                 break;
         }
     }

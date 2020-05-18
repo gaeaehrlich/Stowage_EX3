@@ -3,16 +3,16 @@
 
 bool Simulation::readShipPlan(const string& error_path, const string& travel_path, const string& travel, unique_ptr<AbstractAlgorithm>& algorithm) {
     string plan_path = getPath(travel_path, "ship_plan");
-    int errors = Reader::readShipPlan(plan_path, _plan);
-    algorithm -> readShipPlan(plan_path); // TODO: ignoring if alg read failed
-    return writeShipPlanErrors(error_path, errors, travel);
+    int simulation_errors = Reader::readShipPlan(plan_path, _plan);
+    int alg_errors = algorithm -> readShipPlan(plan_path);
+    return writeShipPlanErrors(error_path, simulation_errors, alg_errors, travel);
 }
 
 bool Simulation::readShipRoute(const string& error_path, const string& travel_path, const string& travel, unique_ptr<AbstractAlgorithm>& algorithm) {
     string route_path = getPath(travel_path, "route");
-    int errors = Reader::readShipRoute(route_path, _route);
-    algorithm -> readShipRoute(route_path); // TODO: ignoring if alg read failed
-    return writeShipRouteErrors(error_path, errors, travel);
+    int simulation_errors = Reader::readShipRoute(route_path, _route);
+    int alg_errors = algorithm -> readShipRoute(route_path);
+    return writeShipRouteErrors(error_path, simulation_errors, alg_errors, travel);
 }
 
 void Simulation::getInstructionForCargo(const string &cargoPath, const string &output_path, const string &error_path, vector<unique_ptr<Container>>& containersAtPort, unique_ptr<AbstractAlgorithm> &algorithm) {
