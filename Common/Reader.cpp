@@ -73,9 +73,9 @@ bool Reader::splitInstructionLine(string& line, char& op, string& id, Position& 
     vector<string> subStrVec;
     std::copy(strVec.begin() + 2, strVec.end(), std::back_inserter(subStrVec));
     if (!convertVectorToInt(intVec, subStrVec)) { return false; }
-    position = Position(intVec[0], intVec[1], intVec[2]);
+    position = Position(intVec[1], intVec[2], intVec[0]);
     if (moving) {
-        move = Position(intVec[3], intVec[4], intVec[5]);
+        move = Position(intVec[4], intVec[5], intVec[3]);
     }
     return true;
 }
@@ -153,7 +153,7 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
         }
         if (mPlan.find({x1, y1}) != mPlan.end()) { // duplicate x,y appearance
             if (mPlan[{x1, y1}] == numFloors1) { // same data
-                errors |= pow2(2);
+                errors |= pow2(1);
             }
             else { // different data
                 errors |= pow2(4);
