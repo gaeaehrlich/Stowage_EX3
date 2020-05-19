@@ -49,17 +49,27 @@ bool Simulation::checkDirectories(const string &travel_path, const string &algor
     return travel && algorithm && output;
 }
 
-void Simulation::writeReaderErrors(std::ofstream& file, int simulation_errors, int alg_errors, vector<string> error_msg, const string& alg_name, int index) {
+void Simulation::writeReaderErrors(const string& error_path, int simulation_errors, int alg_errors, vector<string> error_msg, const string& alg_name, const string& sail_info, int index) {
+    bool errors = false;
+    string msg = sail_info;
     for(long unsigned int i = 0; i < error_msg.size(); i++) {
         if(simulation_errors & pow2(i + index)) {
-            file << "INPUT FILE ERROR: " << error_msg[i];
+            msg.append("INPUT FILE ERROR: " + error_msg[i]);
             if(!(alg_errors & pow2(i + index))) {
-                file << "ALGORITHM WARNING: algorithm did not alert this problem\n";
+                msg.append("ALGORITHM WARNING: algorithm did not alert this problem\n");
             }
+            errors = true;
         }
         else if(alg_errors & pow2(i + index)) {
-            file << "ALGORITHM WARNING: algorithm " << alg_name << " reports a problem the simulation did not find: " << error_msg[i];
+            msg.append("ALGORITHM WARNING: algorithm " + alg_name + " reports a problem the simulation did not find: " + error_msg[i]);
+            errors = true;
         }
+    }
+    if(errors) {
+        std::ofstream file;
+        file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
+        file << msg;
+        file.close();
     }
 }
 
@@ -68,10 +78,7 @@ bool Simulation::writeShipErrors(const string &error_path, int simulation_errors
     if(simulation_errors == 0 && alg_errors == 0) {
         return true;
     }
-    std::ofstream file;
-    file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
-    file << "---------------------------------------------------------------------\n";
-    file << "***** ALGORITHM: " << alg_name << ", TRAVEL: " << travel << " *****\n";
+    const string& sail_info = "---------------------------------------------------------------------\n***** ALGORITHM: " + alg_name + ", TRAVEL: " + travel + " *****\n";
     vector<string> error_msg;
     error_msg.emplace_back("ship plan: a position has an equal number of floors, or more, than the number of floors provided in the first line (ignored)\n");
     error_msg.emplace_back("ship plan: a given position exceeds the X/Y ship limits (ignored)\n");
@@ -82,9 +89,8 @@ bool Simulation::writeShipErrors(const string &error_path, int simulation_errors
     error_msg.emplace_back("travel route: bad port symbol format (ignored)\n");
     error_msg.emplace_back("travel route: travel error - empty file or file cannot be read altogether (cannot run this travel)\n");
     error_msg.emplace_back("travel route: travel error - file with only a single valid port (cannot run this travel)\n");
-    writeReaderErrors(file, simulation_errors, alg_errors, error_msg, alg_name);
-    file.close();
-    return !(simulation_errors & pow2(3) || simulation_errors & pow2(4) || simulation_errors & pow2(7) || simulation_errors & pow2(8));
+    writeReaderErrors(error_path, simulation_errors, alg_errors, error_msg, alg_name, sail_info);
+    return !((simulation_errors & pow2(3)) || (simulation_errors & pow2(4)) || (simulation_errors & pow2(7)) || (simulation_errors & pow2(8)));
 }
 
 
@@ -103,10 +109,7 @@ void Simulation::writeCargoErrors(const string &error_path, int simulation_error
     if(simulation_errors == 0 && alg_errors == 0) {
         return;
     }
-    std::ofstream file;
-    file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
-    file << "---------------------------------------------------------------------\n";
-    file << "***** ALGORITHM: " << alg_name << ", TRAVEL: " << travel_name << ", PORT: " << _route.getCurrentPort() <<" *****\n";
+    const string& sail_info = "---------------------------------------------------------------------\n***** ALGORITHM: " + alg_name + ", TRAVEL: " + travel_name + " *****\n";
     vector<string> error_msg;
     error_msg.emplace_back("containers at port: duplicate ID on port (ID rejected)\n");
     error_msg.emplace_back("containers at port: ID already on ship (ID rejected)\n");
@@ -127,15 +130,13 @@ void Simulation::writeCargoErrors(const string &error_path, int simulation_error
             if(!(simulation_errors & pow2(11))) { error_msg[1].append("The container: "); }
             simulation_errors |= pow2(11);
             error_msg[1].append(container -> getId());
-            file << "containers at port: ID already on ship (ID rejected). ID number: " << container -> getId() << "\n";
         }
     }
     if(simulation_errors & pow2(10 )) { error_msg[0].append("\n"); }
     if(simulation_errors & pow2(11 )) { error_msg[1].append("\n"); }
     if(_route.isLastStop() && !containersAtPort.empty()) { simulation_errors |= pow2(17); }
     if(_plan.numberOfEmptyCells() + _plan.findContainersToUnload(_route.getCurrentPort()).size() < containersAtPort.size()) { simulation_errors |= pow2(18); }
-    writeReaderErrors(file, simulation_errors, alg_errors, error_msg, alg_name, 10);
-    file.close();
+    writeReaderErrors(error_path, simulation_errors, alg_errors, error_msg, alg_name, sail_info, 10);
 }
 
 

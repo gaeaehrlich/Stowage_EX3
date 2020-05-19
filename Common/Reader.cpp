@@ -4,6 +4,7 @@ int Reader::splitLine(string& line, vector<string>& vec, int n, bool exact) {
     int i = 0;
     std::regex r("\\s*,\\s*");
     line = std::regex_replace(line, std::regex("^\\s+"), "");
+    line = std::regex_replace(line, std::regex("\\s+$"), "");
     std::sregex_token_iterator s(line.begin(), line.end(), r, -1), end;
     for (;i < n && s != end; s++, i++) {
         string str = s -> str();
@@ -44,6 +45,8 @@ int Reader::splitCargoLine(string& line, string& id, int& weight, string& destin
     }
     catch (std::invalid_argument const &e) { errors |= pow2(12); weight = -1; }
     destination = vec[2];
+    std::transform(destination.begin(), destination.end(), destination.begin(),
+               [](unsigned char c){ return std::toupper(c); });
     if (!legalPortSymbol(destination)) { errors |= pow2(13); destination = ""; }
     return errors;
 }
@@ -144,7 +147,7 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
             continue;
         }
         x1 = vec[0]; y1 = vec[1]; num_floors1 = vec[2];
-        if (x < x1 || y < y1 || num_floors <= num_floors1) { // wrong values
+        if (x <= x1 || y <= y1 || num_floors <= num_floors1) { // wrong values
             errors |= pow2(2);
             continue;
         }
@@ -161,6 +164,13 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
         m_plan[{x1, y1}] = num_floors1;
     }
     if (!fatal) {
+        for (int i = 0; i < x; i++) {
+        	for (int j = 0; j < y; j++) {
+        		if (m_plan.find({i, j}) == m_plan.end()) {
+				m_plan[{i, j}] = num_floors - 1;
+			}
+        	}
+        }
         plan = ShipPlan(num_floors, std::move(m_plan)); // why not?
     }
     return errors;
@@ -178,6 +188,10 @@ int Reader::readShipRoute(const string &path, ShipRoute& route) {
     if (!file || file.peek() == std::ifstream::traits_type::eof()) { return pow2(7); }
     while (std::getline(file, curr_port)) {
         if (ignoreLine(curr_port)) { continue; }
+	curr_port = std::regex_replace(curr_port, std::regex("^\\s+"), "");
+	curr_port = std::regex_replace(curr_port, std::regex("\\s+$"), "");
+	std::transform(curr_port.begin(), curr_port.end(), curr_port.begin(),
+               [](unsigned char c){ return std::toupper(c); });
         if (curr_port == prev_port) {
             errors |= pow2(5);
             continue;

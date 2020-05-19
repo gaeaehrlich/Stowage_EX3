@@ -9,7 +9,7 @@
 #include <tuple>
 #include <memory>
 #include <map>
-#include <filesystem>
+#include <experimental/filesystem>
 #include <fstream>
 #include <regex>
 #include <cmath>
@@ -24,7 +24,7 @@ using std::string;
 using std::map;
 using std::unique_ptr;
 using std::make_unique;
-namespace fs = std::filesystem;
+namespace fs = std::experimental::filesystem;
 
 #define pow2(x) (int)pow(2, x)
 
