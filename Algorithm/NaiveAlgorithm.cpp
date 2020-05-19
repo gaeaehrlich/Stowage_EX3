@@ -11,7 +11,7 @@ NaiveAlgorithm::~NaiveAlgorithm() {
 void NaiveAlgorithm::finishedPort() {
     _cargo_load.clear();
     _temporary_unloaded.clear();
-    _route.next();
+    if(!_route.isLastStop()) _route.next();
 }
 
 int NaiveAlgorithm::readShipPlan(const string& full_path_and_file_name) {

@@ -24,7 +24,7 @@ unique_ptr<Container> Floor::pop(int x, int y) {
     }
     else if(_map[{x,y}] != nullptr) {
         unique_ptr<Container> container = std::move(_map[{x,y}]);
-        return std::move(container);
+        return container;
     }
     printf("No container to pop");
     return nullptr;
