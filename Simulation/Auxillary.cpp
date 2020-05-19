@@ -119,12 +119,12 @@ void Simulation::writeCargoErrors(const string &error_path, int simulation_error
     error_msg.emplace_back("containers at port: total containers amount exceeds ship capacity (rejecting far containers)\n");
     for(const auto& container: containersAtPort) {
         if(countContainersOnPort(container -> getId(), containersAtPort) > 1) { // 2^10
-            if(!simulation_errors & pow2(10)) { error_msg[0].append("The duplicated containers: "); }
+            if(!(simulation_errors & pow2(10))) { error_msg[0].append("The duplicated containers: "); }
             simulation_errors |= pow2(10);
             error_msg[0].append(container -> getId());
         }
         if(_plan.hasContainer(container -> getId())) { // 2^11
-            if(!simulation_errors & pow2(11)) { error_msg[1].append("The container: "); }
+            if(!(simulation_errors & pow2(11))) { error_msg[1].append("The container: "); }
             simulation_errors |= pow2(11);
             error_msg[1].append(container -> getId());
             file << "containers at port: ID already on ship (ID rejected). ID number: " << container -> getId() << "\n";

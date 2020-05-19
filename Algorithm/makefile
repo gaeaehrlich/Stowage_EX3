@@ -9,7 +9,7 @@ SHARED_OBJS  = _208967075_a.so _208967075_b.so _208967075_c.so
 COMMON = ../Common/
 ALGORITHM = ./
 
-CPP_COMP_FLAG = -std=c++2a -Wall -Wextra -Werror -pedantic-errors -DNDEBUG -fPIC
+CPP_COMP_FLAG = -std=c++2a -Wall -Wextra -Werror -pedantic-errors -DNDEBUG -fPIC -fvisibility=hidden
 CPP_LINK_FLAG = -shared
 
 all: $(SHARED_OBJS)
@@ -48,6 +48,8 @@ _208967075_b.so: $(ALGORITHM)_208967075_b.o NaiveAlgorithm.o $(OBJS)
 	$(COMP) $(CPP_LINK_FLAG) -o $@ $^
 _208967075_c.so: $(ALGORITHM)_208967075_c.o $(OBJS)
 	$(COMP) $(CPP_LINK_FLAG) -o $@ $^
+$(OBJS) _208967075_a.so _208967075_b.so _208967075_c.so:
+	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -o $@
 
 clean:
-	rm -f $(OBJS) _208967075_a.o _208967075_b.o _208967075_c.o
+	rm -f $(OBJS) $(SHARED_OBJS)
