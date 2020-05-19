@@ -9,7 +9,7 @@ SHARED_OBJS  = _208967075_a.so _208967075_b.so _208967075_c.so
 COMMON = ../Common/
 ALGORITHM = ./
 
-CPP_COMP_FLAG = -std=c++2a -Wall -Wextra -Werror -pedantic-errors -DNDEBUG -fPIC
+CPP_COMP_FLAG = -std=c++2a -Wall -Wextra -Werror -pedantic-errors -DNDEBUG -fPIC -lstdc++fs
 CPP_LINK_FLAG = -shared
 
 all: $(SHARED_OBJS)
@@ -31,7 +31,7 @@ ShipRoute.o: $(COMMON)ShipRoute.cpp $(COMMON)ShipRoute.h
 WeightBalanceCalculator.o: $(COMMON)WeightBalanceCalculator.cpp $(COMMON)WeightBalanceCalculator.h
 	$(COMP) $(CPP_COMP_FLAG) -c $(COMMON)$*.cpp
 Reader.o: $(COMMON)Reader.cpp $(COMMON)Reader.h
-	$(COMP) $(CPP_COMP_FLAG) -lstdc++fs -c $(COMMON)$*.cpp
+	$(COMP) $(CPP_COMP_FLAG) -c $(COMMON)$*.cpp
 NaiveAlgorithm.o: $(ALGORITHM)NaiveAlgorithm.cpp $(ALGORITHM)NaiveAlgorithm.h $(ALGORITHM)AbstractAlgorithm.h $(ALGORITHM)AlgorithmRegistration.h
 	$(COMP) $(CPP_COMP_FLAG) -c $(ALGORITHM)$*.cpp
 
