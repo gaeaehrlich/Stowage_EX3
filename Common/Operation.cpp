@@ -2,8 +2,8 @@
 
 #include <utility>
 
-Operation::Operation(char operation, string container_id, Position position, Position move):
-    _container_id(std::move(container_id)), _position(position), _move(move){
+Operation::Operation(char operation, string id, Position position, Position move):
+        _id(std::move(id)), _position(position), _move(move){
     if(operation == 'L') {
         _operation = LOAD;
     }

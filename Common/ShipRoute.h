@@ -16,7 +16,7 @@ public:
     ShipRoute();
     explicit ShipRoute(vector<string> route);
     vector<string> getRoute() const;
-    bool portInRoute(const string& port_symbol);
+    bool portInRoute(const string& symbol);
     string getCurrentPort();
     void next();
     bool isLastStop();

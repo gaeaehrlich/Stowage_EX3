@@ -25,7 +25,7 @@ public:
     string getContainerDest(pair<int,int> location);
     bool isFloorEmpty();
     bool isFloorFull();
-    bool hasContainer(const string& container_id);
+    bool hasContainer(const string& containerId);
     bool isLegalLocation(int x, int y);
     string getContainerID(int x, int y);
     string getContainerDest(int x, int y);

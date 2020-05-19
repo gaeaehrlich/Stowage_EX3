@@ -14,11 +14,11 @@ int Reader::splitLine(string& line, vector<string>& vec, int n, bool exact) {
     return (!exact || s == end) && (i == n);
 }
 
-bool Reader::convertVectorToInt(vector<int>& int_vec, vector<string>& str_vec) {
+bool Reader::convertVectorToInt(vector<int>& intVec, vector<string>& strVec) {
     try {
-        for (unsigned long long i = 0; i < str_vec.size(); i++) {
-            int number = stoi(str_vec[i]);
-            int_vec[i] = number;
+        for (unsigned long long i = 0; i < strVec.size(); i++) {
+            int number = stoi(strVec[i]);
+            intVec[i] = number;
         }
     }
     catch (std::invalid_argument const &e) {
@@ -63,19 +63,19 @@ bool Reader::splitInstructionLine(string& line, char& op, string& id, Position& 
     bool rejecting = std::regex_match(line, std::regex("^\\s*R.*"));
     bool moving = std::regex_match(line, std::regex("^\\s*M.*"));
     int n = moving ? 8 : (rejecting ? 2 : 5);
-    vector<string> str_vec(n);
-    if (!splitLine(line, str_vec, n, !rejecting)) { return false; }
-    if (str_vec[0] != "L" && str_vec[0] != "U" && str_vec[0] != "R" && str_vec[0] != "M") { return false; }
-    op = str_vec[0][0];
-    id = str_vec[1];
+    vector<string> strVec(n);
+    if (!splitLine(line, strVec, n, !rejecting)) { return false; }
+    if (strVec[0] != "L" && strVec[0] != "U" && strVec[0] != "R" && strVec[0] != "M") { return false; }
+    op = strVec[0][0];
+    id = strVec[1];
     if (rejecting) { return true; }
-    vector<int> int_vec(n - 2);
-    vector<string> sub_str_vec;
-    std::copy(str_vec.begin() + 2, str_vec.end(), std::back_inserter(sub_str_vec));
-    if (!convertVectorToInt(int_vec, sub_str_vec)) { return false; }
-    position = Position(int_vec[0], int_vec[1], int_vec[2]);
+    vector<int> intVec(n - 2);
+    vector<string> subStrVec;
+    std::copy(strVec.begin() + 2, strVec.end(), std::back_inserter(subStrVec));
+    if (!convertVectorToInt(intVec, subStrVec)) { return false; }
+    position = Position(intVec[0], intVec[1], intVec[2]);
     if (moving) {
-        move = Position(int_vec[3], int_vec[4], int_vec[5]);
+        move = Position(intVec[3], intVec[4], intVec[5]);
     }
     return true;
 }
@@ -112,8 +112,8 @@ int Reader::readCargoLoad(const string &path, vector<unique_ptr<Container>>& lis
     vector<unique_ptr<Container>> cargo;
     std::string line, destination,  id;
     int weight, errors = 0;
-    fs::path file_path = path;
-    if(path.empty() || !fs::exists(file_path)) { return  pow2(16); }
+    fs::path filePath = path;
+    if(path.empty() || !fs::exists(filePath)) { return  pow2(16); }
     std::ifstream file(path);
     while (std::getline(file, line)) {
         if (ignoreLine(line)) { continue; }
@@ -125,9 +125,9 @@ int Reader::readCargoLoad(const string &path, vector<unique_ptr<Container>>& lis
 }
 
 int Reader::readShipPlan(const string& path, ShipPlan& plan) {
-    int errors = 0, x, x1, y, y1, num_floors, num_floors1;
-    fs::path file_path = path;
-    if(path.empty() || !fs::exists(file_path)) { return  pow2(3); }
+    int errors = 0, x, x1, y, y1, numFloors, numFloors1;
+    fs::path filePath = path;
+    if(path.empty() || !fs::exists(filePath)) { return  pow2(3); }
     std::string line; std::ifstream file(path);
     if (!file || file.peek() == std::ifstream::traits_type::eof()) { return pow2(3); }
     vector<int> vec(3);
@@ -137,22 +137,22 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
         }
     }
     while (ignoreLine(line));
-    num_floors = vec[0]; x = vec[1]; y = vec[2];
+    numFloors = vec[0]; x = vec[1]; y = vec[2];
     bool fatal = false;
-    map< pair<int,int>, int > m_plan;
+    map< pair<int,int>, int > mPlan;
     while (std::getline(file, line)) {
         if (ignoreLine(line)) { continue; }
         if(!Reader::splitPlanLine(line, vec)) { // wrong format
             errors |= pow2(2);
             continue;
         }
-        x1 = vec[0]; y1 = vec[1]; num_floors1 = vec[2];
-        if (x <= x1 || y <= y1 || num_floors <= num_floors1) { // wrong values
+        x1 = vec[0]; y1 = vec[1]; numFloors1 = vec[2];
+        if (x <= x1 || y <= y1 || numFloors <= numFloors1) { // wrong values
             errors |= pow2(2);
             continue;
         }
-        if (m_plan.find({x1, y1}) != m_plan.end()) { // duplicate x,y appearance
-            if (m_plan[{x1, y1}] == num_floors1) { // same data
+        if (mPlan.find({x1, y1}) != mPlan.end()) { // duplicate x,y appearance
+            if (mPlan[{x1, y1}] == numFloors1) { // same data
                 errors |= pow2(2);
             }
             else { // different data
@@ -161,47 +161,47 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
             }
             continue;
         }
-        m_plan[{x1, y1}] = num_floors1;
+        mPlan[{x1, y1}] = numFloors1;
     }
     if (!fatal) {
         for (int i = 0; i < x; i++) {
         	for (int j = 0; j < y; j++) {
-        		if (m_plan.find({i, j}) == m_plan.end()) {
-				m_plan[{i, j}] = num_floors - 1;
+        		if (mPlan.find({i, j}) == mPlan.end()) {
+                    mPlan[{i, j}] = numFloors - 1;
 			}
         	}
         }
-        plan = ShipPlan(num_floors, std::move(m_plan)); // why not?
+        plan = ShipPlan(numFloors, std::move(mPlan)); // why not?
     }
     return errors;
 }
 
 int Reader::readShipRoute(const string &path, ShipRoute& route) {
-    fs::path file_path = path;
-    if(path.empty() || !fs::exists(file_path)) {
+    fs::path filePath = path;
+    if(path.empty() || !fs::exists(filePath)) {
         return pow2(7);
     }
     int errors = 0;
-    string curr_port, prev_port;
+    string currPort, prevPort;
     vector<string> ports;
     std::ifstream file(path);
     if (!file || file.peek() == std::ifstream::traits_type::eof()) { return pow2(7); }
-    while (std::getline(file, curr_port)) {
-        if (ignoreLine(curr_port)) { continue; }
-	curr_port = std::regex_replace(curr_port, std::regex("^\\s+"), "");
-	curr_port = std::regex_replace(curr_port, std::regex("\\s+$"), "");
-	std::transform(curr_port.begin(), curr_port.end(), curr_port.begin(),
-               [](unsigned char c){ return std::toupper(c); });
-        if (curr_port == prev_port) {
+    while (std::getline(file, currPort)) {
+        if (ignoreLine(currPort)) { continue; }
+        currPort = std::regex_replace(currPort, std::regex("^\\s+"), "");
+        currPort = std::regex_replace(currPort, std::regex("\\s+$"), "");
+	    std::transform(currPort.begin(), currPort.end(), currPort.begin(),
+                   [](unsigned char c){ return std::toupper(c); });
+        if (currPort == prevPort) {
             errors |= pow2(5);
             continue;
         }
-        if(!Reader::legalPortSymbol(curr_port)) {
+        if(!Reader::legalPortSymbol(currPort)) {
             errors |= pow2(6);
             continue;
         }
-        ports.emplace_back(curr_port);
-        prev_port = curr_port;
+        ports.emplace_back(currPort);
+        prevPort = currPort;
     }
     if (ports.size() == 1) { errors |= pow2(8); }
     else { route = ShipRoute(ports); }
@@ -226,14 +226,14 @@ vector<string> Reader::getTravels(const string &dir) {
 
 vector<Operation> Reader::getInstructionsVector(const string &path) {
     vector<Operation> ops;
-    char op_char;
+    char opChar;
     Position position, move;
     string line, id;
     std::ifstream file(path);
     while (std::getline(file, line)) {
         if (Reader::ignoreLine(line)) { continue; }
-        if (Reader::splitInstructionLine(line, op_char, id, position, move)) {
-            Operation op = Operation(op_char, id, position, move);
+        if (Reader::splitInstructionLine(line, opChar, id, position, move)) {
+            Operation op = Operation(opChar, id, position, move);
             ops.push_back(op);
         }
     }

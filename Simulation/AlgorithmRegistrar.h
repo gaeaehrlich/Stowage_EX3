@@ -40,7 +40,7 @@ public:
     vector<pair<string, unique_ptr<AbstractAlgorithm>>> getAlgorithms() const;
     size_t size() const;
     static AlgorithmRegistrar& getInstance();
-    void loadAlgorithmFromFile(const string& dir_path, const string& error_path);
+    void loadAlgorithmFromFile(const string& dirPath, const string& errorPath);
 };
 
 

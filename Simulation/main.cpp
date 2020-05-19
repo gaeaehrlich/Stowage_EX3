@@ -42,12 +42,12 @@ bool getPaths(int argc, char *argv[], string& travel_path, string& algorithm_pat
 }
 
 int main(int argc, char *argv[]) {
-    string travel_path, algorithm_path = "." + SUBDIR, output_path = "." + SUBDIR;
-    if(!getPaths(argc, argv, travel_path, algorithm_path, output_path)) {
+    string travelPath, algorithmPath = "." + SUBDIR, outputPath = "." + SUBDIR;
+    if(!getPaths(argc, argv, travelPath, algorithmPath, outputPath)) {
         return FAILURE;
     }
     std::cout << "Hello, World!" << std::endl;
     Simulation simulation;
-    simulation.start(travel_path, algorithm_path, output_path);
+    simulation.start(travelPath, algorithmPath, outputPath);
     return 0;
 }

@@ -12,7 +12,7 @@ public:
     ShipPlan(int num, map< pair<int,int>, int > dict);
     int numberOfFloors();
     Floor& getFloor(int floor_number);
-    bool hasContainer(const string& container_id);
+    bool hasContainer(const string& id);
     bool isFull();
     bool isEmpty();
     bool isLegalLocation(Position position);

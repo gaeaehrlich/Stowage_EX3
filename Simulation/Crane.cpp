@@ -1,59 +1,59 @@
 #include "Crane.h"
 #include "Simulation.h"
 
-void Crane::set_container_data(vector<unique_ptr<Container>> containers) {
+void Crane::setContainerData(vector<unique_ptr<Container>> containers) {
     for(auto& container: containers) {
-        _container_data[container -> getId()].emplace_back(std::move(container));
+        _containerData[container -> getId()].emplace_back(std::move(container));
     }
 }
 
-void Crane::set_operations(vector<Operation> operations) {
+void Crane::setOperations(vector<Operation> operations) {
     _operations = std::move(operations);
 }
 
-void Crane::set_error_path(const string &error_path) {
-    _error_path = error_path;
+void Crane::setErrorPath(const string &errorPath) {
+    _errorPath = errorPath;
 }
 
-void Crane::set_sail_info(const string &sail_info) {
-    _sail_info = sail_info;
+void Crane::setSailInfo(const string &sailInfo) {
+    _sailInfo = sailInfo;
 }
 
 
-void Crane::set_calculator(WeightBalanceCalculator &calculator) {
+void Crane::setCalculator(WeightBalanceCalculator &calculator) {
     _calculator = calculator;
 }
 
-int Crane::start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calculator, vector<unique_ptr<Container>> containers, vector<Operation> operations, const string &error_path, const string &sail_info) {
-    set_container_data(std::move(containers));
-    set_operations(std::move(operations));
-    set_error_path(error_path);
-    set_sail_info(sail_info);
-    set_calculator(calculator);
+int Crane::start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calculator, vector<unique_ptr<Container>> containers, vector<Operation> operations, const string &errorPath, const string &sailInfo) {
+    setContainerData(std::move(containers));
+    setOperations(std::move(operations));
+    setErrorPath(errorPath);
+    setSailInfo(sailInfo);
+    setCalculator(calculator);
     _port = route.getCurrentPort();
     int sum_operations = 0;
     bool flag = false;
     for(Operation& op : _operations) {
         switch(op._operation) {
             case LOAD:
-                if(!load(op._container_id, op._position, plan, route)) { flag = true; }
+                if(!load(op._id, op._position, plan, route)) { flag = true; }
                 sum_operations++;
                 break;
             case UNLOAD:
-                if(!unload(op._container_id, op._position, plan)) { flag = true; }
+                if(!unload(op._id, op._position, plan)) { flag = true; }
                 sum_operations++;
                 break;
             case REJECT:
-                if(!reject(op._container_id, plan, route)) { flag = true; }
+                if(!reject(op._id, plan, route)) { flag = true; }
                 break;
             case MOVE:
-                if(!unload(op._container_id, op._position, plan) || !load(op._container_id, op._move, plan, route)) {  flag = true; }
+                if(!unload(op._id, op._position, plan) || !load(op._id, op._move, plan, route)) {  flag = true; }
                 sum_operations++;
                 break;
             case ERROR:
                 std::ofstream file;
-                file.open(_error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
-                file << _sail_info << "ERROR: Algorithm trying an illegal operation.\n";
+                file.open(_errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
+                file << _sailInfo << "ERROR: Algorithm trying an illegal operation.\n";
                 file.close();
                 break;
         }
@@ -64,20 +64,20 @@ int Crane::start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calc
 
 bool Crane::end(ShipPlan& plan, ShipRoute& route) {
     bool isLegal = checkLoadedTemporaryUnloaded() && checkWronglyUnloaded(plan, route) && checkShip(plan) && handleLastStop(plan, route);
-    _container_data.clear();
-    _temporary_unloaded.clear();
-    _newly_loaded_dest.clear();
+    _containerData.clear();
+    _temporaryUnloaded.clear();
+    _newlyLoadedDest.clear();
     return isLegal;
 }
 
 bool Crane::load(const string& id, Position pos, ShipPlan& plan, ShipRoute& route) {
     unique_ptr<Container> container;
-    if(_container_data[id].empty()) {
+    if(_containerData[id].empty()) {
         containerNotFoundError("at port");
         return false;
     }
-    container = std::move(_container_data[id][0]);
-    _container_data[id].erase(_container_data[id].begin());
+    container = std::move(_containerData[id][0]);
+    _containerData[id].erase(_containerData[id].begin());
 
     bool fatal = false;
     bool isError = isErrorLoad(container, plan, route, pos, fatal);
@@ -85,16 +85,16 @@ bool Crane::load(const string& id, Position pos, ShipPlan& plan, ShipRoute& rout
 
     if(_calculator.tryOperation(LOAD, container -> getWeight(), pos._x, pos._y) != WeightBalanceCalculator::APPROVED) { return false; }
 
-    if(_temporary_unloaded.find(container -> getId()) != _temporary_unloaded.end()) {
-        _temporary_unloaded.erase(container -> getId());
+    if(_temporaryUnloaded.find(container -> getId()) != _temporaryUnloaded.end()) {
+        _temporaryUnloaded.erase(container -> getId());
     }
     else {
-        _newly_loaded_dest.insert(container -> getDest());
+        _newlyLoadedDest.insert(container -> getDest());
     }
 
     plan.getFloor(pos._floor).insert(pos._x, pos._y, std::move(container));
     std::cout << "Loading container " << id << " to position: floor: " << pos._floor << ", x: " << pos._x << ", y: " << pos._y << std::endl;
-    _container_data.erase(id);
+    _containerData.erase(id);
     return !isError;
 }
 
@@ -107,18 +107,18 @@ bool Crane::unload(const string& id, Position pos, ShipPlan& plan) {
 
     unique_ptr<Container> removed = std::move(plan.getFloor(pos._floor).pop(pos._x, pos._y));
     if(removed -> getDest() != _port) {
-        _temporary_unloaded.insert(removed -> getId());
+        _temporaryUnloaded.insert(removed -> getId());
     }
     std::cout << "Unloading container " << id << " from position: floor: " << pos._floor << ", x: " << pos._x << ", y: " << pos._y << std::endl;
-    _container_data[removed -> getId()].emplace_back(std::move(removed));
+    _containerData[removed -> getId()].emplace_back(std::move(removed));
     return !isError;
 }
 
 bool Crane::reject(const string& id, ShipPlan& plan, ShipRoute& route) {
     unique_ptr<Container> container;
-    if(!_container_data[id].empty()) {
-        container = std::move(_container_data[id][0]);
-        _container_data[id].erase(_container_data[id].begin());
+    if(!_containerData[id].empty()) {
+        container = std::move(_containerData[id][0]);
+        _containerData[id].erase(_containerData[id].begin());
     }
     else {
         containerNotFoundError("at port");

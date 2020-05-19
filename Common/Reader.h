@@ -34,7 +34,7 @@ public:
     static bool splitPlanLine(string& line, vector<int>& vec);
     static int splitCargoLine(string& line, string& id, int& weight, string& destination);
     static int splitLine(string& line, vector<string>& vec, int n, bool exact = true);
-    static bool convertVectorToInt(vector<int>& int_vec, vector<string>& str_vec);
+    static bool convertVectorToInt(vector<int>& intVec, vector<string>& strVec);
     static bool ignoreLine(string& str);
     static bool legalPortSymbol(const string& symbol);
     static bool legalContainerId(const string& id);

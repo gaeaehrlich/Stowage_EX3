@@ -2,27 +2,27 @@
 REGISTER_ALGORITHM(_208967075_c)
 
 _208967075_c::~_208967075_c() {
-    _cargo_load.clear();
+    _cargoLoad.clear();
 }
 
 
 void _208967075_c::finishedPort() {
-    _cargo_load.clear();
+    _cargoLoad.clear();
     _route.next();
 }
 
-int _208967075_c::readShipPlan(const string& full_path_and_file_name) {
-    Reader::readShipPlan(full_path_and_file_name, _plan);
+int _208967075_c::readShipPlan(const string& path) {
+    Reader::readShipPlan(path, _plan);
     return 0;
 }
 
-int _208967075_c::readShipRoute(const string& full_path_and_file_name) {
-    Reader::readShipRoute(full_path_and_file_name, _route);
+int _208967075_c::readShipRoute(const string& path) {
+    Reader::readShipRoute(path, _route);
     return 0;
 }
 
-int _208967075_c::readCargoLoad(const string &input_path) {
-    Reader::readCargoLoad(input_path, _cargo_load);
+int _208967075_c::readCargoLoad(const string &path) {
+    Reader::readCargoLoad(path, _cargoLoad);
     return 0;
 }
 
@@ -31,12 +31,12 @@ int _208967075_c::setWeightBalanceCalculator(WeightBalanceCalculator& calculator
     return 0;
 }
 
-int _208967075_c::getInstructionsForCargo(const string &input_path, const string &output_path) {
+int _208967075_c::getInstructionsForCargo(const string &inputPath, const string &outputPath) {
     std::ofstream file;
-    file.open(output_path, std::ios::trunc);
-    readCargoLoad(input_path);
+    file.open(outputPath, std::ios::trunc);
+    readCargoLoad(inputPath);
     unloadInstructions(file);
-    loadInstructions(file, _cargo_load);
+    loadInstructions(file, _cargoLoad);
     file.close();
     finishedPort();
     return 0;
@@ -92,7 +92,7 @@ void _208967075_c::unloadContainersAbove(Position pos, std::ofstream& file) {
                 if(_calc.tryOperation(UNLOAD, _plan.getWeightByPosition(pos), pos._x, pos._y) ==  WeightBalanceCalculator::APPROVED) {
                     unique_ptr<Container> removed = _plan.getFloor(i).pop(pos._x, pos._y);
                     file << instructionToString('U', removed->getId(), Position(i, pos._x, pos._y));
-                    _cargo_load.emplace_back(std::move(removed));
+                    _cargoLoad.emplace_back(std::move(removed));
                 }
             }
         }
@@ -105,16 +105,6 @@ string _208967075_c::instructionToString(char instruction, const string& id, Pos
     string newline = "\n";
     ss << instruction << br << id << br << pos._floor << br << pos._x << br << pos._y << newline;
     return ss.str();
-}
-
-int _208967075_c::countContainersOnPort(const string& id) {
-    int count = 0;
-    for(auto& container: _cargo_load) {
-        if(container != nullptr && container -> getId() == id) {
-            count++;
-        }
-    }
-    return count;
 }
 
 

@@ -78,9 +78,9 @@ bool Floor::isFloorFull() {
     return true;
 }
 
-bool Floor::hasContainer(const string& container_id) {
+bool Floor::hasContainer(const string& containerId) {
     for(const auto& element : _map) {
-        if(element.second != nullptr && element.second->getId() == container_id) {
+        if(element.second != nullptr && element.second->getId() == containerId) {
             return true;
         }
     }

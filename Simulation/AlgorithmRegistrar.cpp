@@ -28,22 +28,22 @@ AlgorithmRegistrar &AlgorithmRegistrar::getInstance() {
     return instance;
 }
 
-void AlgorithmRegistrar::loadAlgorithmFromFile(const string &dir_path, const string& error_path) {
-    vector<pair<string, string>> alg_path; // <algorithm path, algorithm name>
+void AlgorithmRegistrar::loadAlgorithmFromFile(const string &dirPath, const string& errorPath) {
+    vector<pair<string, string>> algPath; // <algorithm path, algorithm name>
     std::regex format("(.*)\\.so");
-    for(const auto & entry : fs::directory_iterator(dir_path)) {
+    for(const auto & entry : fs::directory_iterator(dirPath)) {
         if(std::regex_match(entry.path().string(), format)) {
-            alg_path.emplace_back(entry.path().string(), entry.path().stem().string());
+            algPath.emplace_back(entry.path().string(), entry.path().stem().string());
         }
     }
     long unsigned int registered = 0;
-    for(auto& path: alg_path) {
+    for(auto& path: algPath) {
         unique_ptr<void, DlCloser> handle(dlopen(path.first.data(), RTLD_LAZY));
         if(!handle) {
             std::ofstream file;
-            file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
-            const char* dlopen_error = dlerror();
-            const char* error = dlopen_error ? dlopen_error : "Failed to open shared object.";
+            file.open(errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
+            const char* dlopenError = dlerror();
+            const char* error = dlopenError ? dlopenError : "Failed to open shared object.";
             file << "ERROR: couldn't open algorithm at path: " << path.first << " . The error is: " << error << "\n";
             file.close();
         }
@@ -51,7 +51,7 @@ void AlgorithmRegistrar::loadAlgorithmFromFile(const string &dir_path, const str
             registered++;
             if(registered != _algorithmFactory.size()) {
                 std::ofstream file;
-                file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
+                file.open(errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
                 file << "ERROR: couldn't open algorithm at path: " << path.first << " . The algorithm did not register\n";
                 file.close();
                 registered--;

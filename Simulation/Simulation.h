@@ -28,24 +28,24 @@ class Simulation {
     Crane _crane;
 
 public:
-    void start(const string& travel_path, const string& algorithm_path, const string& output_path);
-    int sail(pair<string, unique_ptr<AbstractAlgorithm>>& algorithm, const string& travel_path, const string& travel_name, const string& output_path, const string& error_path);
-    bool checkDirectories(const string& travel_path, const string& algorithm_path, const string& output_path);
-    bool readShip(const string& error_path, const string& travel_path, const string& travel, pair<string, unique_ptr<AbstractAlgorithm>>& algorithm);
-    string getCargoPath(const string& travel_path, const string& port);
-    bool writeShipErrors(const string& error_path, int simulation_errors, int alg_errors, const string& travel, const string& alg_name);
-    string getPath(const string &travel_dir, const string &search);
-    void getInstructionForCargo(const string &cargoPath, const string &output_path, const string &error_path, vector<unique_ptr<Container>>& containersAtPort, pair<string, unique_ptr<AbstractAlgorithm>> &algorithm, const string& travel_name);
-    void writeCargoErrors(const string& error_path,int simulation_errors, int alg_errors, vector<unique_ptr<Container>>& containersAtPort, const string& travel_name,  const string& alg_name);
-    string createPortOutputFile(const string& output_path, const string& port);
-    int sendInstructionsToCrane(vector<unique_ptr<Container>> containers, WeightBalanceCalculator& calculator, const string& instructions_path, const string &error_path, const string &sail_info);
+    void start(const string& travelPath, const string& algorithmPath, const string& outputPath);
+    int sail(pair<string, unique_ptr<AbstractAlgorithm>>& algorithm, const string& travelPath, const string& travelName, const string& outputPath, const string& errorPath);
+    bool checkDirectories(const string& travelPath, const string& algorithmPath, const string& outputPath);
+    bool readShip(const string& errorPath, const string& travelPath, const string& travel, pair<string, unique_ptr<AbstractAlgorithm>>& algorithm);
+    string getCargoPath(const string& travelDir, const string& port);
+    bool writeShipErrors(const string& errorPath, int simulationErrors, int algErrors, const string& travel, const string& algName);
+    string getPath(const string &travelDir, const string &search);
+    void getInstructionForCargo(const string &cargoPath, const string &outputPath, const string &errorPath, vector<unique_ptr<Container>>& containersAtPort, pair<string, unique_ptr<AbstractAlgorithm>> &algorithm, const string& travelName);
+    void writeCargoErrors(const string& errorPath, int simulationErrors, int algErrors, vector<unique_ptr<Container>>& containersAtPort, const string& travelName, const string& algName);
+    string createPortOutputFile(const string& outputPath, const string& port);
+    int sendInstructionsToCrane(vector<unique_ptr<Container>> containers, WeightBalanceCalculator& calculator, const string& instructions_path, const string &errorPath, const string &sailInfo);
     void writeResults(const string &path, const map<string, vector<int>>& results);
     int sumResults(const vector<int>& results, bool sumOrErr);
-    string createTravelOutputFolder(const string& output_path, const string& alg_name, const string& travel_name);
-    void scanTravelPath(const string& curr_travel_path, const string& error_path);
-    string createResultsFile(const string& output_path, vector<string> travels);
+    string createTravelOutputFolder(const string& outputPath, const string& algName, const string& travelName);
+    void scanTravelPath(const string& currTravelPath, const string& errorPath);
+    string createResultsFile(const string& outputPath, vector<string> travels);
     int countContainersOnPort(const string& id, vector<unique_ptr<Container>>& containersAtPort);
-    void writeReaderErrors(const string& error_path, int simulation_errors, int alg_errors, vector<string> error_msg, const string& alg_name, const string& sail_info, int index = 0);
+    void writeReaderErrors(const string& errorPath, int simulationErrors, int algErrors, vector<string> errorMsg, const string& algName, const string& sailInfo, int index = 0);
 };
 
 

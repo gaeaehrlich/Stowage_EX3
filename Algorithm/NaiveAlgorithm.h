@@ -20,9 +20,9 @@ using std::string;
 using std::vector;
 
 class NaiveAlgorithm: public AbstractAlgorithm {
-    vector<unique_ptr<Container>> _cargo_load;
-    vector<unique_ptr<Container>> _temporary_unloaded;
-    bool _invalid_travel = false;
+    vector<unique_ptr<Container>> _cargoLoad;
+    vector<unique_ptr<Container>> _temporaryUnloaded;
+    bool _invalidTravel = false;
     int _status = 0;
 
 protected:
@@ -34,12 +34,12 @@ public:
     ~NaiveAlgorithm() override;
     void finishedPort();
     int readCargoLoad(const string& full_path_and_file_name);
-    int readShipPlan(const string& full_path_and_file_name) override ;
-    int readShipRoute(const string& full_path_and_file_name) override ;
+    int readShipPlan(const string& path) override ;
+    int readShipRoute(const string& path) override ;
     int setWeightBalanceCalculator(WeightBalanceCalculator& calculator) override;
     int getInstructionsForCargo(
-            const std::string& input_full_path_and_file_name,
-            const std::string& output_full_path_and_file_name) override;
+            const std::string& inputPath,
+            const std::string& outputPath) override;
     void sortCargoLoad();
     void unloadInstructions(std::ofstream& file);
     void loadInstructions(std::ofstream& file, vector<unique_ptr<Container>>& list);

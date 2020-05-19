@@ -27,9 +27,9 @@ Floor& ShipPlan::getFloor(int floor_number) {
 }
 
 
-bool ShipPlan::hasContainer(const string& container_id) {
+bool ShipPlan::hasContainer(const string& id) {
     for(auto & _floor : _floors) {
-        if(_floor.hasContainer(container_id)) {
+        if(_floor.hasContainer(id)) {
             return true;
         }
     }

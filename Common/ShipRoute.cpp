@@ -16,9 +16,9 @@ vector<string> ShipRoute::getRoute() const{
     return remainingRoute;
 }
 
-bool ShipRoute::portInRoute(const string& port_symbol) {
+bool ShipRoute::portInRoute(const string& symbol) {
     for(auto it = _route.begin() + _pos; it != _route.end(); ++it) {
-        if(*it == port_symbol) {
+        if(*it == symbol) {
             return true;
         }
     }

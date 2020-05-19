@@ -9,12 +9,12 @@ enum Op { LOAD = 'L', UNLOAD = 'U', REJECT = 'R' , MOVE = 'M' , ERROR};
 class Operation {
 public:
     Op _operation;
-    string _container_id;
+    string _id;
     Position _position;
     Position _move;
 
 public:
-    Operation(char operation, string container_id, Position position, Position move = Position());
+    Operation(char operation, string id, Position position, Position move = Position());
 };
 
 #endif //STOWAGE_OPERATION_H
