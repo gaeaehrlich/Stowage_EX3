@@ -49,7 +49,6 @@ void AlgorithmRegistrar::loadAlgorithmFromFile(const string &dir_path, const str
         }
         else {
             registered++;
-            std::cout << "path " << path.first << " size " << registered << " " << _algorithmFactory.size() << std::endl;
             if(registered != _algorithmFactory.size()) {
                 std::ofstream file;
                 file.open(error_path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end

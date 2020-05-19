@@ -84,7 +84,7 @@ bool Simulation::writeShipErrors(const string &error_path, int simulation_errors
     error_msg.emplace_back("travel route: travel error - file with only a single valid port (cannot run this travel)\n");
     writeReaderErrors(file, simulation_errors, alg_errors, error_msg, alg_name);
     file.close();
-    return simulation_errors & pow2(3) || simulation_errors & pow2(4) || simulation_errors & pow2(7) || simulation_errors & pow2(8);
+    return !(simulation_errors & pow2(3) || simulation_errors & pow2(4) || simulation_errors & pow2(7) || simulation_errors & pow2(8));
 }
 
 
