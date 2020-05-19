@@ -44,6 +44,8 @@ int Reader::splitCargoLine(string& line, string& id, int& weight, string& destin
     }
     catch (std::invalid_argument const &e) { errors |= pow2(12); weight = -1; }
     destination = vec[2];
+    std::transform(destination.begin(), destination.end(), destination.begin(),
+                   [](unsigned char c){ return std::toupper(c);});
     if (!legalPortSymbol(destination)) { errors |= pow2(13); destination = ""; }
     return errors;
 }
@@ -185,6 +187,8 @@ int Reader::readShipRoute(const string &path, ShipRoute& route) {
     if (!file || file.peek() == std::ifstream::traits_type::eof()) { return pow2(7); }
     while (std::getline(file, curr_port)) {
         if (ignoreLine(curr_port)) { continue; }
+        std::transform(curr_port.begin(), curr_port.end(), curr_port.begin(),
+                [](unsigned char c){ return std::toupper(c);});
         if (curr_port == prev_port) {
             errors |= pow2(5);
             continue;
