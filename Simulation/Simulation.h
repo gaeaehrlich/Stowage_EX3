@@ -45,7 +45,7 @@ public:
     void scanTravelPath(const string& curr_travel_path, const string& error_path);
     string createResultsFile(const string& output_path, vector<string> travels);
     int countContainersOnPort(const string& id, vector<unique_ptr<Container>>& containersAtPort);
-    void writeReaderErrors(std::ofstream& file, int simulation_errors, int alg_errors, vector<string> error_msg, const string& alg_name, int index = 0);
+    void writeReaderErrors(const string& error_path, int simulation_errors, int alg_errors, vector<string> error_msg, const string& alg_name, const string& sail_info, int index = 0);
 };
 
 

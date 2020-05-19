@@ -124,7 +124,6 @@ int Reader::readCargoLoad(const string &path, vector<unique_ptr<Container>>& lis
 int Reader::readShipPlan(const string& path, ShipPlan& plan) {
     int errors = 0, x, x1, y, y1, num_floors, num_floors1;
     fs::path file_path = path;
-    std::cout << path << std::endl;
     if(path.empty() || !fs::exists(file_path)) { return  pow2(3); }
     std::string line; std::ifstream file(path);
     if (!file || file.peek() == std::ifstream::traits_type::eof()) { return pow2(3); }
