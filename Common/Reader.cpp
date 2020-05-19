@@ -145,7 +145,7 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
             continue;
         }
         x1 = vec[0]; y1 = vec[1]; num_floors1 = vec[2];
-        if (x < x1 || y < y1 || num_floors <= num_floors1) { // wrong values
+        if (x <= x1 || y <= y1 || num_floors <= num_floors1) { // wrong values
             errors |= pow2(2);
             continue;
         }
@@ -162,6 +162,13 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
         m_plan[{x1, y1}] = num_floors1;
     }
     if (!fatal) {
+        for (int i = 0; i < x; i++) {
+            for (int j = 0; j < y; j++) {
+                if (m_plan.find({i, j}) == m_plan.end()) {
+                    m_plan[{i, j}] = num_floors - 1;
+                }
+            }
+        }
         plan = ShipPlan(num_floors, std::move(m_plan)); // why not?
     }
     return errors;
