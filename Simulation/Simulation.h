@@ -28,7 +28,7 @@ class Simulation {
     Crane _crane;
 
 public:
-    void start(const string& travelPath, const string& algorithmPath, const string& outputPath);
+    void start(const string& travelPath, string& algorithmPath, string& outputPath);
     int sail(pair<string, unique_ptr<AbstractAlgorithm>>& algorithm, const string& travelPath, const string& travelName, const string& outputPath, const string& errorPath);
     bool checkDirectories(const string& travelPath, string& algorithmPath, string& outputPath);
     bool readShip(const string& errorPath, const string& travelPath, const string& travel, pair<string, unique_ptr<AbstractAlgorithm>>& algorithm);

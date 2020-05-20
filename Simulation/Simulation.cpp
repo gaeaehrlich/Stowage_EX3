@@ -45,7 +45,7 @@ int Simulation::sail(pair<string, unique_ptr<AbstractAlgorithm>> &algorithm, con
 }
 
 
-void Simulation::start(const string &travelPath, const string &algorithmPath, const string &outputPath) {
+void Simulation::start(const string &travelPath, string &algorithmPath, string &outputPath) {
     if(!checkDirectories(travelPath, algorithmPath, outputPath)) { return; }
     string errorPath = outputPath + SUBDIR + "simulation.errors";
     vector<string> travels = Reader::getTravels(travelPath);

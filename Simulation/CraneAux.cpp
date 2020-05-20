@@ -7,7 +7,6 @@ void Crane::checkErrorPort(std::ofstream& file) {
     }
 }
 
-
 void Crane::containerNotFoundError(const string &place) {
     std::ofstream file;
     file.open(_errorPath, std::ios::out | std::ios::app);
