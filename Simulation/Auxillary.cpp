@@ -131,7 +131,10 @@ void Simulation::writeCargoErrors(const string &errorPath, int simulationErrors,
     }
     if(simulationErrors & pow2(10 )) { errorMsg[0].append("\n"); }
     if(simulationErrors & pow2(11 )) { errorMsg[1].append("\n"); }
-    if(_route.isLastStop() && !containersAtPort.empty()) { simulationErrors |= pow2(17); }
+    if(_route.isLastStop() && !containersAtPort.empty()) {
+        simulationErrors |= pow2(17);
+        containersAtPort.clear();
+    }
     if(_plan.numberOfEmptyCells() + _plan.findContainersToUnload(_route.getCurrentPort()).size() < containersAtPort.size()) { simulationErrors |= pow2(18); }
     writeReaderErrors(errorPath, simulationErrors, algErrors, errorMsg, algName, sailInfo, 10);
 }

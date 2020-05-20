@@ -145,7 +145,10 @@ int NaiveAlgorithm::readCargoLoad(const string &input_path) {
         if(countContainersOnPort(container -> getId()) > 1) { readStatus |= pow2(10); }
         if(_plan.hasContainer(container -> getId())) { readStatus |= pow2(11); }
     }
-    if(_route.isLastStop() && !_cargoLoad.empty()) { readStatus |= pow2(17); }
+    if(_route.isLastStop() && !_cargoLoad.empty()) {
+        readStatus |= pow2(17);
+        _cargoLoad.clear();
+    }
     if(_plan.numberOfEmptyCells() + _plan.findContainersToUnload(_route.getCurrentPort()).size() < _cargoLoad.size()) { readStatus |= pow2(18); }
     return readStatus;
 }
