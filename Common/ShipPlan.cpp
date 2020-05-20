@@ -1,5 +1,5 @@
 #include "ShipPlan.h"
-
+#include <iostream>
 
 ShipPlan::ShipPlan() {
     _floors = vector<Floor>();
@@ -9,7 +9,7 @@ ShipPlan::ShipPlan(int num, map< pair<int,int>, int > dict) {
     vector< vector<pair<int,int>> > floors(static_cast<unsigned long long int>(num));
     map< pair<int, int> , int> ::iterator it;
     for (it = dict.begin(); it != dict.end(); it++) {
-        for(int i = num - 1; i >= num - (it -> second) - 1; i--) {
+        for(int i = num - 1; i >= num - (it -> second); i--) {
             floors[i].push_back(it -> first);
         }
     }
