@@ -91,8 +91,9 @@ bool Crane::isErrorUnload(const string& id, ShipPlan &plan, Position pos, bool& 
     Position aboveFloor = Position(pos._floor + 1, pos._x, pos._y);
     bool cellAboveNull = pos._floor + 1 == plan.numberOfFloors() ? true : plan.isLegalFloor(aboveFloor) && plan.isEmptyPosition(aboveFloor);
 
-    if(!plan.hasContainer(id) || !isLegalLocation || !cellAboveNull
-       || !_containerData[id].empty() || _temporaryUnloaded.find(id) != _temporaryUnloaded.end()) {
+    std::cout << id << " SHIT? " << cellAboveNull << std::endl;
+
+    if(!plan.hasContainer(id) || !isLegalLocation || !cellAboveNull) {
         writeInstructionError("Unload", id, false);
         fatal = true;
         return true;

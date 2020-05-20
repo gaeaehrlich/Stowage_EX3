@@ -22,7 +22,7 @@ class Crane {
     vector<Operation> _operations;
 private:
     map<string, vector<unique_ptr<Container>>> _containerData;
-    std::unordered_set<string> _temporaryUnloaded;
+    vector<string> _temporaryUnloaded;
     std::unordered_set<string> _newlyLoadedDest;
     WeightBalanceCalculator _calculator;
     string _port;

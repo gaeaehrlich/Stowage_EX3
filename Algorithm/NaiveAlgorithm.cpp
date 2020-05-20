@@ -102,9 +102,13 @@ bool NaiveAlgorithm::rejectingContainer(unique_ptr<Container>& container) {
 
 
 void NaiveAlgorithm::unloadContainersAbove(Position pos, std::ofstream& file) {
+    std::cout << "*** unload containers above ***" << std::endl;
     for(int i = _plan.numberOfFloors() - 1; i > pos._floor; i--) {
+        std::cout << "checking floor" <<  std::to_string(i) << std::endl;
         if(!_plan.getFloor(i).isEmpty(pos._x, pos._y)) {
+            std::cout << "position not empty " << std::to_string(pos._x) << std::to_string(pos._y)<< std::endl;
             if(_plan.getFloor(i).getContainerDest({pos._x, pos._y}) != _route.getCurrentPort()) {
+                std::cout << "container is not for this stop" << std::endl;
                 if(_calc.tryOperation(UNLOAD, _plan.getWeightByPosition(pos), pos._x, pos._y) ==  WeightBalanceCalculator::APPROVED) {
                     unique_ptr<Container> removed = _plan.getFloor(i).pop(pos._x, pos._y);
                     file << instructionToString('U', removed->getId(), Position(i, pos._x, pos._y));
@@ -113,6 +117,7 @@ void NaiveAlgorithm::unloadContainersAbove(Position pos, std::ofstream& file) {
             }
         }
     }
+    std::cout << "*** finished ***" << std::endl;
 }
 
 string NaiveAlgorithm::instructionToString(char instruction, const string& id, Position pos) {

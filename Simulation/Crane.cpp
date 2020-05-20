@@ -86,8 +86,9 @@ bool Crane::load(const string& id, Position pos, ShipPlan& plan, ShipRoute& rout
 
     if(_calculator.tryOperation(LOAD, container -> getWeight(), pos._x, pos._y) != WeightBalanceCalculator::APPROVED) { return false; }
 
-    if(_temporaryUnloaded.find(container -> getId()) != _temporaryUnloaded.end()) {
-        _temporaryUnloaded.erase(container -> getId());
+    auto isTemporaryUnloaded = find(_temporaryUnloaded.begin(), _temporaryUnloaded.end(), container -> getId());
+    if(isTemporaryUnloaded != _temporaryUnloaded.end()) {
+        _temporaryUnloaded.erase(isTemporaryUnloaded);
     }
     else {
         _newlyLoadedDest.insert(container -> getDest());
@@ -108,7 +109,7 @@ bool Crane::unload(const string& id, Position pos, ShipPlan& plan) {
 
     unique_ptr<Container> removed = std::move(plan.getFloor(pos._floor).pop(pos._x, pos._y));
     if(removed -> getDest() != _port) {
-        _temporaryUnloaded.insert(removed -> getId());
+        _temporaryUnloaded.push_back(removed -> getId());
     }
     std::cout << "Unloading container " << id << " from position: floor: " << pos._floor << ", x: " << pos._x << ", y: " << pos._y << std::endl;
     _containerData[removed -> getId()].emplace_back(std::move(removed));
