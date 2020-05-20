@@ -1,5 +1,6 @@
 #include "ShipPlan.h"
 
+
 ShipPlan::ShipPlan() {
     _floors = vector<Floor>();
 }
