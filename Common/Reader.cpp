@@ -148,12 +148,12 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
         }
         x1 = vec[0]; y1 = vec[1]; numFloors1 = vec[2];
         if (x <= x1 || y <= y1 || numFloors <= numFloors1) { // wrong values
-            errors |= pow2(2);
+            errors |= pow2(1);
             continue;
         }
         if (mPlan.find({x1, y1}) != mPlan.end()) { // duplicate x,y appearance
             if (mPlan[{x1, y1}] == numFloors1) { // same data
-                errors |= pow2(1);
+                errors |= pow2(2);
             }
             else { // different data
                 errors |= pow2(4);
