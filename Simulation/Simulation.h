@@ -30,7 +30,7 @@ class Simulation {
 public:
     void start(const string& travelPath, const string& algorithmPath, const string& outputPath);
     int sail(pair<string, unique_ptr<AbstractAlgorithm>>& algorithm, const string& travelPath, const string& travelName, const string& outputPath, const string& errorPath);
-    bool checkDirectories(const string& travelPath, const string& algorithmPath, const string& outputPath);
+    bool checkDirectories(const string& travelPath, string& algorithmPath, string& outputPath);
     bool readShip(const string& errorPath, const string& travelPath, const string& travel, pair<string, unique_ptr<AbstractAlgorithm>>& algorithm);
     string getCargoPath(const string& travelDir, const string& port);
     bool writeShipErrors(const string& errorPath, int simulationErrors, int algErrors, const string& travel, const string& algName);

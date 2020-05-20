@@ -1,10 +1,18 @@
 #include "Crane.h"
 
+void Crane::checkErrorPort(fs::ofstream& file) {
+    if(!_errorPort) {
+        file << _sailInfo;
+        _errorPort = true;
+    }
+}
+
 
 void Crane::containerNotFoundError(const string &place) {
     std::ofstream file;
     file.open(_errorPath, std::ios::out | std::ios::app);
-    file << _sailInfo << "Trying to get container that's not " << place << ". Instruction terminated.\n";
+    checkErrorPort(file);
+    file << "Trying to get container that's not " << place << ". Instruction terminated.\n";
     file.close();
 }
 
@@ -49,7 +57,8 @@ int Crane::shouldReject(unique_ptr<Container>& container, ShipPlan& plan, ShipRo
 void Crane::writeLoadError(const string& id, const string& reason) {
     std::ofstream file;
     file.open(_errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
-    file << _sailInfo << "ALGORITHM ERROR: Algorithm is loading the container " << id << " that should be rejected. Rejection reason: " << reason;
+    checkErrorPort(file);
+    file << "ALGORITHM ERROR: Algorithm is loading the container " << id << " that should be rejected. Rejection reason: " << reason;
     file.close();
 }
 
@@ -58,7 +67,8 @@ void Crane::writeInstructionError(const string &instruction, const string &id, b
     std::ofstream file;
     file.open(_errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
     string exec = executed ? "still" : "not";
-    file << _sailInfo << "ALGORITHM ERROR: Algorithm is making a mistake with container " << id << ". " << instruction << " was " << exec << " executed.\n";
+    checkErrorPort(file);
+    file << "ALGORITHM ERROR: Algorithm is making a mistake with container " << id << ". " << instruction << " was " << exec << " executed.\n";
     file.close();
 }
 
@@ -92,7 +102,8 @@ bool Crane::isErrorUnload(const string& id, ShipPlan &plan, Position pos, bool& 
     if(plan.getIdAtPosition(pos) != id) {
         std::ofstream file;
         file.open(_errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
-        file << _sailInfo << "ALGORITHM ERROR: Algorithm is unloading the container " << plan.getIdAtPosition(pos) << " instead of " << id << ".\n";
+        checkErrorPort(file);
+        file << "ALGORITHM ERROR: Algorithm is unloading the container " << plan.getIdAtPosition(pos) << " instead of " << id << ".\n";
         file.close();
         writeInstructionError("Unload", id, true);
         return true;
@@ -103,7 +114,8 @@ bool Crane::isErrorUnload(const string& id, ShipPlan &plan, Position pos, bool& 
 void Crane::writeLeftAtPortError(const string& id, const string& msg) {
     std::ofstream file;
     file.open(_errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
-    file << _sailInfo << "ALGORITHM ERROR: Algorithm is making a mistake with container " << id
+    checkErrorPort(file);
+    file << "ALGORITHM ERROR: Algorithm is making a mistake with container " << id
          << ". It " << msg << ", and was wrongly left at port " << _port << ".\n";
     file.close();
 }

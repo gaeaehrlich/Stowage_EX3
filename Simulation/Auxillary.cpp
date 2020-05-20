@@ -33,20 +33,22 @@ string Simulation::createTravelOutputFolder(const string &outputPath, const stri
     return path;
 }
 
-bool Simulation::checkDirectories(const string &travelPath, const string &algorithmPath, const string &outputPath) {
+bool Simulation::checkDirectories(const string &travelPath, string &algorithmPath, string &outputPath) {
     bool travel = Reader::checkDirPath(travelPath);
     bool algorithm = Reader::checkDirPath(algorithmPath);
     bool output = Reader::checkDirPath(outputPath);
     if(!travel) {
-        std::cout << "The path for the travels is incorrect: " << travelPath << std::endl;
+        std::cout << "The path for the travels is incorrect: " << travelPath << ". Simulation terminated" << std::endl;
     }
     if(!algorithm) {
-        std::cout << "The path for the algorithms is incorrect: " << algorithmPath << std::endl;
+        std::cout << "The path for the algorithms is incorrect: " << algorithmPath << ". Simulation will use current working directory instead" << std::endl;
+        algorithmPath = ".";
     }
     if(!output) {
-        std::cout << "The path for the output is incorrect: " << outputPath << std::endl;
+        std::cout << "The path for the output is incorrect: " << outputPath << ". Simulation will use current working directory instead" << std::endl;
+        outputPath = ".";
     }
-    return travel && algorithm && output;
+    return travel;
 }
 
 void Simulation::writeReaderErrors(const string& errorPath, int simulationErrors, int algErrors, vector<string> errorMsg, const string& algName, const string& sailInfo, int index) {

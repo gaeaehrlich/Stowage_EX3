@@ -31,6 +31,7 @@ int Crane::start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calc
     setSailInfo(sailInfo);
     setCalculator(calculator);
     _port = route.getCurrentPort();
+    _errorPort = false;
     int sum_operations = 0;
     bool flag = false;
     for(Operation& op : _operations) {

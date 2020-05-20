@@ -10,27 +10,15 @@ bool getPaths(int argc, char *argv[], string& travel_path, string& algorithm_pat
             if(i + 1 < argc) {
                 travel_path = argv[i + 1];
             }
-            else {
-                std::cout << "Error: Missing path for travel_path, even though declared" << std::endl;
-                return false;
-            }
         }
         if(strncmp(argv[i], "-algorithm_path", strlen(argv[i])) == 0) {
             if(i + 1 < argc) {
                 algorithm_path = argv[i + 1];
             }
-            else {
-                std::cout << "Error: Missing path for algorithm_path, even though declared" << std::endl;
-                return false;
-            }
         }
         if(strncmp(argv[i], "-output", strlen(argv[i])) == 0) {
             if(i + 1 < argc) {
                 output_path = argv[i + 1];
-            }
-            else {
-                std::cout << "Error: Missing path for output, even though declared" << std::endl;
-                return false;
             }
         }
     }

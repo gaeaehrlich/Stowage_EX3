@@ -28,6 +28,7 @@ private:
     string _port;
     string _errorPath;
     string _sailInfo;
+    bool _errorPort;
 
 public:
     void setOperations(vector<Operation> operations);
@@ -52,6 +53,7 @@ public:
     bool checkShip(ShipPlan& plan);
     bool handleLastStop(ShipPlan& plan, ShipRoute& route);
     void setCalculator(WeightBalanceCalculator& calculator);
+    void checkErrorPort(fs::ofstream& file);
 };
 
 
