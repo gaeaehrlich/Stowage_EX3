@@ -53,7 +53,7 @@ public:
     bool checkShip(ShipPlan& plan);
     bool handleLastStop(ShipPlan& plan, ShipRoute& route);
     void setCalculator(WeightBalanceCalculator& calculator);
-    void checkErrorPort(fs::ofstream& file);
+    void checkErrorPort(std::ofstream& file);
 };
 
 

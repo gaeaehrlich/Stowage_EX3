@@ -1,6 +1,6 @@
 #include "Crane.h"
 
-void Crane::checkErrorPort(fs::ofstream& file) {
+void Crane::checkErrorPort(std::ofstream& file) {
     if(!_errorPort) {
         file << _sailInfo;
         _errorPort = true;
