@@ -1,5 +1,4 @@
 #include "ShipPlan.h"
-#include <iostream>
 
 ShipPlan::ShipPlan() {
     _floors = vector<Floor>();
@@ -74,6 +73,9 @@ bool ShipPlan::isLegalLoadPosition(Position position) {
     Position lowerFloor = Position(position._floor - 1, position._x, position._y);
     bool isLegalPosition =  isLegalLocation(position) && isEmptyPosition(position);
     bool cellBelowNull = position._floor > 0 ? (this -> isLegalLocation(lowerFloor) && isEmptyPosition(lowerFloor)) : false;
+    if (!(isLegalPosition && !cellBelowNull)) {
+        std::cout  << "NOT EMPTY - POSITION " << position._floor << position._x << position._y << " has "<< getIdAtPosition(position) << std::endl;
+    }
     return isLegalPosition && !cellBelowNull;
 }
 
