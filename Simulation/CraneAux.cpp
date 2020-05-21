@@ -174,7 +174,7 @@ void Crane::writeLeftAtPortError(const string& id, const string& msg) {
     file.close();
 }
 
-bool Crane::checkForgotOnPort(ShipPlan& plan, ShipRoute& route) {
+bool Crane::checkForgotOnPort() {
     bool flag = true;
     for(const auto& container : _cargoLoad) {
         writeLeftAtPortError(container -> getId(), "wasn't handled by the algorithm");

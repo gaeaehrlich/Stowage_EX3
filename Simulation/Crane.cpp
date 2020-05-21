@@ -48,7 +48,7 @@ void Crane::setCrane(vector<unique_ptr<Container>> containers, vector<Operation>
 }
 
 bool Crane::end(ShipPlan& plan, ShipRoute& route) {
-    bool isLegal = checkLoadedTemporaryUnloaded() && checkForgotOnPort(plan, route) && checkShip(plan) && handleLastStop(plan, route);
+    bool isLegal = checkLoadedTemporaryUnloaded() && checkForgotOnPort() && checkShip(plan) && handleLastStop(plan, route);
     _cargoLoad.clear();
     _temporaryUnloaded.clear();
     _newlyLoadedDest.clear();

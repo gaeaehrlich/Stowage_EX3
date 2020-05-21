@@ -49,7 +49,7 @@ public:
     bool isErrorUnload(const string& id, ShipPlan& plan, Position pos, bool& fatal);
     bool checkLoadedTemporaryUnloaded();
     void writeLeftAtPortError(const string& id, const string& msg);
-    bool checkForgotOnPort(ShipPlan& plan, ShipRoute& route);
+    bool checkForgotOnPort();
     bool shouldPrioritize(const string& dest, ShipRoute& route);
     void writeLoadError(const string& id, const string& reason);
     bool checkShip(ShipPlan& plan);
