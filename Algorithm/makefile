@@ -1,4 +1,4 @@
-COMP = g++-8.3.0
+COMP = g++-9.3.0
 #put all your object files here
 OBJS = Position.o Container.o Operation.o Floor.o ShipPlan.o ShipRoute.o WeightBalanceCalculator.o Reader.o NaiveAlgorithm.o
 #The executabel filename DON'T CHANGE
