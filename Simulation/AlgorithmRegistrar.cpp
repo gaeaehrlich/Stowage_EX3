@@ -8,6 +8,9 @@ void AlgorithmRegistrar::registerAlgorithm(std::function<unique_ptr<AbstractAlgo
 
 AlgorithmRegistrar::~AlgorithmRegistrar() {
     _algorithmFactory.clear();
+    for(auto &handle : _handles){
+        ;
+    }
     _handles.clear();
 }
 

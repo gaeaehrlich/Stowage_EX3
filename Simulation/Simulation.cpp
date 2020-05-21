@@ -61,7 +61,7 @@ void Simulation::start(const string &travelPath, string &algorithmPath, string &
         for(auto& alg: algorithms) {
             std::cout << "strating travel: " << travelName << " with algorithm: " << alg.first << std::endl;
             if(!readShip(errorPath, currTravelPath, travelName, alg)) {
-                algResults[alg.first].push_back(0);
+                continue;
             }
             else {
                 algResults[alg.first].emplace_back(sail(alg, currTravelPath, travelName, outputPath, errorPath));

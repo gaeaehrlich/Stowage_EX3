@@ -9,7 +9,7 @@ SHARED_OBJS  = _208967075_a.so _208967075_b.so _208967075_c.so
 COMMON = ../Common/
 ALGORITHM = ./
 
-CPP_COMP_FLAG = -std=c++2a -Wall -Wextra -Werror -pedantic-errors -DNDEBUG -fPIC -lstdc++fs
+CPP_COMP_FLAG = -std=c++2a -Wall -Wextra -Werror -pedantic-errors -DNDEBUG -fPIC -lstdc++fs -fvisibility=hidden -fvisibility-inlines-hidden
 CPP_LINK_FLAG = -shared
 
 all: $(SHARED_OBJS)

@@ -117,7 +117,7 @@ int Floor::getWeightByPosition(int x, int y) {
 int Floor::numberOfEmptyCells() {
     int count = 0;
     for(const auto& element : _map) {
-        if(element.second != nullptr) {
+        if(element.second == nullptr) {
             count++;
         }
     }
