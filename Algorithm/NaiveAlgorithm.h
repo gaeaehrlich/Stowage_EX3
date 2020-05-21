@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <unordered_set>
 #include "../Common/Container.h"
 #include "../Common/ShipPlan.h"
 #include "../Common/ShipRoute.h"
@@ -44,10 +45,12 @@ public:
     void unloadInstructions(std::ofstream& file);
     void loadInstructions(std::ofstream& file, vector<unique_ptr<Container>>& list);
     virtual Position findPosition(const unique_ptr<Container>& container) = 0;
-    bool rejectingContainer(unique_ptr<Container>& container);
+    bool shouldRejectContainer(unique_ptr<Container>& container);
     void unloadContainersAbove(Position position, std::ofstream& file);
     string instructionToString(char instruction, const string& id, Position pos);
     int countContainersOnPort(const string& id);
+    void rejectInstructions(std::ofstream& file);
+    void removeDuplicates(std::ofstream &file);
 };
 
 

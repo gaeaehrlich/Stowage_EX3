@@ -41,6 +41,7 @@ int NaiveAlgorithm::getInstructionsForCargo(const string &inputPath, const strin
         portStatus = readCargoLoad(inputPath);
         unloadInstructions(file);
         loadInstructions(file, _temporaryUnloaded);
+        rejectInstructions(file);
         sortCargoLoad();
         loadInstructions(file, _cargoLoad);
     }
@@ -49,6 +50,32 @@ int NaiveAlgorithm::getInstructionsForCargo(const string &inputPath, const strin
     return _status | portStatus;
 }
 
+void NaiveAlgorithm::rejectInstructions(std::ofstream &file) {
+    removeDuplicates(file);
+    for(auto container = _cargoLoad.begin(); container != _cargoLoad.end();) {
+        if(shouldRejectContainer(*container)) {
+            file << instructionToString('R', (*container) -> getId(), Position());
+            _cargoLoad.erase(container);
+        }
+        else {
+            ++container;
+        }
+    }
+}
+
+void NaiveAlgorithm::removeDuplicates(std::ofstream &file) {
+    std::unordered_set<string> idsOnPort;
+    for(auto container = _cargoLoad.begin(); container != _cargoLoad.end();) {
+        if(idsOnPort.find((*container) -> getId()) != idsOnPort.end()) {
+            file << instructionToString('R', (*container) -> getId(), Position());
+            _cargoLoad.erase(container);
+        }
+        else {
+            idsOnPort.insert((*container) -> getId());
+            ++container;
+        }
+    }
+}
 
 void NaiveAlgorithm::sortCargoLoad() {
     ShipRoute& route = _route;
@@ -75,8 +102,8 @@ void NaiveAlgorithm::unloadInstructions(std::ofstream& file) {
 
 void NaiveAlgorithm::loadInstructions(std::ofstream& file,  vector<unique_ptr<Container>>& list) {
     for(auto & container : list) {
-        if(rejectingContainer(container)) {
-            file << instructionToString('R', container -> getId(), Position(-1, -1, -1));
+        if(_plan.isFull() || _plan.hasContainer(container -> getId())) { // all other reject reasons were already handled
+            file << instructionToString('R', container -> getId(), Position());
         }
         else {
             Position pos = findPosition(container);
@@ -87,8 +114,8 @@ void NaiveAlgorithm::loadInstructions(std::ofstream& file,  vector<unique_ptr<Co
     }
 }
 
-bool NaiveAlgorithm::rejectingContainer(unique_ptr<Container>& container) {
-    if(_plan.hasContainer(container -> getId())) { return true; } //containers at port: ID already on ship (ID rejected)
+bool NaiveAlgorithm::shouldRejectContainer(unique_ptr<Container>& container) {
+    //if(_plan.hasContainer(container -> getId())) { return true; } //containers at port: ID already on ship (ID rejected)
     if(container -> getWeight() <= 0) { return true; } //containers at port: bad line format, missing or bad weight (ID rejected)
     if(!Reader::legalPortSymbol(container -> getDest())) { return true; } //containers at port: bad line format, missing or bad port dest (ID rejected)
     if(!_route.portInRoute(container -> getDest())) { return true; }
@@ -102,13 +129,9 @@ bool NaiveAlgorithm::rejectingContainer(unique_ptr<Container>& container) {
 
 
 void NaiveAlgorithm::unloadContainersAbove(Position pos, std::ofstream& file) {
-    std::cout << "*** unload containers above ***" << std::endl;
     for(int i = _plan.numberOfFloors() - 1; i > pos._floor; i--) {
-        std::cout << "checking floor" <<  std::to_string(i) << std::endl;
         if(!_plan.getFloor(i).isEmpty(pos._x, pos._y)) {
-            std::cout << "position not empty " << std::to_string(pos._x) << std::to_string(pos._y)<< std::endl;
             if(_plan.getFloor(i).getContainerDest({pos._x, pos._y}) != _route.getCurrentPort()) {
-                std::cout << "container is not for this stop" << std::endl;
                 if(_calc.tryOperation(UNLOAD, _plan.getWeightByPosition(pos), pos._x, pos._y) ==  WeightBalanceCalculator::APPROVED) {
                     unique_ptr<Container> removed = _plan.getFloor(i).pop(pos._x, pos._y);
                     file << instructionToString('U', removed->getId(), Position(i, pos._x, pos._y));
@@ -117,7 +140,6 @@ void NaiveAlgorithm::unloadContainersAbove(Position pos, std::ofstream& file) {
             }
         }
     }
-    std::cout << "*** finished ***" << std::endl;
 }
 
 string NaiveAlgorithm::instructionToString(char instruction, const string& id, Position pos) {

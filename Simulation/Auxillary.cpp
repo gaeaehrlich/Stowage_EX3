@@ -123,12 +123,12 @@ void Simulation::writeCargoErrors(const string &errorPath, int simulationErrors,
         if(countContainersOnPort(container -> getId(), containersAtPort) > 1) { // 2^10
             if(!(simulationErrors & pow2(10))) { errorMsg[0].append("The duplicated containers: "); }
             simulationErrors |= pow2(10);
-            errorMsg[0].append(container -> getId());
+            errorMsg[0].append(container -> getId() + " ");
         }
         if(_plan.hasContainer(container -> getId())) { // 2^11
             if(!(simulationErrors & pow2(11))) { errorMsg[1].append("The container: "); }
             simulationErrors |= pow2(11);
-            errorMsg[1].append(container -> getId());
+            errorMsg[1].append(container -> getId() + " ");
         }
     }
     if(simulationErrors & pow2(10 )) { errorMsg[0].append("\n"); }

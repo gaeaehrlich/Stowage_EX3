@@ -1,5 +1,61 @@
 #include "Crane.h"
 
+
+void Crane::setContainerData(vector<unique_ptr<Container>> containers) {
+    for(auto& container: containers) {
+        if(isDuplicateOnPort(container -> getId())) {
+            _duplicates.emplace_back(std::move(container));
+        }
+        else {
+            _cargoLoad.emplace_back(std::move(container));
+        }
+    }
+}
+
+void Crane::setOperations(vector<Operation> operations) {
+    _operations = std::move(operations);
+}
+
+void Crane::setErrorPath(const string &errorPath) {
+    _errorPath = errorPath;
+}
+
+void Crane::setSailInfo(const string &sailInfo) {
+    _sailInfo = sailInfo;
+}
+
+
+void Crane::setCalculator(WeightBalanceCalculator &calculator) {
+    _calculator = calculator;
+}
+
+bool Crane::isDuplicateOnPort(const string& id) {
+    for(const auto& container: _cargoLoad) {
+        if(container -> getId() == id) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Crane::isInDuplicated(const string& id) {
+    for(const auto& container: _duplicates) {
+        if(container -> getId() == id) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Crane::isInTemporaryUnloaded(const string& id) {
+    for(const auto& container: _temporaryUnloaded) {
+        if(container -> getId() == id) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void Crane::checkErrorPort(std::ofstream& file) {
     if(!_errorPort) {
         file << _sailInfo;
@@ -30,7 +86,7 @@ int Crane::shouldReject(unique_ptr<Container>& container, ShipPlan& plan, ShipRo
         errors++;
     }
     if(!Reader::legalContainerId(container -> getId())) {
-        if(write) { writeLoadError(container -> getId(), "The container's ID is not in format.\n"); }
+        if (write) { writeLoadError(container->getId(), "The container's ID is not in format.\n"); }
         errors++;
     }
     if(container -> getId().empty()) {
@@ -41,7 +97,7 @@ int Crane::shouldReject(unique_ptr<Container>& container, ShipPlan& plan, ShipRo
         if(write) { writeLoadError(container -> getId(), "The container to load is at the last stop.\n"); }
         errors++;
     }
-    if(plan.isFull()) errors++; // this is not a legal load, this is a fatal error
+    if(plan.isFull() && !shouldPrioritize(container -> getDest(), route)) errors++; // this is a fatal error for load
     if(!route.portInRoute(container -> getDest())) {
         if(write) { writeLoadError(container -> getId(), "The container's destination port is not in route.\n"); }
         errors++;
@@ -91,8 +147,6 @@ bool Crane::isErrorUnload(const string& id, ShipPlan &plan, Position pos, bool& 
     Position aboveFloor = Position(pos._floor + 1, pos._x, pos._y);
     bool cellAboveNull = pos._floor + 1 == plan.numberOfFloors() ? true : plan.isLegalFloor(aboveFloor) && plan.isEmptyPosition(aboveFloor);
 
-    std::cout << id << " SHIT? " << cellAboveNull << std::endl;
-
     if(!plan.hasContainer(id) || !isLegalLocation || !cellAboveNull) {
         writeInstructionError("Unload", id, false);
         fatal = true;
@@ -120,15 +174,15 @@ void Crane::writeLeftAtPortError(const string& id, const string& msg) {
     file.close();
 }
 
-bool Crane::checkWronglyUnloaded(ShipPlan& plan, ShipRoute& route) {
+bool Crane::checkForgotOnPort(ShipPlan& plan, ShipRoute& route) {
     bool flag = true;
-    for(auto& element : _containerData) {
-        if(element.second.empty()) { continue; }
-        unique_ptr<Container>& container = element.second[0]; // should be only one container in vector
-        if (container -> getDest() != _port && !shouldReject(container, plan, route) && shouldPrioritize(container -> getDest(), route)) {
-            writeLeftAtPortError(container -> getId(), "should have been loaded");
-            flag = false;
-        }
+    for(const auto& container : _cargoLoad) {
+        writeLeftAtPortError(container -> getId(), "wasn't handled by the algorithm");
+        flag = false;
+    }
+    for(const auto& container: _duplicates) {
+        writeLeftAtPortError(container -> getId(), "wasn't handled by the algorithm");
+        flag = false;
     }
     return flag;
 }
@@ -137,34 +191,44 @@ bool Crane::checkWronglyUnloaded(ShipPlan& plan, ShipRoute& route) {
 bool Crane::shouldPrioritize(const string &dest, ShipRoute& route) {
     for(const string& port: _newlyLoadedDest) {
         if(route.isStopAfter(port, dest)) {
-            return false;
+            return true;
         }
     }
-    return true;
+    return false;
 }
 
 bool Crane::checkLoadedTemporaryUnloaded() {
     bool flag = true;
     if(!_temporaryUnloaded.empty()) {
-        for(const string& id: _temporaryUnloaded) {
-            writeLeftAtPortError(id, "was temporary unloaded");
+        for(const auto& container: _temporaryUnloaded) {
+            writeLeftAtPortError(container -> getId(), "was temporary unloaded");
         }
         flag = false;
     }
     return flag;
 }
 
+
 bool Crane::checkShip(ShipPlan &plan) {
-    for(int i = 0; i < plan.numberOfFloors(); i++) {
-        for(const pair<int, int>& location: plan.getFloor(i).getLegalLocations()) {
-            if(plan.getFloor(i).getContainerDest(location) == _port) {
-                return false;
-            }
-        }
+    bool flag = plan.findContainersToUnload(_port).size() == 0;
+    if(!flag) {
+        std::ofstream file;
+        file.open(_errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
+        checkErrorPort(file);
+        file << "ALGORITHM ERROR: The handling of port " << _port << " is finished, but there are still containers on the ship that need to be unloaded at this port.\n";
+        file.close();
     }
-    return true;
+    return flag;
 }
 
 bool Crane::handleLastStop(ShipPlan &plan, ShipRoute &route) {
-    return !(route.isLastStop() && !plan.isEmpty());
+    bool flag = !(route.isLastStop() && !plan.isEmpty());
+    if(!flag) {
+        std::ofstream file;
+        file.open(_errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
+        checkErrorPort(file);
+        file << "ALGORITHM ERROR: The handling of the last port in route is finished, but there are still containers on the ship.\n";
+        file.close();
+    }
+    return flag;
 }

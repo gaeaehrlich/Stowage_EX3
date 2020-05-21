@@ -215,11 +215,8 @@ bool Reader::checkDirPath(const string& pathName) {
 
 vector<string> Reader::getTravels(const string &dir) {
     vector<string> travels;
-    std::regex format("(.*)_travel");
     for(const auto & entry : fs::directory_iterator(dir)) {
-        if(std::regex_match(entry.path().stem().string(), format)) {
-            travels.emplace_back(entry.path().stem().string());
-        }
+        travels.emplace_back(entry.path().stem().string());
     }
     return travels;
 }
@@ -235,6 +232,9 @@ vector<Operation> Reader::getInstructionsVector(const string &path) {
         if (Reader::splitInstructionLine(line, opChar, id, position, move)) {
             Operation op = Operation(opChar, id, position, move);
             ops.push_back(op);
+        }
+        else {
+            ops.emplace_back(ERROR, "", Position());
         }
     }
     return ops;
