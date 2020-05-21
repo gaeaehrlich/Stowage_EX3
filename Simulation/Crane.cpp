@@ -66,13 +66,13 @@ unique_ptr<Container> Crane::getContainerToLoad(const string &id) {
     if(temporaryUnloadedPointer != _temporaryUnloaded.end()) {
         auto container = std::move(*temporaryUnloadedPointer);
         _temporaryUnloaded.erase(temporaryUnloadedPointer);
-        return std::move(container);
+        return container;
     }
     else if(cargoLoadPointer != _cargoLoad.end()) {
         auto container = std::move(*cargoLoadPointer);
         _cargoLoad.erase(cargoLoadPointer);
         _newlyLoadedDest.insert(container -> getDest());
-        return std::move(container);
+        return container;
     }
     else if(isInDuplicated(id)) {
         writeLoadError(id, "This container is a duplicate ID on port and should have been rejected. Only the first container with this ID is taken under consideration.\n");
@@ -126,12 +126,12 @@ unique_ptr<Container> Crane::getContainerToReject(const string &id) {
     if(duplicatePointer != _duplicates.end()) {
         auto container = std::move(*duplicatePointer);
         _duplicates.erase(duplicatePointer);
-        return std::move(container);
+        return container;
     }
     else if(cargoLoadPointer != _cargoLoad.end()) {
         auto container = std::move(*cargoLoadPointer);
         _cargoLoad.erase(cargoLoadPointer);
-        return std::move(container);
+        return container;
     }
     else if(isInTemporaryUnloaded(id)) {
         writeInstructionError("Reject", id, false);
