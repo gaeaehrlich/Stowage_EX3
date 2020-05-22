@@ -5,6 +5,7 @@
 #include <iostream>
 #include <algorithm>
 #include <dlfcn.h>
+#include <stdio.h>
 #include "../Common/ShipPlan.h"
 #include "../Common/ShipRoute.h"
 #include "../Algorithm/AbstractAlgorithm.h"

@@ -1,4 +1,4 @@
-COMP = g++-8.3.0
+COMP = g++-9.3.0
 
 OBJS = Position.o Container.o Operation.o Floor.o ShipPlan.o ShipRoute.o WeightBalanceCalculator.o Reader.o CraneAux.o Crane.o AlgorithmRegistrar.o AlgorithmRegistration.o Auxillary.o Simulation.o main.o
 EXEC = simulation
@@ -34,7 +34,7 @@ Crane.o: $(SIMULATOR)Crane.cpp $(SIMULATOR)Crane.h $(COMMON)Operation.h $(COMMON
 AlgorithmRegistrar.o: $(SIMULATOR)AlgorithmRegistrar.cpp $(SIMULATOR)AlgorithmRegistrar.h $(ALGORITHM)AbstractAlgorithm.h
 	$(COMP) $(CPP_COMP_FLAG) -c $(SIMULATOR)$*.cpp
 AlgorithmRegistration.o: $(SIMULATOR)AlgorithmRegistration.cpp $(ALGORITHM)AlgorithmRegistration.h
-    $(COMP) $(CPP_COMP_FLAG) -c $(SIMULATOR)$*.cpp
+	$(COMP) $(CPP_COMP_FLAG) -c $(SIMULATOR)$*.cpp
 Auxillary.o: $(SIMULATOR)Auxillary.cpp $(SIMULATOR)Simulation.h $(SIMULATOR)AlgorithmRegistrar.h
 	$(COMP) $(CPP_COMP_FLAG) -c $(SIMULATOR)$*.cpp
 Simulation.o: $(SIMULATOR)Simulation.cpp $(SIMULATOR)Simulation.h $(SIMULATOR)AlgorithmRegistrar.h
