@@ -55,13 +55,14 @@ void Simulation::start(const string &travelPath, string &algorithmPath, string &
     registrar.loadAlgorithmFromFile(algorithmPath, errorPath);
     string resultsPath = createResultsFile(outputPath, travels);
     map<string, vector<int>> algResults;
-    for(const auto& travelName : travels) {
+    for(auto& travelName : travels) {
         string currTravelPath = travelPath + SUBDIR + travelName;
         auto algorithms = registrar.getAlgorithms();
         if(algorithms.empty()) { return; }
         for(auto& alg: algorithms) {
-            std::cout << "***\nstarting travel: " << travelName << " with algorithm: " << alg.first << std::endl;
+            std::cout << SEPARATOR << "starting travel: " << travelName << " with algorithm: " << alg.first << std::endl;
             if(!readShip(errorPath, currTravelPath, travelName, alg)) {
+                travelName = "";
                 continue;
             }
             else {
@@ -69,5 +70,5 @@ void Simulation::start(const string &travelPath, string &algorithmPath, string &
             }
         }
     }
-    writeResults(resultsPath, algResults);
+    writeResults(resultsPath, algResults, travels);
 }

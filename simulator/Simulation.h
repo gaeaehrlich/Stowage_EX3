@@ -41,7 +41,7 @@ public:
     void writeCargoErrors(const string& errorPath, int simulationErrors, int algErrors, vector<unique_ptr<Container>>& containersAtPort, const string& travelName, const string& algName);
     string createPortOutputFile(const string& outputPath, const string& port);
     int sendInstructionsToCrane(vector<unique_ptr<Container>> containers, WeightBalanceCalculator& calculator, const string& instructions_path, const string &errorPath, const string &sailInfo);
-    void writeResults(const string &path, const map<string, vector<int>>& results);
+    void writeResults(const string &path, const map<string, vector<int>>& results, vector<string> travels);
     int sumResults(const vector<int>& results, bool sumOrErr);
     string createTravelOutputFolder(const string& outputPath, const string& algName, const string& travelName);
     void scanTravelPath(const string& currTravelPath, const string& errorPath);

@@ -144,19 +144,20 @@ void Simulation::writeCargoErrors(const string &errorPath, int simulationErrors,
 string Simulation::createResultsFile(const string &outputPath, vector<string> travels) {
     string resultsPath = outputPath + SUBDIR + "simulator.results";
     std::ofstream file(resultsPath);
-    file << "RESULTS, ";
-    for(const string& travel: travels) {
-        file << travel << ", ";
-    }
-    file << "Sum, Num Errors\n";
     file.close();
     return resultsPath;
 }
 
-void Simulation::writeResults(const string &path, const map<string, vector<int>>& results) {
+void Simulation::writeResults(const string &path, const map<string, vector<int>>& results, vector<string> travels) {
     vector<tuple<string, vector<int>, int, int>> resVec;
     std::ofstream file;
     file.open(path, std::ios_base::app);
+    file << "RESULTS, ";
+    for(const string& travel: travels) {
+        if(travel != "") file << travel << ", ";
+    }
+    file << "Sum, Num Errors\n";
+
     for(auto& algRes: results) {
         resVec.emplace_back(algRes.first, algRes.second, sumResults(algRes.second, true), sumResults(algRes.second, false));
     }
