@@ -1,7 +1,7 @@
 COMP = g++-9.3.0
 
 OBJS = Position.o Container.o Operation.o Floor.o ShipPlan.o ShipRoute.o WeightBalanceCalculator.o Reader.o CraneAux.o Crane.o AlgorithmRegistrar.o AlgorithmRegistration.o Auxillary.o Simulation.o main.o
-EXEC = simulation
+EXEC = simulator
 COMMON = ../Common/
 SIMULATOR= ./
 ALGORITHM = ../Algorithm/
