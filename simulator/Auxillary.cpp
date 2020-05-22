@@ -12,6 +12,11 @@ string Simulation::getPath(const string& travelDir, const string& search) {
 
 string Simulation::getCargoPath(const string &travelDir, const string &port) {
     string pathName = travelDir + SUBDIR + port + "_" + std::to_string(_route.getPortNumber()) + ".cargo_data";
+    fs::path path = pathName;
+    if(!fs::exists(path)) { // if cargo file doesn't exist, create an empty one
+        std::ofstream cargoFile (pathName);
+        cargoFile.close();
+    }
     return pathName;
 }
 
@@ -33,14 +38,14 @@ bool Simulation::checkDirectories(const string &travelPath, string &algorithmPat
     bool algorithm = Reader::checkDirPath(algorithmPath);
     bool output = Reader::checkDirPath(outputPath);
     if(!travel) {
-        std::cout << "The path for the travels is incorrect: " << travelPath << ". Simulation terminated" << std::endl;
+        std::cout << "The path for the travels is incorrect: " << travelPath << ". simulator terminated" << std::endl;
     }
     if(!algorithm) {
-        std::cout << "The path for the algorithms is incorrect: " << algorithmPath << ". Simulation will use current working directory instead" << std::endl;
+        std::cout << "The path for the algorithms is incorrect: " << algorithmPath << ". simulator will use current working directory instead" << std::endl;
         algorithmPath = ".";
     }
     if(!output) {
-        std::cout << "The path for the output is incorrect: " << outputPath << ". Simulation will use current working directory instead" << std::endl;
+        std::cout << "The path for the output is incorrect: " << outputPath << ". simulator will use current working directory instead" << std::endl;
         outputPath = ".";
     }
     return travel;
@@ -58,7 +63,7 @@ void Simulation::writeReaderErrors(const string& errorPath, int simulationErrors
             errors = true;
         }
         else if(algErrors & pow2(i + index)) {
-            msg.append("ALGORITHM WARNING: algorithm " + algName + " reports a problem the simulation did not find: " + errorMsg[i]);
+            msg.append("ALGORITHM WARNING: algorithm " + algName + " reports a problem the simulator did not find: " + errorMsg[i]);
             errors = true;
         }
     }
@@ -75,7 +80,7 @@ bool Simulation::writeShipErrors(const string &errorPath, int simulationErrors, 
     if(simulationErrors == 0 && algErrors == 0) {
         return true;
     }
-    const string& sailInfo = "---------------------------------------------------------------------\n***** ALGORITHM: " + algName + ", TRAVEL: " + travel + " *****\n";
+    const string& sailInfo = SEPARATOR + "***** ALGORITHM: " + algName + ", TRAVEL: " + travel + " *****\n";
     vector<string> errorMsg;
     errorMsg.emplace_back("ship plan: a position has an equal number of floors, or more, than the number of floors provided in the first line (ignored)\n");
     errorMsg.emplace_back("ship plan: a given position exceeds the X/Y ship limits (ignored)\n");
@@ -103,7 +108,7 @@ int Simulation::countContainersOnPort(const string& id, vector<unique_ptr<Contai
 
 
 void Simulation::writeCargoErrors(const string &errorPath, int simulationErrors, int algErrors, vector<unique_ptr<Container>>& containersAtPort, const string& travelName, const string& algName) {
-    const string& sailInfo = "---------------------------------------------------------------------\n***** ALGORITHM: " + algName + ", TRAVEL: " + travelName + " *****\n";
+    const string& sailInfo = SEPARATOR + "***** ALGORITHM: " + algName + ", TRAVEL: " + travelName + " *****\n";
     vector<string> errorMsg;
     errorMsg.emplace_back("containers at port: duplicate ID on port (ID rejected)\n");
     errorMsg.emplace_back("containers at port: ID already on ship (ID rejected)\n");
@@ -130,7 +135,6 @@ void Simulation::writeCargoErrors(const string &errorPath, int simulationErrors,
     if(simulationErrors & pow2(11 )) { errorMsg[1].append("\n"); }
     if(_route.isLastStop() && !containersAtPort.empty()) {
         simulationErrors |= pow2(17);
-        containersAtPort.clear();
     }
     if(_plan.numberOfEmptyCells() + _plan.findContainersToUnload(_route.getCurrentPort()).size() < containersAtPort.size()) { simulationErrors |= pow2(18); }
     writeReaderErrors(errorPath, simulationErrors, algErrors, errorMsg, algName, sailInfo, 10);
@@ -138,7 +142,7 @@ void Simulation::writeCargoErrors(const string &errorPath, int simulationErrors,
 
 
 string Simulation::createResultsFile(const string &outputPath, vector<string> travels) {
-    string resultsPath = outputPath + SUBDIR + "simulation.results";
+    string resultsPath = outputPath + SUBDIR + "simulator.results";
     std::ofstream file(resultsPath);
     file << "RESULTS, ";
     for(const string& travel: travels) {

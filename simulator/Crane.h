@@ -6,11 +6,11 @@
 #include <map>
 #include <iostream>
 #include <unordered_set>
-#include "../Common/Container.h"
-#include "../Common/ShipPlan.h"
-#include "../Common/Operation.h"
-#include "../Common/Reader.h"
-#include "../Common/WeightBalanceCalculator.h"
+#include "../common/Container.h"
+#include "../common/ShipPlan.h"
+#include "../common/Operation.h"
+#include "../common/Reader.h"
+#include "../common/WeightBalanceCalculator.h"
 
 
 using std::string;
@@ -49,7 +49,7 @@ public:
     bool isErrorUnload(const string& id, ShipPlan& plan, Position pos, bool& fatal);
     bool checkLoadedTemporaryUnloaded();
     void writeLeftAtPortError(const string& id, const string& msg);
-    bool checkForgotOnPort();
+    bool checkForgotOnPort(bool isLastStop);
     bool shouldPrioritize(const string& dest, ShipRoute& route);
     void writeLoadError(const string& id, const string& reason);
     bool checkShip(ShipPlan& plan);

@@ -6,16 +6,17 @@
 #include <algorithm>
 #include <dlfcn.h>
 #include <stdio.h>
-#include "../Common/ShipPlan.h"
-#include "../Common/ShipRoute.h"
-#include "../Algorithm/AbstractAlgorithm.h"
-#include "../Common/Reader.h"
-#include "../Algorithm/AlgorithmRegistration.h"
+#include "../common/ShipPlan.h"
+#include "../common/ShipRoute.h"
+#include "../algorithm/AbstractAlgorithm.h"
+#include "../common/Reader.h"
+#include "../algorithm/AlgorithmRegistration.h"
 #include "AlgorithmRegistrar.h"
 #include "Crane.h"
 
 const string SUBDIR = "/";
 const int FAILURE = -1;
+const string SEPARATOR = "---------------------------------------------------------------------\n";
 
 using std::string;
 using std::vector;

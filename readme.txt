@@ -3,8 +3,8 @@ STOWAGE - EXERCISE 2
 HOW TO RUN THE PROJECT:
 
 	We have 3 folders: bonus, algorithm, common, and simulation.
-	in both algorithm and simulation, you need to run - make.
-	After that, in our Simulation folder, an execution file named 	"simulator" will be created.
+	in bonus, algorithm and simulation, you need to run - make.
+	After that, in our simulation folder, an execution file named 	"simulator" will be created.
 	In order to run our simulation, use the following command:
 		simulation -travel_path <travel path> -algorithm_path <algorithm path> -output <output path>
 	Flags can be given in different order.
@@ -18,5 +18,8 @@ OUTPUT FILES:
 	If an error occurred during our run, an error file is created, named simulation.errors.
 
 SPECIAL CASES:
-    1. Duplicates - if a container with the same ID appears more than once on a certain port, we treat only ut's first appearance as a valid one, that can be loaded or rejected, and the rest of the appearances must be rejected by the algorithm.
-    2. Algorithm error - if the algorithm makes an error in it's instructions the run on the travel does not terminate, but more on that in the bonus file.
+    1. Duplicates - if a container with the same ID appears more than once on a certain port, we treat only it's first
+       appearance as a valid one, that can be loaded or rejected, and the rest of the appearances must be rejected by
+       the algorithm.
+    2. Algorithm errors - if the algorithm makes an error in it's instructions, the run on the travel does not terminate,
+       but more on that in the bonus file.

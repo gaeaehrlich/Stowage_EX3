@@ -1,18 +1,30 @@
-The error handling concerns two aspects:
+The error handling concerns two main aspects:
     # Algorithm warnings: when an algorithm fails to report input file errors that the simulation did find.
-    # Algorithm mistakes: when an algorithm instructs an illegal operation, or doesn't concern all containers in it's instructions.
+    # Algorithm mistakes: when an algorithm instructs an illegal operation, or doesn't concern all the containers in
+      it's instructions.
 
+
+SAMPLE BAD ALGORITHM
+    In the bonus folder you'll find a bad algorithm, designed to show owr error handling in all it's glory.
+    To run it, simply run make and direct the simulation algorithm path to the new .so file.
+    You'll be able to see the algorithm errors in the file simulation.errors.
 
 ALGORITHM RETURN VALUE
-    The simulation compares it's own errors regarding the input file with the return value of the algorithm, and checks whether the algorithm reported all the needed errors,
+    The simulation compares it's own errors regarding the input file with the return value of the algorithm, and checks
+    whether the algorithm reported all the needed errors,
     or if it reported unnecessary errors. A proper message will be printed in the error file.
 
 ALGORITHM INSTRUCTION ERROR
-    If the algorithm instructs an illegal operation, the simulation reports it to the error file, a
+    If the algorithm instructs an illegal operation, or forgets to handle a container on port, the simulation reports it
+    to the error file, and continues the run on that travel, whilst trying to conduct as many operations the algorithm
+    instructs as possible, even if they're illegal.
 
-    COLLECTING ERRORS
-        If an algorithm makes a mistake during it's travel, the run on that travel does not terminate. The simulation keeps collecting algorithm errors and reports them to the error file.
-        The simulation enables the algorithm to make illegal operations as much as possible, for example: if the algorithm instructs the load of a container with a port destination that's not
-        in route, the simulation will enable that and report an error. This will probably cause the container to be on the ship at the end of the travel, when another error will be reported:
-        the travel has ended but the ship is not empty.
-        Examples for cases when the simulation does not able the algorithm to make an operation: trying to load a "floating" container, trying to unload a container when there's another container on top of it.
+COLLECTING ERRORS
+    If an algorithm makes a mistake during it's travel, the run on that travel does not terminate. The simulation keeps
+    collecting algorithm errors and reports them to the error file.
+    The simulation enables the algorithm to make illegal operations as much as possible, for example: if the algorithm
+    instructs the load of a container with a port destination that's not in route, the simulation will enable that and
+    report an error. This might cause the container to be on the ship at the end of the travel, when another error will
+    be reported: the travel has ended but the ship is not empty.
+    Examples for cases when the simulation does not able the algorithm to make an operation: trying to load a "floating"
+    container, trying to unload a container when there's another container on top of it.

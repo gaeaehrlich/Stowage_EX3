@@ -35,7 +35,7 @@ int Simulation::sail(pair<string, unique_ptr<AbstractAlgorithm>> &algorithm, con
         vector<unique_ptr<Container>> containersAtPort;
         string portOutputPath = createPortOutputFile(travel_output_path, port);
         getInstructionForCargo(cargoPath, portOutputPath, errorPath, containersAtPort, algorithm, travelName);
-        string sailInfo = "---------------------------------------------------------------------\n***** ALGORITHM: " + algorithm.first + ", TRAVEL: " + travelName + " PORT: " + port + " *****\n";
+        string sailInfo = SEPARATOR + "***** ALGORITHM: " + algorithm.first + ", TRAVEL: " + travelName + " PORT: " + port + " *****\n";
         int numOp = sendInstructionsToCrane(std::move(containersAtPort), calculator, portOutputPath, errorPath, sailInfo);
         if(numOp == FAILURE) { failed = true; }
         results += numOp;
@@ -47,7 +47,7 @@ int Simulation::sail(pair<string, unique_ptr<AbstractAlgorithm>> &algorithm, con
 
 void Simulation::start(const string &travelPath, string &algorithmPath, string &outputPath) {
     if(!checkDirectories(travelPath, algorithmPath, outputPath)) { return; }
-    string errorPath = outputPath + SUBDIR + "simulation.errors";
+    string errorPath = outputPath + SUBDIR + "simulator.errors";
     std::remove(errorPath.c_str());
     vector<string> travels = Reader::getTravels(travelPath);
     vector<std::function<unique_ptr<AbstractAlgorithm>()>> algorithmFactories;
@@ -60,7 +60,7 @@ void Simulation::start(const string &travelPath, string &algorithmPath, string &
         auto algorithms = registrar.getAlgorithms();
         if(algorithms.empty()) { return; }
         for(auto& alg: algorithms) {
-            std::cout << "strating travel: " << travelName << " with algorithm: " << alg.first << std::endl;
+            std::cout << "***\nstarting travel: " << travelName << " with algorithm: " << alg.first << std::endl;
             if(!readShip(errorPath, currTravelPath, travelName, alg)) {
                 continue;
             }

@@ -26,7 +26,7 @@ int Crane::start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calc
             case ERROR:
                 std::ofstream file;
                 file.open(_errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
-                file << _sailInfo << "ERROR: Algorithm trying an illegal operation.\n";
+                file << _sailInfo << "ERROR: algorithm trying an illegal operation.\n";
                 file.close();
                 break;
         }
@@ -48,7 +48,7 @@ void Crane::setCrane(vector<unique_ptr<Container>> containers, vector<Operation>
 }
 
 bool Crane::end(ShipPlan& plan, ShipRoute& route) {
-    bool isLegal = checkLoadedTemporaryUnloaded() && checkForgotOnPort() && checkShip(plan) && handleLastStop(plan, route);
+    bool isLegal = checkLoadedTemporaryUnloaded() && checkForgotOnPort(route.isLastStop()) && checkShip(plan) && handleLastStop(plan, route);
     _cargoLoad.clear();
     _temporaryUnloaded.clear();
     _newlyLoadedDest.clear();

@@ -11,7 +11,7 @@
 #include <dlfcn.h>
 #include <filesystem>
 #include <fstream>
-#include "../Algorithm/AbstractAlgorithm.h"
+#include "../algorithm/AbstractAlgorithm.h"
 
 using std::vector;
 using std::string;

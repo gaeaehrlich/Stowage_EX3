@@ -73,6 +73,10 @@ void Crane::containerNotFoundError(const string &place) {
 
 int Crane::shouldReject(unique_ptr<Container>& container, ShipPlan& plan, ShipRoute& route, bool write) {
     int errors = 0;
+    if(route.isLastStop()) {
+        if(write) { writeLoadError(container -> getId(), "The container to load is at the last stop.\n"); }
+        errors++;
+    }
     if(plan.hasContainer(container -> getId())) {
         if(write) { writeLoadError(container -> getId(), "The ship plan already has a container with this ID.\n"); }
         errors++;
@@ -93,10 +97,6 @@ int Crane::shouldReject(unique_ptr<Container>& container, ShipPlan& plan, ShipRo
         if(write) { writeLoadError(container -> getId(), "The container's ID is illegal.\n"); }
         errors++;
     }
-    if(route.isLastStop()) {
-        if(write) { writeLoadError(container -> getId(), "The container to load is at the last stop.\n"); }
-        errors++;
-    }
     if(plan.isFull() && !shouldPrioritize(container -> getDest(), route)) errors++; // this is a fatal error for load
     if(!route.portInRoute(container -> getDest())) {
         if(write) { writeLoadError(container -> getId(), "The container's destination port is not in route.\n"); }
@@ -113,7 +113,7 @@ void Crane::writeLoadError(const string& id, const string& reason) {
     std::ofstream file;
     file.open(_errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
     checkErrorPort(file);
-    file << "ALGORITHM ERROR: Algorithm is loading the container " << id << " that should be rejected. Rejection reason: " << reason;
+    file << "ALGORITHM ERROR: algorithm is loading the container " << id << " that should be rejected. Rejection reason: " << reason;
     file.close();
 }
 
@@ -123,7 +123,7 @@ void Crane::writeInstructionError(const string &instruction, const string &id, b
     file.open(_errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
     string exec = executed ? "still" : "not";
     checkErrorPort(file);
-    file << "ALGORITHM ERROR: Algorithm is making a mistake with container " << id << ". " << instruction << " was " << exec << " executed.\n";
+    file << "ALGORITHM ERROR: algorithm is making a mistake with container " << id << ". " << instruction << " was " << exec << " executed.\n";
     file.close();
 }
 
@@ -157,7 +157,7 @@ bool Crane::isErrorUnload(const string& id, ShipPlan &plan, Position pos, bool& 
         std::ofstream file;
         file.open(_errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
         checkErrorPort(file);
-        file << "ALGORITHM ERROR: Algorithm is unloading the container " << plan.getIdAtPosition(pos) << " instead of " << id << ".\n";
+        file << "ALGORITHM ERROR: algorithm is unloading the container " << plan.getIdAtPosition(pos) << " instead of " << id << ".\n";
         file.close();
         writeInstructionError("Unload", id, true);
         return true;
@@ -169,12 +169,13 @@ void Crane::writeLeftAtPortError(const string& id, const string& msg) {
     std::ofstream file;
     file.open(_errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
     checkErrorPort(file);
-    file << "ALGORITHM ERROR: Algorithm is making a mistake with container " << id
+    file << "ALGORITHM ERROR: algorithm is making a mistake with container " << id
          << ". It " << msg << ", and was wrongly left at port " << _port << ".\n";
     file.close();
 }
 
-bool Crane::checkForgotOnPort() {
+bool Crane::checkForgotOnPort(bool isLastStop) {
+    if(isLastStop) { return true; }
     bool flag = true;
     for(const auto& container : _cargoLoad) {
         writeLeftAtPortError(container -> getId(), "wasn't handled by the algorithm");

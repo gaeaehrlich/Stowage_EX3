@@ -6,14 +6,14 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include "../Common/Container.h"
-#include "../Common/ShipPlan.h"
-#include "../Common/ShipRoute.h"
-#include "../Common/Reader.h"
-#include "../Common/WeightBalanceCalculator.h"
-#include "../Common/Reader.h"
-#include "AbstractAlgorithm.h"
-#include "AlgorithmRegistration.h"
+#include "../common/Container.h"
+#include "../common/ShipPlan.h"
+#include "../common/ShipRoute.h"
+#include "../common/Reader.h"
+#include "../common/WeightBalanceCalculator.h"
+#include "../common/Reader.h"
+#include "../algorithm/AbstractAlgorithm.h"
+#include "../algorithm/AlgorithmRegistration.h"
 
 
 using std::unique_ptr;
