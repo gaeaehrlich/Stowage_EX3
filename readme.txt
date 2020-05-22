@@ -23,3 +23,4 @@ SPECIAL CASES:
        the algorithm.
     2. Algorithm errors - if the algorithm makes an error in it's instructions, the run on the travel does not terminate,
        but more on that in the bonus file.
+    3. Algorithm return value - for each port the algorithm returns

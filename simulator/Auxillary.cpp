@@ -113,7 +113,7 @@ void Simulation::writeCargoErrors(const string &errorPath, int simulationErrors,
     errorMsg.emplace_back("containers at port: duplicate ID on port (ID rejected)\n");
     errorMsg.emplace_back("containers at port: ID already on ship (ID rejected)\n");
     errorMsg.emplace_back("containers at port: bad line format, missing or bad weight (ID rejected)\n");
-    errorMsg.emplace_back("containers at port: bad line format, missing or bad port dest (ID rejected)\n");
+    errorMsg.emplace_back("containers at port: bad line format, missing or bad port destination (ID rejected)\n");
     errorMsg.emplace_back("containers at port: bad line format, ID cannot be read (ignored)\n");
     errorMsg.emplace_back("containers at port: illegal ID check ISO 6346 (ID rejected)\n");
     errorMsg.emplace_back("containers at port: file cannot be read altogether (assuming no cargo to be loaded at this port)\n");
@@ -129,6 +129,11 @@ void Simulation::writeCargoErrors(const string &errorPath, int simulationErrors,
             if(!(simulationErrors & pow2(11))) { errorMsg[1].append("The container: "); }
             simulationErrors |= pow2(11);
             errorMsg[1].append(container -> getId() + " ");
+        }
+        if(!_route.portInRoute(container -> getDest())) { // 2^13
+            if(!(simulationErrors & pow2(13))) { errorMsg[1].append("The containers with port not in route: "); }
+            simulationErrors |= pow2(13);
+            errorMsg[3].append(container -> getId() + " ");
         }
     }
     if(simulationErrors & pow2(10 )) { errorMsg[0].append("\n"); }
@@ -168,12 +173,13 @@ void Simulation::writeResults(const string &path, const map<string, vector<int>>
         return std::get<3>(res1) < std::get<3>(res2);
     });
     for(auto& algResult: resVec) {
-        file << std::get<0>(algResult) << ","; // algorithm name
+        file << std::get<0>(algResult) << ", "; // algorithm name
         for(auto& travel_result: std::get<1>(algResult)) { // iterating over each travel result
-            file << travel_result << ",";
+            file << travel_result << ", ";
         }
-        file << std::get<2>(algResult) << "," << std::get<3>(algResult) << "\n";
+        file << std::get<2>(algResult) << ", " << std::get<3>(algResult) << "\n";
     }
+    file.close();
 }
 
 int Simulation::sumResults(const vector<int>& results, bool sumOrErr) {
