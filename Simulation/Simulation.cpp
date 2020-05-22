@@ -47,7 +47,8 @@ int Simulation::sail(pair<string, unique_ptr<AbstractAlgorithm>> &algorithm, con
 
 void Simulation::start(const string &travelPath, string &algorithmPath, string &outputPath) {
     if(!checkDirectories(travelPath, algorithmPath, outputPath)) { return; }
-    string errorPath = outputPath + SUBDIR + "simulation.errors";
+    const string errorPath = outputPath + SUBDIR + "simulation.errors";
+    std::remove(errorPath.c_str()); // so errors won't build up from run to run
     vector<string> travels = Reader::getTravels(travelPath);
     vector<std::function<unique_ptr<AbstractAlgorithm>()>> algorithmFactories;
     auto& registrar = AlgorithmRegistrar::getInstance();

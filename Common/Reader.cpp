@@ -147,7 +147,11 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
             continue;
         }
         x1 = vec[0]; y1 = vec[1]; numFloors1 = vec[2];
-        if (x <= x1 || y <= y1 || numFloors <= numFloors1) { // wrong values
+        if (numFloors <= numFloors1) { // floors
+            errors |= pow2(0);
+            continue;
+        }
+        if (x <= x1 || y <= y1) { // wrong values
             errors |= pow2(1);
             continue;
         }
@@ -168,7 +172,7 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
         	for (int j = 0; j < y; j++) {
         		if (mPlan.find({i, j}) == mPlan.end()) {
                     mPlan[{i, j}] = numFloors;
-			}
+        		}
         	}
         }
         plan = ShipPlan(numFloors, std::move(mPlan)); // why not?
@@ -230,8 +234,7 @@ vector<Operation> Reader::getInstructionsVector(const string &path) {
     while (std::getline(file, line)) {
         if (Reader::ignoreLine(line)) { continue; }
         if (Reader::splitInstructionLine(line, opChar, id, position, move)) {
-            Operation op = Operation(opChar, id, position, move);
-            ops.push_back(op);
+            ops.emplace_back(opChar, id, position, move);
         }
         else {
             ops.emplace_back(ERROR, "", Position());

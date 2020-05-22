@@ -55,7 +55,7 @@ void NaiveAlgorithm::rejectInstructions(std::ofstream &file) {
     for(auto container = _cargoLoad.begin(); container != _cargoLoad.end();) {
         if(shouldRejectContainer(*container)) {
             file << instructionToString('R', (*container) -> getId(), Position());
-            _cargoLoad.erase(container);
+            container = _cargoLoad.erase(container);
         }
         else {
             ++container;

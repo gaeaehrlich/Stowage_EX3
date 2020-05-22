@@ -12,11 +12,6 @@ string Simulation::getPath(const string& travelDir, const string& search) {
 
 string Simulation::getCargoPath(const string &travelDir, const string &port) {
     string pathName = travelDir + SUBDIR + port + "_" + std::to_string(_route.getPortNumber()) + ".cargo_data";
-    fs::path path = pathName;
-    if(!fs::exists(path)) { // if cargo file doesn't exist, create an empty one
-        std::ofstream cargoFile (pathName);
-        cargoFile.close();
-    }
     return pathName;
 }
 
@@ -84,7 +79,7 @@ bool Simulation::writeShipErrors(const string &errorPath, int simulationErrors, 
     vector<string> errorMsg;
     errorMsg.emplace_back("ship plan: a position has an equal number of floors, or more, than the number of floors provided in the first line (ignored)\n");
     errorMsg.emplace_back("ship plan: a given position exceeds the X/Y ship limits (ignored)\n");
-    errorMsg.emplace_back("ship plan: bad line format after first line (ignored)\n");
+    errorMsg.emplace_back("ship plan: bad line format after first line or duplicate x,y appearance with same data (ignored)\n");
     errorMsg.emplace_back("ship plan: travel error - bad first line or file cannot be read altogether (cannot run this travel)\n");
     errorMsg.emplace_back("ship plan: travel error - duplicate x,y appearance with different data (cannot run this travel)\n");
     errorMsg.emplace_back("travel route: a port appears twice or more consecutively (ignored)\n");
