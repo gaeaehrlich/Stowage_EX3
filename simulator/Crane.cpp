@@ -97,6 +97,7 @@ bool Crane::load(const string& id, Position pos, ShipPlan& plan, ShipRoute& rout
     if(_calculator.tryOperation(LOAD, container -> getWeight(), pos._x, pos._y) != WeightBalanceCalculator::APPROVED) { return false; }
 
     plan.getFloor(pos._floor).insert(pos._x, pos._y, std::move(container));
+    std::cout << "Loading container " << id << " to position: floor: " << pos._floor << ", x: " << pos._x << ", y: " << pos._y << std::endl;
     return !isError;
 }
 
