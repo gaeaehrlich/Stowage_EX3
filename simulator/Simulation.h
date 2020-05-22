@@ -45,7 +45,7 @@ public:
     int sumResults(const vector<int>& results, bool sumOrErr);
     string createTravelOutputFolder(const string& outputPath, const string& algName, const string& travelName);
     void scanTravelPath(const string& currTravelPath, const string& errorPath);
-    string createResultsFile(const string& outputPath, vector<string> travels);
+    string createResultsFile(const string& outputPath);
     int countContainersOnPort(const string& id, vector<unique_ptr<Container>>& containersAtPort);
     void writeReaderErrors(const string& errorPath, int simulationErrors, int algErrors, vector<string> errorMsg, const string& algName, const string& sailInfo, int index = 0);
 };

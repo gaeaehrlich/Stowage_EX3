@@ -141,7 +141,7 @@ void Simulation::writeCargoErrors(const string &errorPath, int simulationErrors,
 }
 
 
-string Simulation::createResultsFile(const string &outputPath, vector<string> travels) {
+string Simulation::createResultsFile(const string &outputPath) {
     string resultsPath = outputPath + SUBDIR + "simulator.results";
     std::ofstream file(resultsPath);
     file.close();

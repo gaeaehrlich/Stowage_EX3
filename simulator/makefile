@@ -2,9 +2,9 @@ COMP = g++-9.3.0
 
 OBJS = Position.o Container.o Operation.o Floor.o ShipPlan.o ShipRoute.o WeightBalanceCalculator.o Reader.o CraneAux.o Crane.o AlgorithmRegistrar.o AlgorithmRegistration.o Auxillary.o Simulation.o main.o
 EXEC = simulator
-COMMON = ../Common/
+COMMON = ../common/
 SIMULATOR= ./
-ALGORITHM = ../Algorithm/
+ALGORITHM = ../algorithm/
 
 CPP_COMP_FLAG = -std=c++2a -Wall -Wextra -Werror -pedantic-errors -DNDEBUG
 CPP_LINK_FLAG = -ldl -export-dynamic -lstdc++fs
