@@ -206,3 +206,9 @@ void Simulation::scanTravelPath(const string &currTravelPath, const string &erro
         }
     }
 }
+
+void Simulation::setRelevantTravels(vector<string> &travels, const std::unordered_set<string> &invalid) {
+    for(const string& travel: invalid) {
+        travels.erase(std::remove(travels.begin(), travels.end(), travel), travels.end());
+    }
+}

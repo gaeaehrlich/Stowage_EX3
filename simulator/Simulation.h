@@ -48,6 +48,7 @@ public:
     string createResultsFile(const string& outputPath);
     int countContainersOnPort(const string& id, vector<unique_ptr<Container>>& containersAtPort);
     void writeReaderErrors(const string& errorPath, int simulationErrors, int algErrors, vector<string> errorMsg, const string& algName, const string& sailInfo, int index = 0);
+    void setRelevantTravels(vector<string>& travels, const std::unordered_set<string>& invalid);
 };
 
 
