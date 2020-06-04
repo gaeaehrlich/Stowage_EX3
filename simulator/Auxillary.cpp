@@ -1,5 +1,11 @@
 #include "Simulation.h"
 
+void Simulation::initPaths(const string& outputPath, string& errorPath, string& resultsPath) {
+    errorPath = outputPath + SUBDIR + "simulator.errors";
+    std::remove(errorPath.c_str());
+    resultsPath = createResultsFile(outputPath);
+}
+
 string Simulation::getPath(const string& travelDir, const string& search) {
     std::regex format("(.*)\\." + search);
     for(const auto & entry : fs::directory_iterator(travelDir)) {
@@ -33,37 +39,20 @@ string Simulation::createTravelOutputFolder(const string &outputPath, const stri
     return path;
 }
 
-bool Simulation::checkDirectories(const string &travelPath, string &algorithmPath, string &outputPath) {
-    bool travel = Reader::checkDirPath(travelPath);
-    bool algorithm = Reader::checkDirPath(algorithmPath);
-    bool output = Reader::checkDirPath(outputPath);
-    if(!travel) {
-        std::cout << "The path for the travels is incorrect: " << travelPath << ". simulator terminated" << std::endl;
-    }
-    if(!algorithm) {
-        std::cout << "The path for the algorithms is incorrect: " << algorithmPath << ". simulator will use current working directory instead" << std::endl;
-        algorithmPath = ".";
-    }
-    if(!output) {
-        std::cout << "The path for the output is incorrect: " << outputPath << ". simulator will use current working directory instead" << std::endl;
-        outputPath = ".";
-    }
-    return travel;
-}
 
-void Simulation::writeReaderErrors(const string& errorPath, int simulationErrors, int algErrors, vector<string> errorMsg, const string& algName, const string& sailInfo, int index) {
+void Simulation::writeReaderErrors(const string& errorPath, int simulationErrors, int algErrors, vector<string> errorMsg, const string& sailInfo, int index, bool reportAlg) {
     bool errors = false;
     string msg = sailInfo;
     for(long unsigned int i = 0; i < errorMsg.size(); i++) {
         if(simulationErrors & pow2(i + index)) {
-            msg.append("INPUT FILE ERROR: " + errorMsg[i]);
-            if(!(algErrors & pow2(i + index))) {
-                msg.append("ALGORITHM WARNING: algorithm did not alert this problem\n");
+            if(!reportAlg) msg.append("Error " + std::to_string(i + index) + ": " + errorMsg[i]);
+            else if(!(algErrors & pow2(i + index))) {
+                msg.append("ALGORITHM WARNING: algorithm did not alert error " + std::to_string(i + index) + "\n");
             }
             errors = true;
         }
-        else if(algErrors & pow2(i + index)) {
-            msg.append("ALGORITHM WARNING: algorithm " + algName + " reports a problem the simulator did not find: " + errorMsg[i]);
+        else if(reportAlg && algErrors & pow2(i + index)) {
+            msg.append("ALGORITHM WARNING: algorithm reports a problem the simulator did not find: error " + std::to_string(i + index) + ": " + errorMsg[i]);
             errors = true;
         }
     }
@@ -75,12 +64,13 @@ void Simulation::writeReaderErrors(const string& errorPath, int simulationErrors
     }
 }
 
-
-bool Simulation::writeShipErrors(const string &errorPath, int simulationErrors, int algErrors, const string& travel, const string& algName) {
-    if(simulationErrors == 0 && algErrors == 0) {
+bool Simulation::writeTravelErrors(const string &errorPath, const string& travel, const string& simOrAlg, int simulationErrors, int algErrors) {
+    if(simulationErrors == 0) {
         return true;
     }
-    const string& sailInfo = SEPARATOR + "***** ALGORITHM: " + algName + ", TRAVEL: " + travel + " *****\n";
+    bool simulation = simOrAlg == "Simulation";
+    const string& sailInfo = simulation ? SEPARATOR + "***** Simulation reader report *****" :
+            SEPARATOR + "***** " + simOrAlg + ": , TRAVEL: " + travel + " *****\n";
     vector<string> errorMsg;
     errorMsg.emplace_back("ship plan: a position has an equal number of floors, or more, than the number of floors provided in the first line (ignored)\n");
     errorMsg.emplace_back("ship plan: a given position exceeds the X/Y ship limits (ignored)\n");
@@ -91,8 +81,8 @@ bool Simulation::writeShipErrors(const string &errorPath, int simulationErrors, 
     errorMsg.emplace_back("travel route: bad port symbol format (ignored)\n");
     errorMsg.emplace_back("travel route: travel error - empty file or file cannot be read altogether (cannot run this travel)\n");
     errorMsg.emplace_back("travel route: travel error - file with only a single valid port (cannot run this travel)\n");
-    writeReaderErrors(errorPath, simulationErrors, algErrors, errorMsg, algName, sailInfo);
-    return !((simulationErrors & pow2(3)) || (simulationErrors & pow2(4)) || (simulationErrors & pow2(7)) || (simulationErrors & pow2(8)));
+    writeReaderErrors(errorPath, simulationErrors, algErrors, errorMsg, sailInfo, simulation);
+    return (simulationErrors & pow2(3)) || (simulationErrors & pow2(4)) || (simulationErrors & pow2(7)) || (simulationErrors & pow2(8));
 }
 
 
@@ -142,7 +132,7 @@ void Simulation::writeCargoErrors(const string &errorPath, int simulationErrors,
         simulationErrors |= pow2(17);
     }
     if(_plan.numberOfEmptyCells() + _plan.findContainersToUnload(_route.getCurrentPort()).size() < containersAtPort.size()) { simulationErrors |= pow2(18); }
-    writeReaderErrors(errorPath, simulationErrors, algErrors, errorMsg, algName, sailInfo, 10);
+    writeReaderErrors(errorPath, simulationErrors, algErrors, errorMsg, sailInfo, 10);
 }
 
 

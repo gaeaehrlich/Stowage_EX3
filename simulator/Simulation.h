@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <dlfcn.h>
 #include <stdio.h>
+#include <thread>
 #include "../common/ShipPlan.h"
 #include "../common/ShipRoute.h"
 #include "../algorithm/AbstractAlgorithm.h"
@@ -13,6 +14,7 @@
 #include "../algorithm/AlgorithmRegistration.h"
 #include "AlgorithmRegistrar.h"
 #include "Crane.h"
+#include "ThreadPool.h"
 
 const string SUBDIR = "/";
 const int FAILURE = -1;
@@ -28,14 +30,16 @@ class Simulation {
     ShipPlan _plan;
     ShipRoute _route;
     Crane _crane;
+    ThreadPool _pool;
 
 public:
-    void start(const string& travelPath, string& algorithmPath, string& outputPath);
-    int sail(pair<string, unique_ptr<AbstractAlgorithm>>& algorithm, const string& travelPath, const string& travelName, const string& outputPath, const string& errorPath);
-    bool checkDirectories(const string& travelPath, string& algorithmPath, string& outputPath);
-    bool readShip(const string& errorPath, const string& travelPath, const string& travel, pair<string, unique_ptr<AbstractAlgorithm>>& algorithm);
+    Simulation(int numThreads);
+    void start(const string& travelPath, string& algorithmPath, string& outputPath, int numThreads);
+    void sail(pair<string, unique_ptr<AbstractAlgorithm>>& algorithm, WeightBalanceCalculator& calculator, const string& travelPath, const string& travelName, const string& outputPath, const string& errorPath, int& numOp);
+    int readShip(const string& errorPath, const string& travelPath, const string& travel, std::unordered_set<string>& invalidTravels);
+    void algorithmReadShip(unique_ptr<AbstractAlgorithm>& algorithm, int simulationErrors, const string& errorPath, const string& travelPath, const string& travel, const string& algName);
     string getCargoPath(const string& travelDir, const string& port);
-    bool writeShipErrors(const string& errorPath, int simulationErrors, int algErrors, const string& travel, const string& algName);
+    bool writeTravelErrors(const string &errorPath, const string& travel, const string& simOrAlg, int simulationErrors, int algErrors = 0);
     string getPath(const string &travelDir, const string &search);
     void getInstructionForCargo(const string &cargoPath, const string &outputPath, const string &errorPath, vector<unique_ptr<Container>>& containersAtPort, pair<string, unique_ptr<AbstractAlgorithm>> &algorithm, const string& travelName);
     void writeCargoErrors(const string& errorPath, int simulationErrors, int algErrors, vector<unique_ptr<Container>>& containersAtPort, const string& travelName, const string& algName);
@@ -47,8 +51,10 @@ public:
     void scanTravelPath(const string& currTravelPath, const string& errorPath);
     string createResultsFile(const string& outputPath);
     int countContainersOnPort(const string& id, vector<unique_ptr<Container>>& containersAtPort);
-    void writeReaderErrors(const string& errorPath, int simulationErrors, int algErrors, vector<string> errorMsg, const string& algName, const string& sailInfo, int index = 0);
+    void writeReaderErrors(const string& errorPath, int simulationErrors, int algErrors, vector<string> errorMsg, const string& sailInfo, int index = 0, bool reportAlg = true);
     void setRelevantTravels(vector<string>& travels, const std::unordered_set<string>& invalid);
+    void initPaths(const string& outputPath, string& errorPath, string& resultsPath);
+    int runThread(pair<string, unique_ptr<AbstractAlgorithm>>& algorithm, int travelStatus, const string& travelPath, const string& travelName, const string& outputPath, const string& errorPath);
 };
 
 

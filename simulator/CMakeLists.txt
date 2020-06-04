@@ -19,7 +19,7 @@ set(COMMON_SRC
         ../common/Position.cpp
         ../common/WeightBalanceCalculator.h
         ../common/WeightBalanceCalculator.cpp
-        AlgorithmRegistrar.cpp)
+        AlgorithmRegistrar.cpp ThreadPool.cpp ThreadPool.h)
 
 add_executable(simulator
         main.cpp
@@ -33,3 +33,4 @@ add_executable(simulator
 
 target_link_libraries(simulator stdc++fs)
 target_link_libraries(simulator ${CMAKE_DL_LIBS})
+target_link_libraries(simulator pthread)

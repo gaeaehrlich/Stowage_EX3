@@ -10,18 +10,18 @@ int Crane::start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calc
         switch(op._operation) {
             case LOAD:
                 if(!load(op._id, op._position, plan, route)) { flag = true; }
-                sum_operations++;
+                sum_operations += 5;
                 break;
             case UNLOAD:
                 if(!unload(op._id, op._position, plan)) { flag = true; }
-                sum_operations++;
+                sum_operations += 5;
                 break;
             case REJECT:
                 if(!reject(op._id, plan, route)) { flag = true; }
                 break;
             case MOVE:
                 if(!unload(op._id, op._position, plan) || !load(op._id, op._move, plan, route)) {  flag = true; }
-                sum_operations++;
+                sum_operations += 3;
                 break;
             case ERROR:
                 std::ofstream file;
