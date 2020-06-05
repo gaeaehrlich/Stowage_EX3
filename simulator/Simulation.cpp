@@ -1,6 +1,6 @@
 #include "Simulation.h"
 
-Simulation::Simulation(int numThreads) : _pool(numThreads){}
+Simulation::Simulation(int numThreads) : _pool(numThreads - 1){}
 
 int Simulation::readShip(const string &errorPath, const string &travelPath, const string &travel, std::unordered_set<string>& invalidTravels) {
     string routePath = getPath(travelPath, "route");
@@ -12,10 +12,12 @@ int Simulation::readShip(const string &errorPath, const string &travelPath, cons
 }
 
 void Simulation::algorithmReadShip(unique_ptr<AbstractAlgorithm>& algorithm, int simulationErrors, const string& errorPath, const string& travelPath, const string& travel, const string& algName) {
+    std::cout << "in read ship for alg " << algName << " for travel " << travel << std::endl;
     string routePath = getPath(travelPath, "route");
     string planPath = getPath(travelPath, "ship_plan");
     int algErrors = algorithm -> readShipRoute(routePath) | algorithm -> readShipPlan(planPath);
     writeTravelErrors(errorPath, travel, "ALGORITHM: " + algName, simulationErrors, algErrors);
+    std::cout << "after read ship" << std::endl;
 }
 
 void Simulation::getInstructionForCargo(const string &cargoPath, const string &outputPath, const string &errorPath, vector<unique_ptr<Container>>& containersAtPort, pair<string, unique_ptr<AbstractAlgorithm>> &algorithm, const string& travelName) {
@@ -29,8 +31,9 @@ int Simulation::sendInstructionsToCrane(vector<unique_ptr<Container>> containers
     return _crane.start(_plan, _route, calculator, std::move(containers), instructions, errorPath, sailInfo);
 }
 
-void Simulation::sail(pair<string, unique_ptr<AbstractAlgorithm>> &algorithm, WeightBalanceCalculator& calculator, const string &travelPath, const string& travelName, const string& outputPath, const string& errorPath, int& numOp) {
+int Simulation::sail(pair<string, unique_ptr<AbstractAlgorithm>> &algorithm, WeightBalanceCalculator& calculator, const string &travelPath, const string& travelName, const string& outputPath, const string& errorPath) {
     bool failed = false;
+    int numOp = 0;
     string travelOutputPath = createTravelOutputFolder(outputPath, algorithm.first, travelName);
     for(const string& port: _route.getRoute()) {
         std::cout << "entering port: " << port << std::endl;
@@ -44,21 +47,22 @@ void Simulation::sail(pair<string, unique_ptr<AbstractAlgorithm>> &algorithm, We
         numOp += result;
         _route.next();
     }
-    if(failed) numOp = FAILURE;
+    return failed ? FAILURE : numOp;
 }
 
 
-int Simulation::runThread(pair<string, unique_ptr<AbstractAlgorithm>>& algorithm, int travelStatus, const string& travelPath, const string& travelName, const string& outputPath, const string& errorPath) {
-    WeightBalanceCalculator calculator;
-    calculator.readShipPlan(getPath(travelPath, "ship_plan"));
-    algorithm.second -> setWeightBalanceCalculator(calculator);
-    algorithmReadShip(algorithm.second, travelStatus, errorPath, travelPath, travelName, algorithm.first);
-    std::cout << SEPARATOR << "starting travel: " << travelName << " with algorithm: " << algorithm.first << std::endl;
-    int numOp;
-    _pool.addTask([this, &algorithm, &calculator , travelPath, travelName, outputPath, errorPath, &numOp]() {
-        sail(algorithm, calculator, travelPath, travelName, outputPath, errorPath, numOp);
+void Simulation::runThread(pair<string, unique_ptr<AbstractAlgorithm>> algorithm, int travelStatus, const string& travelPath, const string& travelName, const string& outputPath, const string& errorPath) {
+    std::cout << "inserting task" << std::endl;
+    _pool.addTask([this, algorithm = std::move(algorithm), travelPath, travelName, travelStatus, outputPath, errorPath]() mutable {
+        std::cout << "staring thread" << std::endl;
+        algorithmReadShip(algorithm.second, travelStatus, errorPath, travelPath, travelName, algorithm.first);
+        std::cout << SEPARATOR << "starting travel: " << travelName << " with algorithm: " << algorithm.first << std::endl;
+        WeightBalanceCalculator calculator;
+        calculator.readShipPlan(getPath(travelPath, "ship_plan"));
+        algorithm.second -> setWeightBalanceCalculator(calculator);
+        int numOp = sail(algorithm, calculator, travelPath, travelName, outputPath, errorPath);
+        _simulationResults[algorithm.first][travelName] = numOp;
     });
-    return numOp;
 }
 
 
@@ -69,7 +73,6 @@ void Simulation::start(const string &travelPath, string &algorithmPath, string &
     vector<std::function<unique_ptr<AbstractAlgorithm>()>> algorithmFactories;
     auto& registrar = AlgorithmRegistrar::getInstance();
     registrar.loadAlgorithmFromFile(algorithmPath, errorPath);
-    map<string, vector<int>> algResults;
     std::unordered_set<string> invalidTravels;
     for(auto& travelName : travels) {
         int travelStatus;
@@ -81,10 +84,10 @@ void Simulation::start(const string &travelPath, string &algorithmPath, string &
         if(algorithms.empty()) { return; } // TODO: do we want this?
         scanTravelPath(currTravelPath, errorPath);
         for(auto& alg: algorithms) {
-            int numOp = runThread(alg, travelStatus, currTravelPath, travelName, outputPath, errorPath);
-            algResults[alg.first].emplace_back(numOp);
+            runThread(std::move(alg), travelStatus, currTravelPath, travelName, outputPath, errorPath);
         }
     }
+    _pool.joinThreads();
     setRelevantTravels(travels, invalidTravels);
-    writeResults(resultsPath, algResults, travels);
+    writeResults(resultsPath, travels);
 }

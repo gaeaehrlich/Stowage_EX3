@@ -57,15 +57,15 @@ void Simulation::writeReaderErrors(const string& errorPath, int simulationErrors
         }
     }
     if(errors) {
-        std::ofstream file;
-        file.open(errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
-        file << msg;
-        file.close();
+        //std::ofstream file;
+        //file.open(errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
+        //file << msg;
+        //file.close();
     }
 }
 
 bool Simulation::writeTravelErrors(const string &errorPath, const string& travel, const string& simOrAlg, int simulationErrors, int algErrors) {
-    if(simulationErrors == 0) {
+    if(simulationErrors == 0 && algErrors == 0) {
         return true;
     }
     bool simulation = simOrAlg == "Simulation";
@@ -143,26 +143,29 @@ string Simulation::createResultsFile(const string &outputPath) {
     return resultsPath;
 }
 
-void Simulation::writeResults(const string &path, const map<string, vector<int>>& results, vector<string> travels) {
-    vector<tuple<string, vector<int>, int, int>> resVec;
+void Simulation::writeResults(const string &path, vector<string> travels) {
+    vector<tuple<string, vector<int>, int, int>> results; //alg name, results vector, sum, errors
     std::ofstream file;
     file.open(path, std::ios_base::app);
     file << "RESULTS, ";
+    for(auto& algRes: _simulationResults) {
+        vector<int> travelsResults;
+        for(const string& travel: travels) {
+            travelsResults.emplace_back(algRes.second[travel]);
+        }
+        results.emplace_back(algRes.first, travelsResults, sumResults(travelsResults, true), sumResults(travelsResults, false));
+    }
     for(const string& travel: travels) {
         if(travel != "") file << travel << ", ";
     }
     file << "Sum, Num Errors\n";
-
-    for(auto& algRes: results) {
-        resVec.emplace_back(algRes.first, algRes.second, sumResults(algRes.second, true), sumResults(algRes.second, false));
-    }
-    sort(resVec.begin(), resVec.end(), [](const auto& res1, const auto& res2 ) {
+    sort(results.begin(), results.end(), [](const auto& res1, const auto& res2 ) {
         if(std::get<3>(res1) == std::get<3>(res2)) { // if same #errors sort by #operations
             return std::get<2>(res1) < std::get<2>(res2);
         }
         return std::get<3>(res1) < std::get<3>(res2);
     });
-    for(auto& algResult: resVec) {
+    for(auto& algResult: results) {
         file << std::get<0>(algResult) << ", "; // algorithm name
         for(auto& travel_result: std::get<1>(algResult)) { // iterating over each travel result
             file << travel_result << ", ";

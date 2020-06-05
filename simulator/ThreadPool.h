@@ -18,7 +18,7 @@ typedef std::function<void(void)> Task;
 
 class ThreadPool {
 private:
-    std::atomic<bool> _stopped = false;
+    std::atomic<bool> _running = true;
     std::queue<Task> _tasks;
     std::atomic<int> _numTasks;
     std::mutex _mutex;
@@ -27,6 +27,7 @@ public:
     ThreadPool(int numThreads);
     virtual ~ThreadPool();
     void addTask(Task task);
+    void joinThreads();
 };
 
 #endif //STOWAGE_THREADPOOL_H

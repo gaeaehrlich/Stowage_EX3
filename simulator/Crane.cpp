@@ -24,10 +24,10 @@ int Crane::start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calc
                 sum_operations += 3;
                 break;
             case ERROR:
-                std::ofstream file;
-                file.open(_errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
-                file << _sailInfo << "ERROR: algorithm trying an illegal operation.\n";
-                file.close();
+                //std::ofstream file;
+                //file.open(_errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
+                //file << _sailInfo << "ERROR: algorithm trying an illegal operation.\n";
+                //file.close();
                 break;
         }
     }

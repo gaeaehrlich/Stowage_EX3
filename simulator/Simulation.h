@@ -31,11 +31,12 @@ class Simulation {
     ShipRoute _route;
     Crane _crane;
     ThreadPool _pool;
+    map<string, map<string, int>> _simulationResults;
 
 public:
     Simulation(int numThreads);
     void start(const string& travelPath, string& algorithmPath, string& outputPath, int numThreads);
-    void sail(pair<string, unique_ptr<AbstractAlgorithm>>& algorithm, WeightBalanceCalculator& calculator, const string& travelPath, const string& travelName, const string& outputPath, const string& errorPath, int& numOp);
+    int sail(pair<string, unique_ptr<AbstractAlgorithm>>& algorithm, WeightBalanceCalculator& calculator, const string& travelPath, const string& travelName, const string& outputPath, const string& errorPath);
     int readShip(const string& errorPath, const string& travelPath, const string& travel, std::unordered_set<string>& invalidTravels);
     void algorithmReadShip(unique_ptr<AbstractAlgorithm>& algorithm, int simulationErrors, const string& errorPath, const string& travelPath, const string& travel, const string& algName);
     string getCargoPath(const string& travelDir, const string& port);
@@ -45,7 +46,7 @@ public:
     void writeCargoErrors(const string& errorPath, int simulationErrors, int algErrors, vector<unique_ptr<Container>>& containersAtPort, const string& travelName, const string& algName);
     string createPortOutputFile(const string& outputPath, const string& port);
     int sendInstructionsToCrane(vector<unique_ptr<Container>> containers, WeightBalanceCalculator& calculator, const string& instructions_path, const string &errorPath, const string &sailInfo);
-    void writeResults(const string &path, const map<string, vector<int>>& results, vector<string> travels);
+    void writeResults(const string &path, vector<string> travels);
     int sumResults(const vector<int>& results, bool sumOrErr);
     string createTravelOutputFolder(const string& outputPath, const string& algName, const string& travelName);
     void scanTravelPath(const string& currTravelPath, const string& errorPath);
@@ -54,7 +55,7 @@ public:
     void writeReaderErrors(const string& errorPath, int simulationErrors, int algErrors, vector<string> errorMsg, const string& sailInfo, int index = 0, bool reportAlg = true);
     void setRelevantTravels(vector<string>& travels, const std::unordered_set<string>& invalid);
     void initPaths(const string& outputPath, string& errorPath, string& resultsPath);
-    int runThread(pair<string, unique_ptr<AbstractAlgorithm>>& algorithm, int travelStatus, const string& travelPath, const string& travelName, const string& outputPath, const string& errorPath);
+    void runThread(pair<string, unique_ptr<AbstractAlgorithm>> algorithm, int travelStatus, const string& travelPath, const string& travelName, const string& outputPath, const string& errorPath);
 };
 
 

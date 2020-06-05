@@ -55,10 +55,7 @@ bool checkDirectories(const string &travelPath, string &algorithmPath, string &o
 int main(int argc, char *argv[]) {
     string travelPath, algorithmPath = "." + SUBDIR, outputPath = "." + SUBDIR;
     int numThreads = 1;
-    if(!getArgs(argc, argv, travelPath, algorithmPath, outputPath, numThreads)) {
-        return FAILURE;
-    }
-    if(!checkDirectories(travelPath, algorithmPath, outputPath)) {
+    if(!getArgs(argc, argv, travelPath, algorithmPath, outputPath, numThreads) || !checkDirectories(travelPath, algorithmPath, outputPath) || numThreads < 1) {
         return FAILURE;
     }
     std::cout << "Hello, World!" << std::endl;
