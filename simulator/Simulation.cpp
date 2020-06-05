@@ -1,6 +1,6 @@
 #include "Simulation.h"
 
-Simulation::Simulation(int numThreads) : _pool(numThreads - 1){}
+Simulation::Simulation(int numThreads) : _pool(numThreads){}
 
 int Simulation::readShip(const string &errorPath, const string &travelPath, const string &travel, std::unordered_set<string>& invalidTravels) {
     string routePath = getPath(travelPath, "route");
