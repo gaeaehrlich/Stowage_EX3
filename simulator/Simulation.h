@@ -32,6 +32,7 @@ class Simulation {
     Crane _crane;
     ThreadPool _pool;
     map<string, map<string, int>> _simulationResults;
+    vector<pair<string, unique_ptr<AbstractAlgorithm>>> _allAlgorithms;
 
 public:
     Simulation(int numThreads);
@@ -55,7 +56,7 @@ public:
     void writeReaderErrors(const string& errorPath, int simulationErrors, int algErrors, vector<string> errorMsg, const string& sailInfo, int index = 0, bool reportAlg = true);
     void setRelevantTravels(vector<string>& travels, const std::unordered_set<string>& invalid);
     void initPaths(const string& outputPath, string& errorPath, string& resultsPath);
-    void runThread(pair<string, unique_ptr<AbstractAlgorithm>> algorithm, int travelStatus, const string& travelPath, const string& travelName, const string& outputPath, const string& errorPath);
+    void runThread(pair<string, unique_ptr<AbstractAlgorithm>>& algorithm, int travelStatus, const string& travelPath, const string& travelName, const string& outputPath, const string& errorPath);
 };
 
 

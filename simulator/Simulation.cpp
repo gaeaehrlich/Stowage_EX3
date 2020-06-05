@@ -51,9 +51,9 @@ int Simulation::sail(pair<string, unique_ptr<AbstractAlgorithm>> &algorithm, Wei
 }
 
 
-void Simulation::runThread(pair<string, unique_ptr<AbstractAlgorithm>> algorithm, int travelStatus, const string& travelPath, const string& travelName, const string& outputPath, const string& errorPath) {
+void Simulation::runThread(pair<string, unique_ptr<AbstractAlgorithm>>& algorithm, int travelStatus, const string& travelPath, const string& travelName, const string& outputPath, const string& errorPath) {
     std::cout << "inserting task" << std::endl;
-    _pool.addTask([this, algorithm = std::move(algorithm), travelPath, travelName, travelStatus, outputPath, errorPath]() mutable {
+    _pool.addTask([this, &algorithm, travelPath, travelName, travelStatus, outputPath, errorPath]() {
         std::cout << "staring thread" << std::endl;
         algorithmReadShip(algorithm.second, travelStatus, errorPath, travelPath, travelName, algorithm.first);
         std::cout << SEPARATOR << "starting travel: " << travelName << " with algorithm: " << algorithm.first << std::endl;
@@ -84,7 +84,8 @@ void Simulation::start(const string &travelPath, string &algorithmPath, string &
         if(algorithms.empty()) { return; } // TODO: do we want this?
         scanTravelPath(currTravelPath, errorPath);
         for(auto& alg: algorithms) {
-            runThread(std::move(alg), travelStatus, currTravelPath, travelName, outputPath, errorPath);
+            _allAlgorithms.push_back(std::move(alg));
+            runThread(_allAlgorithms.back(), travelStatus, currTravelPath, travelName, outputPath, errorPath);
         }
     }
     _pool.joinThreads();

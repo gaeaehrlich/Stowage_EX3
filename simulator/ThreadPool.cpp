@@ -34,7 +34,7 @@ ThreadPool::~ThreadPool() {
     }
 }
 
-void ThreadPool::addTask(Task task) {
+void ThreadPool::addTask(const Task& task) {
     _mutex.lock();
     _tasks.push(task);
     _numTasks++;

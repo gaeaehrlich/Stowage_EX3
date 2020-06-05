@@ -26,7 +26,7 @@ private:
 public:
     ThreadPool(int numThreads);
     virtual ~ThreadPool();
-    void addTask(Task task);
+    void addTask(const Task& task);
     void joinThreads();
 };
 
