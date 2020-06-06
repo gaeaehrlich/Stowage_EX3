@@ -18,6 +18,7 @@ typedef std::function<void(void)> Task;
 
 class ThreadPool {
 private:
+    int _numThreads;
     std::atomic<bool> _running = true;
     std::queue<Task> _tasks;
     std::atomic<int> _numTasks;
@@ -25,6 +26,7 @@ private:
     vector<std::thread> _threads;
 public:
     ThreadPool(int numThreads);
+    void startThreads();
     virtual ~ThreadPool();
     void addTask(const Task& task);
     void joinThreads();

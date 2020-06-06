@@ -15,17 +15,19 @@ void NaiveAlgorithm::finishedPort() {
 }
 
 int NaiveAlgorithm::readShipPlan(const string& path) {
-    int readStatus = Reader::readShipPlan(path, _plan);
-    if((readStatus & pow2(3)) || (readStatus & pow2(4))) _invalidTravel = true;
-    _status |= readStatus;
-    return readStatus;
+    pair<int, pair<int, map< pair<int,int>, int >>> readPlan = Reader::readShipPlan(path);
+    _plan = ShipPlan(readPlan.second.first, readPlan.second.second);
+    if((readPlan.first & pow2(3)) || (readPlan.first & pow2(4))) _invalidTravel = true;
+    _status |= readPlan.first;
+    return readPlan.first;
 }
 
 int NaiveAlgorithm::readShipRoute(const string& path) {
-    int readStatus = Reader::readShipRoute(path, _route);
-    if((readStatus & pow2(7)) || (readStatus & pow2(8))) _invalidTravel = true;
-    _status |= readStatus;
-    return readStatus;
+    pair<int, vector<string>> readRoute = Reader::readShipRoute(path);
+    _route = ShipRoute(readRoute.second);
+    if((readRoute.first & pow2(7)) || (readRoute.first & pow2(8))) _invalidTravel = true;
+    _status |= readRoute.first;
+    return readRoute.first;
 }
 
 int NaiveAlgorithm::setWeightBalanceCalculator(WeightBalanceCalculator& calculator) {

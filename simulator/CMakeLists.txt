@@ -19,11 +19,13 @@ set(COMMON_SRC
         ../common/Position.cpp
         ../common/WeightBalanceCalculator.h
         ../common/WeightBalanceCalculator.cpp
-        AlgorithmRegistrar.cpp ThreadPool.cpp ThreadPool.h)
+        )
 
 add_executable(simulator
         main.cpp
         Crane.h Crane.cpp CraneAux.cpp
+        ThreadPool.cpp ThreadPool.h
+        Stowage.h
         Simulation.h Simulation.cpp Auxillary.cpp
         ../algorithm/AbstractAlgorithm.h
         ../algorithm/AlgorithmRegistration.h AlgorithmRegistration.cpp

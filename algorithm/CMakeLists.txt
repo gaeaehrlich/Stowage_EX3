@@ -25,6 +25,7 @@ set(COMMON_SRC
 add_library(_208967075_a SHARED
         ./AlgorithmRegistration.h
         ./AbstractAlgorithm.h
+        NaiveAlgorithm.h NaiveAlgorithm.cpp
         _208967075_a.h
         _208967075_a.cpp
         ${COMMON_SRC}
@@ -33,6 +34,7 @@ add_library(_208967075_a SHARED
 add_library(_208967075_b SHARED
         ./AlgorithmRegistration.h
         ./AbstractAlgorithm.h
+        NaiveAlgorithm.h NaiveAlgorithm.cpp
         _208967075_b.h
         _208967075_b.cpp
         ${COMMON_SRC}

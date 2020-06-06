@@ -124,22 +124,22 @@ int Reader::readCargoLoad(const string &path, vector<unique_ptr<Container>>& lis
     return errors;
 }
 
-int Reader::readShipPlan(const string& path, ShipPlan& plan) {
+pair<int, pair<int, map< pair<int,int>, int >>> Reader::readShipPlan(const string& path) {
     int errors = 0, x, x1, y, y1, numFloors, numFloors1;
     fs::path filePath = path;
-    if(path.empty() || !fs::exists(filePath)) { return  pow2(3); }
+    map< pair<int,int>, int > mPlan;
+    if(path.empty() || !fs::exists(filePath)) { return  {pow2(3), {0, mPlan}}; }
     std::string line; std::ifstream file(path);
-    if (!file || file.peek() == std::ifstream::traits_type::eof()) { return pow2(3); }
+    if (!file || file.peek() == std::ifstream::traits_type::eof()) { return {pow2(3), {0, mPlan}}; }
     vector<int> vec(3);
     do {
         if (!std::getline(file, line) || !Reader::splitPlanLine(line, vec)) {
-            return pow2(3);
+            return {pow2(3), {0, mPlan}};
         }
     }
     while (ignoreLine(line));
     numFloors = vec[0]; x = vec[1]; y = vec[2];
     bool fatal = false;
-    map< pair<int,int>, int > mPlan;
     while (std::getline(file, line)) {
         if (ignoreLine(line)) { continue; }
         if(!Reader::splitPlanLine(line, vec)) { // wrong format
@@ -175,21 +175,21 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
         		}
         	}
         }
-        plan = ShipPlan(numFloors, std::move(mPlan)); // why not?
+        //plan = ShipPlan(numFloors, std::move(mPlan)); // why not?
     }
-    return errors;
+    return {errors, {numFloors, std::move(mPlan)}};
 }
 
-int Reader::readShipRoute(const string &path, ShipRoute& route) {
+pair<int, vector<string>> Reader::readShipRoute(const string &path) {
     fs::path filePath = path;
+    vector<string> ports;
     if(path.empty() || !fs::exists(filePath)) {
-        return pow2(7);
+        return {pow2(7), ports};
     }
     int errors = 0;
     string currPort, prevPort;
-    vector<string> ports;
     std::ifstream file(path);
-    if (!file || file.peek() == std::ifstream::traits_type::eof()) { return pow2(7); }
+    if (!file || file.peek() == std::ifstream::traits_type::eof()) { return {pow2(7), ports}; }
     while (std::getline(file, currPort)) {
         if (ignoreLine(currPort)) { continue; }
         currPort = std::regex_replace(currPort, std::regex("^\\s+"), "");
@@ -208,8 +208,8 @@ int Reader::readShipRoute(const string &path, ShipRoute& route) {
         prevPort = currPort;
     }
     if (ports.size() == 1) { errors |= pow2(8); }
-    else { route = ShipRoute(ports); }
-    return errors;
+    //else { route = ShipRoute(ports); }
+    return {errors, ports};
 }
 
 bool Reader::checkDirPath(const string& pathName) {
@@ -220,7 +220,9 @@ bool Reader::checkDirPath(const string& pathName) {
 vector<string> Reader::getTravels(const string &dir) {
     vector<string> travels;
     for(const auto & entry : fs::directory_iterator(dir)) {
-        travels.emplace_back(entry.path().stem().string());
+        if(fs::is_directory(entry.path())) {
+            travels.emplace_back(entry.path().stem().string());
+        }
     }
     return travels;
 }

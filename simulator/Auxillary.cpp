@@ -16,18 +16,12 @@ string Simulation::getPath(const string& travelDir, const string& search) {
     return "";
 }
 
-string Simulation::getCargoPath(const string &travelDir, const string &port) {
-    string pathName = travelDir + SUBDIR + port + "_" + std::to_string(_route.getPortNumber()) + ".cargo_data";
-    fs::path path = pathName;
-    if(!fs::exists(path)) { // if cargo file doesn't exist, create an empty one
-        std::ofstream cargoFile (pathName);
-        cargoFile.close();
-    }
-    return pathName;
+string Simulation::getCargoPath(Stowage& stowage, const string &travelDir, const string &port) {
+    return travelDir + SUBDIR + port + "_" + std::to_string(stowage._route.getPortNumber()) + ".cargo_data";
 }
 
-string Simulation::createPortOutputFile(const string &outputPath, const string &port) {
-    string file = outputPath + SUBDIR + port + "_" + std::to_string(_route.getPortNumber()) + ".crane_instructions";
+string Simulation::createPortOutputFile(Stowage& stowage, const string &outputPath, const string &port) {
+    string file = outputPath + SUBDIR + port + "_" + std::to_string(stowage._route.getPortNumber()) + ".crane_instructions";
     std::ofstream outfile(file);
     outfile.close();
     return file;
@@ -40,49 +34,47 @@ string Simulation::createTravelOutputFolder(const string &outputPath, const stri
 }
 
 
-void Simulation::writeReaderErrors(const string& errorPath, int simulationErrors, int algErrors, vector<string> errorMsg, const string& sailInfo, int index, bool reportAlg) {
+void Simulation::writeReaderErrors(int simulationErrors, int algErrors, vector<string> errorMsg, const pair<string, string>& sailInfo, int index) {
     bool errors = false;
-    string msg = sailInfo;
+    string msg = "";
     for(long unsigned int i = 0; i < errorMsg.size(); i++) {
         if(simulationErrors & pow2(i + index)) {
-            if(!reportAlg) msg.append("Error " + std::to_string(i + index) + ": " + errorMsg[i]);
-            else if(!(algErrors & pow2(i + index))) {
-                msg.append("ALGORITHM WARNING: algorithm did not alert error " + std::to_string(i + index) + "\n");
+            if(!errors) {
+                if(index == 0) msg.append("Input travel files errors:\n");
+                else msg.append("Input cargo data files errors:\n");
+            }
+            msg.append(errorMsg[i]);
+            if(!(algErrors & pow2(i + index))) {
+                msg.append("ALGORITHM WARNING: algorithm did not alert this problem\n");
             }
             errors = true;
         }
-        else if(reportAlg && algErrors & pow2(i + index)) {
-            msg.append("ALGORITHM WARNING: algorithm reports a problem the simulator did not find: error " + std::to_string(i + index) + ": " + errorMsg[i]);
+        else if(algErrors & pow2(i + index)) {
+            msg.append("ALGORITHM WARNING: algorithm " + sailInfo.first + " reports a problem the simulator did not find: " + errorMsg[i]);
             errors = true;
         }
     }
     if(errors) {
-        //std::ofstream file;
-        //file.open(errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
-        //file << msg;
-        //file.close();
+        _simulationErrors[sailInfo.first][sailInfo.second].append(msg);
     }
 }
 
-bool Simulation::writeTravelErrors(const string &errorPath, const string& travel, const string& simOrAlg, int simulationErrors, int algErrors) {
+void Simulation::writeShipErrors(int simulationErrors, int algErrors, const string& travel, const string& algName) {
     if(simulationErrors == 0 && algErrors == 0) {
-        return true;
+        return;
     }
-    bool simulation = simOrAlg == "Simulation";
-    const string& sailInfo = simulation ? SEPARATOR + "***** Simulation reader report *****" :
-            SEPARATOR + "***** " + simOrAlg + ": , TRAVEL: " + travel + " *****\n";
+    const pair<string, string>& sailInfo = {algName, travel}; // SEPARATOR + "***** ALGORITHM: " + algName + ", TRAVEL: " + travel + " *****\n";
     vector<string> errorMsg;
-    errorMsg.emplace_back("ship plan: a position has an equal number of floors, or more, than the number of floors provided in the first line (ignored)\n");
-    errorMsg.emplace_back("ship plan: a given position exceeds the X/Y ship limits (ignored)\n");
-    errorMsg.emplace_back("ship plan: bad line format after first line or duplicate x,y appearance with same data (ignored)\n");
-    errorMsg.emplace_back("ship plan: travel error - bad first line or file cannot be read altogether (cannot run this travel)\n");
-    errorMsg.emplace_back("ship plan: travel error - duplicate x,y appearance with different data (cannot run this travel)\n");
-    errorMsg.emplace_back("travel route: a port appears twice or more consecutively (ignored)\n");
-    errorMsg.emplace_back("travel route: bad port symbol format (ignored)\n");
-    errorMsg.emplace_back("travel route: travel error - empty file or file cannot be read altogether (cannot run this travel)\n");
-    errorMsg.emplace_back("travel route: travel error - file with only a single valid port (cannot run this travel)\n");
-    writeReaderErrors(errorPath, simulationErrors, algErrors, errorMsg, sailInfo, simulation);
-    return (simulationErrors & pow2(3)) || (simulationErrors & pow2(4)) || (simulationErrors & pow2(7)) || (simulationErrors & pow2(8));
+    errorMsg.emplace_back("\tship plan: a position has an equal number of floors, or more, than the number of floors provided in the first line (ignored)\n");
+    errorMsg.emplace_back("\tship plan: a given position exceeds the X/Y ship limits (ignored)\n");
+    errorMsg.emplace_back("\tship plan: bad line format after first line or duplicate x,y appearance with same data (ignored)\n");
+    errorMsg.emplace_back("\tship plan: travel error - bad first line or file cannot be read altogether (cannot run this travel)\n");
+    errorMsg.emplace_back("\tship plan: travel error - duplicate x,y appearance with different data (cannot run this travel)\n");
+    errorMsg.emplace_back("\ttravel route: a port appears twice or more consecutively (ignored)\n");
+    errorMsg.emplace_back("\ttravel route: bad port symbol format (ignored)\n");
+    errorMsg.emplace_back("\ttravel route: travel error - empty file or file cannot be read altogether (cannot run this travel)\n");
+    errorMsg.emplace_back("\ttravel route: travel error - file with only a single valid port (cannot run this travel)\n");
+    writeReaderErrors(simulationErrors, algErrors, errorMsg, sailInfo);
 }
 
 
@@ -97,42 +89,44 @@ int Simulation::countContainersOnPort(const string& id, vector<unique_ptr<Contai
 }
 
 
-void Simulation::writeCargoErrors(const string &errorPath, int simulationErrors, int algErrors, vector<unique_ptr<Container>>& containersAtPort, const string& travelName, const string& algName) {
-    const string& sailInfo = SEPARATOR + "***** ALGORITHM: " + algName + ", TRAVEL: " + travelName + " *****\n";
+void Simulation::writeCargoErrors(Stowage& stowage, int simulationErrors, int algErrors, vector<unique_ptr<Container>>& containersAtPort, const string& travelName, const string& algName) {
+    const pair<string, string> & sailInfo = {algName, travelName};
+    string portInfo = "\tcontainers at port " + stowage._route.getCurrentPort() + "_" + std::to_string(stowage._route.getPortNumber()) + ": ";
     vector<string> errorMsg;
-    errorMsg.emplace_back("containers at port: duplicate ID on port (ID rejected)\n");
-    errorMsg.emplace_back("containers at port: ID already on ship (ID rejected)\n");
-    errorMsg.emplace_back("containers at port: bad line format, missing or bad weight (ID rejected)\n");
-    errorMsg.emplace_back("containers at port: bad line format, missing or bad port destination (ID rejected)\n");
-    errorMsg.emplace_back("containers at port: bad line format, ID cannot be read (ignored)\n");
-    errorMsg.emplace_back("containers at port: illegal ID check ISO 6346 (ID rejected)\n");
-    errorMsg.emplace_back("containers at port: file cannot be read altogether (assuming no cargo to be loaded at this port)\n");
-    errorMsg.emplace_back("containers at port: last port has waiting containers (ignored)\n");
-    errorMsg.emplace_back("containers at port: total containers amount exceeds ship capacity (rejecting far containers)\n");
+    errorMsg.emplace_back(portInfo + "duplicate ID on port (ID rejected)\n");
+    errorMsg.emplace_back(portInfo + "ID already on ship (ID rejected)\n");
+    errorMsg.emplace_back(portInfo + "bad line format, missing or bad weight (ID rejected)\n");
+    errorMsg.emplace_back(portInfo + "bad line format, missing or bad port destination (ID rejected)\n");
+    errorMsg.emplace_back(portInfo + "bad line format, ID cannot be read (ignored)\n");
+    errorMsg.emplace_back(portInfo + "illegal ID check ISO 6346 (ID rejected)\n");
+    errorMsg.emplace_back(portInfo + "file cannot be read altogether (assuming no cargo to be loaded at this port)\n");
+    errorMsg.emplace_back(portInfo + "last port has waiting containers (ignored)\n");
+    errorMsg.emplace_back(portInfo + "total containers amount exceeds ship capacity (rejecting far containers)\n");
     for(const auto& container: containersAtPort) {
         if(countContainersOnPort(container -> getId(), containersAtPort) > 1) { // 2^10
             if(!(simulationErrors & pow2(10))) { errorMsg[0].append("The duplicated containers: "); }
             simulationErrors |= pow2(10);
             errorMsg[0].append(container -> getId() + " ");
         }
-        if(_plan.hasContainer(container -> getId())) { // 2^11
+        if(stowage._plan.hasContainer(container -> getId())) { // 2^11
             if(!(simulationErrors & pow2(11))) { errorMsg[1].append("The container: "); }
             simulationErrors |= pow2(11);
             errorMsg[1].append(container -> getId() + " ");
         }
-        if(!_route.portInRoute(container -> getDest())) { // 2^13
-            if(!(simulationErrors & pow2(13))) { errorMsg[1].append("The containers with port not in route: "); }
+        if(!stowage._route.portInRoute(container -> getDest())) { // 2^13
+            if(!(simulationErrors & pow2(13))) { errorMsg[3].append("The containers with port not in route: "); }
             simulationErrors |= pow2(13);
             errorMsg[3].append(container -> getId() + " ");
         }
     }
     if(simulationErrors & pow2(10 )) { errorMsg[0].append("\n"); }
     if(simulationErrors & pow2(11 )) { errorMsg[1].append("\n"); }
-    if(_route.isLastStop() && !containersAtPort.empty()) {
+    if(simulationErrors & pow2(13 )) { errorMsg[3].append("\n"); }
+    if(stowage._route.isLastStop() && !containersAtPort.empty()) {
         simulationErrors |= pow2(17);
     }
-    if(_plan.numberOfEmptyCells() + _plan.findContainersToUnload(_route.getCurrentPort()).size() < containersAtPort.size()) { simulationErrors |= pow2(18); }
-    writeReaderErrors(errorPath, simulationErrors, algErrors, errorMsg, sailInfo, 10);
+    if(stowage._plan.numberOfEmptyCells() + stowage._plan.findContainersToUnload(stowage._route.getCurrentPort()).size() < containersAtPort.size()) { simulationErrors |= pow2(18); }
+    writeReaderErrors(simulationErrors, algErrors, errorMsg, sailInfo, 10);
 }
 
 
@@ -185,22 +179,28 @@ int Simulation::sumResults(const vector<int>& results, bool sumOrErr) {
 }
 
 
-void Simulation::scanTravelPath(const string &currTravelPath, const string &errorPath) {
+void Simulation::scanTravelPath(ShipRoute& route, const string &currTravelPath, const string &errorPath) {
     map<string, int> occurrence;
     std::unordered_set<string> files;
-    for(const string& port: _route.getRoute()) {
+    for(const string& port: route.getRoute()) {
         if(occurrence.count(port) == 0) {
             occurrence[port] = 0;
         }
         occurrence[port]++;
-        files.insert(port + "_" + std::to_string(occurrence[port]) + ".cargo_data");
+        string cargo = port + "_" + std::to_string(occurrence[port]) + ".cargo_data";
+        files.insert(cargo);
+        if(!fs::exists(currTravelPath + SUBDIR + cargo)) { // if cargo file doesn't exist, create an empty one
+            std::ofstream cargoFile (currTravelPath + SUBDIR + port + "_" + std::to_string(occurrence[port]) + ".cargo_data");
+            cargoFile.close();
+        }
     }
     std::regex format("(.*)\\.cargo_data");
     std::ofstream file;
     for(const auto & entry : fs::directory_iterator(currTravelPath)) {
         if(std::regex_match(entry.path().string(), format) && files.find((entry.path().stem().string().append(".cargo_data"))) == files.end()) {
             file.open(errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
-            file << "WARNING: the travel folder " << currTravelPath << " has a cargo_data file that is not in use: " << entry.path().string() << "\n";
+            file <<  SEPARATOR << "Simulation warning:\n";
+            file << "The travel folder " << currTravelPath << " has a cargo_data file that is not in use: " << entry.path().string() << "\n";
             file.close();
         }
     }
@@ -210,4 +210,18 @@ void Simulation::setRelevantTravels(vector<string> &travels, const std::unordere
     for(const string& travel: invalid) {
         travels.erase(std::remove(travels.begin(), travels.end(), travel), travels.end());
     }
+}
+
+
+bool Simulation::isTravelValid(std::unordered_set<string>& invalidTravels, const string& currTravelPath, const string& travelName, const string& errorPath) {
+    pair<int, vector<string >> readRoute = Reader::readShipRoute(getPath(currTravelPath, "route"));
+    int readShipPlan = Reader::readShipPlan(getPath(currTravelPath, "ship_plan")).first;
+    bool isValidRead = !((readShipPlan & pow2(3)) || (readShipPlan & pow2(4)) || (readRoute.first & pow2(7)) || (readRoute.first & pow2(8)));
+    if(!isValidRead) {
+        invalidTravels.insert(travelName);
+    }
+    bool isInInvalid = invalidTravels.find(travelName) != invalidTravels.end();
+    ShipRoute route = ShipRoute(readRoute.second);
+    scanTravelPath(route, currTravelPath, errorPath);
+    return isValidRead && !isInInvalid;
 }

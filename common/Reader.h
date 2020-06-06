@@ -9,7 +9,7 @@
 #include <tuple>
 #include <memory>
 #include <map>
-#include <experimental/filesystem>
+#include <filesystem>
 #include <fstream>
 #include <regex>
 #include <cmath>
@@ -24,7 +24,7 @@ using std::string;
 using std::map;
 using std::unique_ptr;
 using std::make_unique;
-namespace fs = std::experimental::filesystem;
+namespace fs = std::filesystem;
 
 #define pow2(x) (int)pow(2, x)
 
@@ -40,8 +40,8 @@ public:
     static bool legalContainerId(const string& id);
     static bool legalCheckDigit(const string& id);
     static int readCargoLoad(const string& path, vector<unique_ptr<Container>>& list);
-    static int readShipPlan(const string& path, ShipPlan& plan);
-    static int readShipRoute(const string& path, ShipRoute& route);
+    static pair<int, pair<int, map< pair<int,int>, int >>> readShipPlan(const string& path);
+    static pair<int, vector<string>> readShipRoute(const string& path);
     static bool checkDirPath(const string& pathName);
     static vector<string> getTravels(const string& dir);
     static vector<Operation> getInstructionsVector(const string &path);
