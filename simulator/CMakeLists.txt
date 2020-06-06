@@ -26,7 +26,7 @@ add_executable(simulator
         Crane.h Crane.cpp CraneAux.cpp
         ThreadPool.cpp ThreadPool.h
         Stowage.h
-        Simulation.h Simulation.cpp Auxillary.cpp
+        Simulation.h Simulation.cpp Auxiliary.cpp
         ../algorithm/AbstractAlgorithm.h
         ../algorithm/AlgorithmRegistration.h AlgorithmRegistration.cpp
         AlgorithmRegistrar.h AlgorithmRegistrar.cpp
