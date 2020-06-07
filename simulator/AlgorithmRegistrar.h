@@ -8,6 +8,7 @@
 #include <functional>
 #include <memory>
 #include <regex>
+#include <iostream>
 #include <dlfcn.h>
 #include <filesystem>
 #include <fstream>
@@ -22,7 +23,11 @@ namespace fs = std::filesystem;
 class AlgorithmRegistrar {
     struct DlCloser {
         void operator()(void *dlhandle) const noexcept {
-            dlclose(dlhandle);
+            int ret = dlclose(dlhandle);
+            // TODO: erase - debbugind prints
+            const char* dlcloseError = dlerror();
+            const char* error = dlcloseError ? dlcloseError : "Failed to open shared object.";
+            if(ret != 0) std::cout << "DLCLOSE ERROR: " << error << std::endl;
         }
     };
 

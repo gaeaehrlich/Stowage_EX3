@@ -39,6 +39,11 @@ void AlgorithmRegistrar::loadAlgorithmFromFile(const string &dirPath, const stri
     long unsigned int registered = 0;
     for(auto& path: algPath) {
         unique_ptr<void, DlCloser> handle(dlopen(path.first.data(), RTLD_LAZY));
+        // TODO: erase - debbugind prints
+        const char* dlopenError1 = dlerror();
+        const char* error1 = dlopenError1 ? dlopenError1 : "none";
+        std::cout << "DLOPEN ERROR: " << error1 << std::endl;
+
         if(!handle) {
             std::ofstream file;
             file.open(errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end

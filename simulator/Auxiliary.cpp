@@ -50,7 +50,7 @@ void Simulation::writeReaderErrors(int simulationErrors, int algErrors, vector<s
             errors = true;
         }
         else if(algErrors & pow2(i + index)) {
-            msg.append("ALGORITHM WARNING: algorithm " + sailInfo.first + " reports a problem the simulator did not find: " + errorMsg[i]);
+            msg.append("ALGORITHM WARNING: algorithm " + sailInfo.first + " reports a problem the simulator did not find:\n " + errorMsg[i]);
             errors = true;
         }
     }

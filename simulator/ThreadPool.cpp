@@ -1,10 +1,11 @@
 #include <iostream>
 #include "ThreadPool.h"
 
-ThreadPool::ThreadPool(int numThreads) : _numTasks(0), _numThreads(numThreads) {}
+ThreadPool::ThreadPool(int numThreads) : _numThreads(numThreads), _numTasks(0) {}
 
 void ThreadPool::startThreads() {
-    auto thread_loop = [&](size_t id) {
+    auto thread_loop = [&](int id) {
+        (void)id;
         while (_running) {
             _mutex.lock();
             if (!_tasks.empty()) {
@@ -20,7 +21,7 @@ void ThreadPool::startThreads() {
         }
     };
     _threads.reserve(_numThreads);
-    for (size_t i = 0; i < _numThreads; i++) {
+    for (int i = 0; i < _numThreads; i++) {
         _threads.push_back(std::thread(thread_loop, i));
     }
 }

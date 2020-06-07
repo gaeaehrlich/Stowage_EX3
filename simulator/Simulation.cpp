@@ -86,6 +86,7 @@ void Simulation::start(const string &travelPath, string &algorithmPath, string &
         }
     }
     _pool.joinThreads();
+    _allAlgorithms.clear();
     writeErrors(errorPath);
     setRelevantTravels(travels, invalidTravels);
     writeResults(resultsPath, travels);
