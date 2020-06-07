@@ -39,7 +39,7 @@ Auxiliary.o: $(SIMULATOR)Auxiliary.cpp $(SIMULATOR)Simulation.h $(SIMULATOR)Algo
 	$(COMP) $(CPP_COMP_FLAG) -c $(SIMULATOR)$*.cpp
 Stowage.o: $(SIMULATOR)Stowage.h
     $(COMP) $(CPP_COMP_FLAG) -c $(SIMULATOR)$*.cpp
-ThreadPool.o $(SIMULATOR)ThreadPool.cpp $(SIMULATOR)ThreadPool.h $(ALGORITHM)AbstractAlgorithm.h
+ThreadPool.o: $(SIMULATOR)ThreadPool.cpp $(SIMULATOR)ThreadPool.h $(ALGORITHM)AbstractAlgorithm.h
     $(COMP) $(CPP_COMP_FLAG) -c $(SIMULATOR)$*.cpp
 Simulation.o: $(SIMULATOR)Simulation.cpp $(SIMULATOR)Simulation.h $(SIMULATOR)AlgorithmRegistrar.h $(SIMULATOR)Stowage.h $(SIMULATOR)ThreadPool.h
 	$(COMP) $(CPP_COMP_FLAG) -c $(SIMULATOR)$*.cpp
