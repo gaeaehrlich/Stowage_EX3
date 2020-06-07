@@ -26,7 +26,7 @@ class AlgorithmRegistrar {
             int ret = dlclose(dlhandle);
             // TODO: erase - debbugind prints
             const char* dlcloseError = dlerror();
-            const char* error = dlcloseError ? dlcloseError : "Failed to open shared object.";
+            const char* error = dlcloseError ? dlcloseError : "none";
             if(ret != 0) std::cout << "DLCLOSE ERROR: " << error << std::endl;
         }
     };
