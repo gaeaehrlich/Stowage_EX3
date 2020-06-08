@@ -79,13 +79,18 @@ void NaiveAlgorithm::removeDuplicates(std::ofstream &file) {
 
 void NaiveAlgorithm::sortCargoLoad() {
     ShipRoute& route = _route;
-    sort(_cargoLoad.begin(), _cargoLoad.end(), [route](const unique_ptr<Container>& a, const unique_ptr<Container>& b) {
+    ShipPlan& plan = _plan;
+    sort(_cargoLoad.begin(), _cargoLoad.end(), [route, &plan](const unique_ptr<Container>& a, const unique_ptr<Container>& b)  {
+        if (plan.hasContainer(a -> getId())) return false;
         for(const string& port: route.getRoute()) {
             if(port == a -> getDest()) return true;
             if(port == b -> getDest()) return false;
         }
         return false;
     });
+    int numOfEmptyCells = plan.numberOfEmptyCells();
+    auto end = numOfEmptyCells >= _cargoLoad.size() ? _cargoLoad.end() : _cargoLoad.begin() + numOfEmptyCells;
+    std::reverse(_cargoLoad.begin(), end);
 }
 
 
@@ -132,8 +137,9 @@ void NaiveAlgorithm::unloadContainersAbove(Position pos, std::ofstream& file) {
     for(int i = _plan.numberOfFloors() - 1; i > pos._floor; i--) {
         if(!_plan.getFloor(i).isEmpty(pos._x, pos._y)) {
             if(_plan.getFloor(i).getContainerDest({pos._x, pos._y}) != _route.getCurrentPort()) {
+                unique_ptr<Container> removed = _plan.getFloor(i).pop(pos._x, pos._y);
+                if(tryMoveFrom(removed, Position(i, pos._x, pos._y), file)) continue;
                 if(_calc.tryOperation(UNLOAD, _plan.getWeightByPosition(pos), pos._x, pos._y) ==  WeightBalanceCalculator::APPROVED) {
-                    unique_ptr<Container> removed = _plan.getFloor(i).pop(pos._x, pos._y);
                     file << instructionToString('U', removed->getId(), Position(i, pos._x, pos._y));
                     _temporaryUnloaded.emplace_back(std::move(removed));
                 }
@@ -142,11 +148,13 @@ void NaiveAlgorithm::unloadContainersAbove(Position pos, std::ofstream& file) {
     }
 }
 
-string NaiveAlgorithm::instructionToString(char instruction, const string& id, Position pos) {
+string NaiveAlgorithm::instructionToString(char instruction, const string& id, const Position pos, const Position move) {
     std::stringstream ss;
     string br = ", ";
     string newline = "\n";
-    ss << instruction << br << id << br << pos._floor << br << pos._x << br << pos._y << newline;
+    ss << instruction << br << id << br << pos._floor << br << pos._x << br << pos._y;
+    if (instruction == 'M') ss << br << move._floor << br << move._x << br << move._y;
+    ss << newline;
     return ss.str();
 }
 
@@ -179,4 +187,33 @@ int NaiveAlgorithm::readCargoLoad(const string &input_path) {
     }
     if(_plan.numberOfEmptyCells() + _plan.findContainersToUnload(_route.getCurrentPort()).size() < _cargoLoad.size()) { readStatus |= pow2(18); }
     return readStatus;
+}
+
+Position NaiveAlgorithm::findPosition(const unique_ptr<Container> &container, const pair<int, int> oldLoc) {
+    double diff = -1*(double)_route.getRoute().size(), weight = container -> getWeight();
+    double newDist = _route.portDistance(container -> getDest());
+    Position best;
+    for(int i = 0; i < _plan.numberOfFloors(); ++i) {
+        Floor& floor = _plan.getFloor(i);
+        for(pair<int,int> location: floor.getLegalLocations()) {
+            if(_plan.isLegalLoadPosition(Position(i, location.first, location.second)) &&
+               _calc.tryOperation(LOAD,weight, location.first, location.second) == WeightBalanceCalculator::APPROVED) {
+                double oldDist = 1.5; // if at the bottom, different calculation
+                if (_plan.isLegalLocation(Position(i - 1, location.first, location.second))) {
+                    string port = _plan.getDestAtPosition(Position(i - 1,
+                                                                   location.first,
+                                                                   location.second));
+                    oldDist = _route.portDistance(port);
+                }
+                if (location == oldLoc) { continue; } // in case of move operation
+                if (diff < 0 ? diff < oldDist - newDist : (oldDist >= newDist && oldDist - newDist < diff)) {
+                    diff = oldDist - newDist;
+                    best = Position(i, location.first, location.second);
+                }
+                if (diff == 0) { break; } // ideal!
+            }
+        }
+        if (diff == 0) { break; }
+    }
+    return best;
 }

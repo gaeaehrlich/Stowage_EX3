@@ -11,3 +11,7 @@ Position::Position() {
     _x = -1;
     _y = -1;
 }
+
+bool Position::operator!=(const Position &other) const {
+    return _floor != other._floor || _x != other._x || _y != other._y;
+}
