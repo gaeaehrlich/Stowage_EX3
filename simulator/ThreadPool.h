@@ -24,6 +24,7 @@ private:
     std::atomic<int> _numTasks;
     std::mutex _mutex;
     vector<std::thread> _threads;
+
 public:
     ThreadPool(int numThreads);
     void startThreads();

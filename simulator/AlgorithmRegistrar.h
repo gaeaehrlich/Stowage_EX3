@@ -18,22 +18,20 @@ using std::vector;
 using std::string;
 using std::pair;
 using std::unique_ptr;
+using std::map;
 namespace fs = std::filesystem;
 
 class AlgorithmRegistrar {
     struct DlCloser {
         void operator()(void *dlhandle) const noexcept {
-            int ret = dlclose(dlhandle);
-            // TODO: erase - debbugind prints
-            const char* dlcloseError = dlerror();
-            const char* error = dlcloseError ? dlcloseError : "none";
-            if(ret != 0) std::cout << "DLCLOSE ERROR: " << error << std::endl;
+            dlclose(dlhandle);
         }
     };
 
-    vector<std::function<unique_ptr<AbstractAlgorithm>()>> _algorithmFactory;
+    map<string, std::function<unique_ptr<AbstractAlgorithm>()>> _algorithmFactory;
     vector<unique_ptr<void, DlCloser>> _handles;
     vector<string> _names;
+    string _currAlgName;
 
     AlgorithmRegistrar() = default;
     ~AlgorithmRegistrar();
@@ -42,10 +40,10 @@ class AlgorithmRegistrar {
 public:
     friend struct AlgorithmRegistration;
 
-    vector<pair<string, unique_ptr<AbstractAlgorithm>>> getAlgorithms() const;
     size_t size() const;
     static AlgorithmRegistrar& getInstance();
-    void loadAlgorithmFromFile(const string& dirPath, const string& errorPath);
+    vector<pair<string, string>> loadAlgorithmFromFile(vector<pair<string, string>> algPath);
+    map<string, std::function<unique_ptr<AbstractAlgorithm>()>> getAlgorithmFactory() const;
 };
 
 

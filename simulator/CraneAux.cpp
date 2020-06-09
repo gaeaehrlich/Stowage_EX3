@@ -55,7 +55,8 @@ bool Crane::isInTemporaryUnloaded(const string& id) {
 
 
 void Crane::containerNotFoundError(const string &place) {
-    _simulationErrors[_sailInfo.first][_sailInfo.second].append("ALGORITHM ERROR: Trying to get container that's not " + place + ". Instruction terminated.\n");
+    _craneErrors.append("ALGORITHM ERROR: Trying to get container that's not " + place + ". Instruction terminated.\n");
+    _craneErrors.append("ALGORITHM ERROR: Trying to get container that's not " + place + ". Instruction terminated.\n");
 }
 
 int Crane::shouldReject(unique_ptr<Container>& container, ShipPlan& plan, ShipRoute& route, bool write) {
@@ -97,13 +98,13 @@ int Crane::shouldReject(unique_ptr<Container>& container, ShipPlan& plan, ShipRo
 }
 
 void Crane::writeLoadError(const string& id, const string& reason) {
-    _simulationErrors[_sailInfo.first][_sailInfo.second].append("ALGORITHM ERROR: algorithm is loading the container " + id + " from port " + _port + " that should be rejected. Rejection reason: " + reason);
+    _craneErrors.append("ALGORITHM ERROR: algorithm is loading the container " + id + " from port " + _port + " that should be rejected. Rejection reason: " + reason);
 }
 
 
 void Crane::writeInstructionError(const string &instruction, const string &id, bool executed) {
     string exec = executed ? "still" : "not";
-    _simulationErrors[_sailInfo.first][_sailInfo.second].append("ALGORITHM ERROR: algorithm is making a mistake with container " + id + " at port " + _port + ". " + instruction + " was " + exec + " executed.\n");
+    _craneErrors.append("ALGORITHM ERROR: algorithm is making a mistake with container " + id + " at port " + _port + ". " + instruction + " was " + exec + " executed.\n");
 }
 
 
@@ -133,7 +134,7 @@ bool Crane::isErrorUnload(const string& id, ShipPlan &plan, Position pos, bool& 
     }
 
     if(plan.getIdAtPosition(pos) != id) {
-        _simulationErrors[_sailInfo.first][_sailInfo.second].append("ALGORITHM ERROR: algorithm is unloading the container " + plan.getIdAtPosition(pos) + " instead of " + id + " at port " + _port + ".\n");
+        _craneErrors.append("ALGORITHM ERROR: algorithm is unloading the container " + plan.getIdAtPosition(pos) + " instead of " + id + " at port " + _port + ".\n");
         writeInstructionError("Unload", id, true);
         return true;
     }
@@ -141,7 +142,7 @@ bool Crane::isErrorUnload(const string& id, ShipPlan &plan, Position pos, bool& 
 }
 
 void Crane::writeLeftAtPortError(const string& id, const string& msg) {
-    _simulationErrors[_sailInfo.first][_sailInfo.second].append("ALGORITHM ERROR: algorithm is making a mistake with container " + id
+    _craneErrors.append("ALGORITHM ERROR: algorithm is making a mistake with container " + id
                                                                + ". It " + msg + ", and was wrongly left at port " + _port + ".\n");
 }
 
@@ -184,7 +185,7 @@ bool Crane::checkLoadedTemporaryUnloaded() {
 bool Crane::checkShip(ShipPlan &plan) {
     bool flag = plan.findContainersToUnload(_port).size() == 0;
     if(!flag) {
-        _simulationErrors[_sailInfo.first][_sailInfo.second].append("ALGORITHM ERROR: The handling of port " + _port + " is finished, but there are still containers on the ship that need to be unloaded at this port.\n");
+        _craneErrors.append("ALGORITHM ERROR: The handling of port " + _port + " is finished, but there are still containers on the ship that need to be unloaded at this port.\n");
     }
     return flag;
 }
@@ -192,7 +193,11 @@ bool Crane::checkShip(ShipPlan &plan) {
 bool Crane::handleLastStop(ShipPlan &plan, ShipRoute &route) {
     bool flag = !(route.isLastStop() && !plan.isEmpty());
     if(!flag) {
-        _simulationErrors[_sailInfo.first][_sailInfo.second].append("ALGORITHM ERROR: The handling of the last port in route is finished, but there are still containers on the ship.\n");
+        _craneErrors.append("ALGORITHM ERROR: The handling of the last port in route is finished, but there are still containers on the ship.\n");
     }
     return flag;
+}
+
+string Crane::getCraneErrors() {
+    return _craneErrors;
 }

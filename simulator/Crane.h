@@ -20,7 +20,6 @@ using std::unique_ptr;
 
 class Crane {
     vector<Operation> _operations;
-    map<string, map<string, string>>& _simulationErrors; // algorithm name, travel name, errors
     vector<unique_ptr<Container>> _cargoLoad;
     vector<unique_ptr<Container>> _temporaryUnloaded;
     vector<unique_ptr<Container>> _duplicates;
@@ -28,9 +27,9 @@ class Crane {
     WeightBalanceCalculator _calculator;
     string _port;
     pair<string, string> _sailInfo; // algorithm name, trave name
+    string _craneErrors; // algorithm name, travel name, errors
 
 public:
-    Crane(map<string, map<string, string>>& simulationErrors);
     void setCrane(vector<unique_ptr<Container>> containers, vector<Operation> operations, const  pair<string, string> &sailInfo, WeightBalanceCalculator& calculator, ShipRoute& route);
     void setOperations(vector<Operation> operations);
     void setSailInfo(const pair<string, string> &sailInfo);
@@ -58,6 +57,7 @@ public:
     bool isInDuplicated(const string& id);
     bool isInTemporaryUnloaded(const string& id);
     unique_ptr<Container> getContainerToReject(const string& id);
+    string getCraneErrors();
 };
 
 

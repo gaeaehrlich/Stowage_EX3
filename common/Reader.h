@@ -40,8 +40,8 @@ public:
     static bool legalContainerId(const string& id);
     static bool legalCheckDigit(const string& id);
     static int readCargoLoad(const string& path, vector<unique_ptr<Container>>& list);
-    static pair<int, pair<int, map< pair<int,int>, int >>> readShipPlan(const string& path);
-    static pair<int, vector<string>> readShipRoute(const string& path);
+    static int readShipPlan(const string& path, ShipPlan& plan);
+    static int readShipRoute(const string& path, ShipRoute& route);
     static bool checkDirPath(const string& pathName);
     static vector<string> getTravels(const string& dir);
     static vector<Operation> getInstructionsVector(const string &path);

@@ -1,9 +1,10 @@
 #include <iostream>
+#include <utility>
 #include "AlgorithmRegistrar.h"
 
 
 void AlgorithmRegistrar::registerAlgorithm(std::function<unique_ptr<AbstractAlgorithm>()> algorithmFactory) {
-    _algorithmFactory.push_back(algorithmFactory);
+    _algorithmFactory[_currAlgName]= std::move(algorithmFactory);
 }
 
 AlgorithmRegistrar::~AlgorithmRegistrar() {
@@ -11,12 +12,8 @@ AlgorithmRegistrar::~AlgorithmRegistrar() {
     _handles.clear();
 }
 
-vector<pair<string, unique_ptr<AbstractAlgorithm>>> AlgorithmRegistrar::getAlgorithms() const {
-    vector<pair<string, unique_ptr<AbstractAlgorithm>>> algorithms;
-    for(long unsigned int i = 0; i < _algorithmFactory.size(); i++) {
-        algorithms.push_back({_names[i], _algorithmFactory[i]()});
-    }
-    return algorithms;
+map<string, std::function<unique_ptr<AbstractAlgorithm>()>> AlgorithmRegistrar::getAlgorithmFactory() const {
+    return _algorithmFactory;
 }
 
 size_t AlgorithmRegistrar::size() const {
@@ -28,37 +25,21 @@ AlgorithmRegistrar &AlgorithmRegistrar::getInstance() {
     return instance;
 }
 
-void AlgorithmRegistrar::loadAlgorithmFromFile(const string &dirPath, const string& errorPath) {
-    vector<pair<string, string>> algPath; // <algorithm path, algorithm name>
-    std::regex format("(.*)\\.so");
-    for(const auto & entry : fs::directory_iterator(dirPath)) {
-        if(std::regex_match(entry.path().string(), format)) {
-            algPath.emplace_back(entry.path().string(), entry.path().stem().string());
-        }
-    }
+vector<pair<string, string>> AlgorithmRegistrar::loadAlgorithmFromFile(vector<pair<string, string>> algPath) {
+    vector<pair<string, string>> errors;
     long unsigned int registered = 0;
     for(auto& path: algPath) {
+        _currAlgName = path.second;
         unique_ptr<void, DlCloser> handle(dlopen(path.first.data(), RTLD_LAZY));
-        // TODO: erase - debbugind prints
-        const char* dlopenError1 = dlerror();
-        const char* error1 = dlopenError1 ? dlopenError1 : "none";
-        std::cout << "DLOPEN ERROR: " << error1 << std::endl;
-
         if(!handle) {
-            std::ofstream file;
-            file.open(errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
             const char* dlopenError = dlerror();
             const char* error = dlopenError ? dlopenError : "Failed to open shared object.";
-            file << "ERROR: couldn't open algorithm at path: " << path.first << " . The error is: " << error << "\n";
-            file.close();
+            errors.push_back({path.first, error});
         }
         else {
             registered++;
             if(registered != _algorithmFactory.size()) {
-                std::ofstream file;
-                file.open(errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
-                file << "ERROR: couldn't open algorithm at path: " << path.first << " . The algorithm did not register\n";
-                file.close();
+                errors.push_back({path.first, "The algorithm did not register"});
                 registered--;
             }
             else {

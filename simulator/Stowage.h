@@ -12,7 +12,7 @@ public:
     ShipRoute _route;
     Crane _crane;
 
-    explicit Stowage(map<string, map<string, string>>& simulationErrors) : _crane(simulationErrors){};
+    // TODO create empty stowage
 };
 
 

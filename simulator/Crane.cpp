@@ -1,9 +1,10 @@
 #include "Crane.h"
 #include "Simulation.h"
 
-Crane::Crane(map<string, map<string, string>>& simulationErrors) : _simulationErrors(simulationErrors){}
 
-int Crane::start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calculator, vector<unique_ptr<Container>> containers, vector<Operation> operations, const pair<string, string>&sailInfo) {
+int Crane::start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calculator,
+                 vector<unique_ptr<Container>> containers, vector<Operation> operations,
+                 const pair<string, string>& sailInfo) {
     setCrane(std::move(containers), std::move(operations), sailInfo, calculator, route);
     int sum_operations = 0;
     bool flag = false;
@@ -25,7 +26,7 @@ int Crane::start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calc
                 sum_operations += 3;
                 break;
             case ERROR:
-                _simulationErrors[_sailInfo.first][sailInfo.second].append("ALGORITHM ERROR: algorithm trying an illegal operation.\n");
+                _craneErrors.append("ALGORITHM ERROR: algorithm trying an illegal operation.\n");
                 break;
         }
     }

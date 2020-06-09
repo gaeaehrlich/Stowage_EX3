@@ -33,24 +33,26 @@ string Simulation::createTravelOutputFolder(const string &outputPath, const stri
     return path;
 }
 
-
-void Simulation::writeReaderErrors(int simulationErrors, int algErrors, vector<string> errorMsg, const pair<string, string>& sailInfo, int index) {
+void Simulation::writeReaderErrors(int simulationErrors, int algErrors, const pair<string, string>& sailInfo, const string& portInfo) {
     bool errors = false;
     string msg = "";
-    for(long unsigned int i = 0; i < errorMsg.size(); i++) {
+    int index = portInfo.empty() ? 0 : 10;
+    for(long unsigned int i = 0; i < _readerErrors.size(); i++) {
         if(simulationErrors & pow2(i + index)) {
             if(!errors) {
                 if(index == 0) msg.append("Input travel files errors:\n");
                 else msg.append("Input cargo data files errors:\n");
             }
-            msg.append(errorMsg[i]);
+            if(!portInfo.empty()) msg.append(portInfo);
+            msg.append(_readerErrors[i]);
             if(!(algErrors & pow2(i + index))) {
                 msg.append("ALGORITHM WARNING: algorithm did not alert this problem\n");
             }
             errors = true;
         }
         else if(algErrors & pow2(i + index)) {
-            msg.append("ALGORITHM WARNING: algorithm " + sailInfo.first + " reports a problem the simulator did not find:\n " + errorMsg[i]);
+            string extraError = portInfo.empty() ? _readerErrors[i] : portInfo + _readerErrors[i];
+            msg.append("ALGORITHM WARNING: algorithm " + sailInfo.first + " reports a problem the simulator did not find:\n " + extraError);
             errors = true;
         }
     }
@@ -59,22 +61,13 @@ void Simulation::writeReaderErrors(int simulationErrors, int algErrors, vector<s
     }
 }
 
-void Simulation::writeShipErrors(int simulationErrors, int algErrors, const string& travel, const string& algName) {
+void Simulation::writeShipErrors(int algErrors, const string& travel, const string& algName) {
+    int simulationErrors = _travels[travel].second;
     if(simulationErrors == 0 && algErrors == 0) {
         return;
     }
-    const pair<string, string>& sailInfo = {algName, travel}; // SEPARATOR + "***** ALGORITHM: " + algName + ", TRAVEL: " + travel + " *****\n";
-    vector<string> errorMsg;
-    errorMsg.emplace_back("\tship plan: a position has an equal number of floors, or more, than the number of floors provided in the first line (ignored)\n");
-    errorMsg.emplace_back("\tship plan: a given position exceeds the X/Y ship limits (ignored)\n");
-    errorMsg.emplace_back("\tship plan: bad line format after first line or duplicate x,y appearance with same data (ignored)\n");
-    errorMsg.emplace_back("\tship plan: travel error - bad first line or file cannot be read altogether (cannot run this travel)\n");
-    errorMsg.emplace_back("\tship plan: travel error - duplicate x,y appearance with different data (cannot run this travel)\n");
-    errorMsg.emplace_back("\ttravel route: a port appears twice or more consecutively (ignored)\n");
-    errorMsg.emplace_back("\ttravel route: bad port symbol format (ignored)\n");
-    errorMsg.emplace_back("\ttravel route: travel error - empty file or file cannot be read altogether (cannot run this travel)\n");
-    errorMsg.emplace_back("\ttravel route: travel error - file with only a single valid port (cannot run this travel)\n");
-    writeReaderErrors(simulationErrors, algErrors, errorMsg, sailInfo);
+    const pair<string, string>& sailInfo = {algName, travel};
+    writeReaderErrors(simulationErrors, algErrors, sailInfo);
 }
 
 
@@ -92,41 +85,14 @@ int Simulation::countContainersOnPort(const string& id, vector<unique_ptr<Contai
 void Simulation::writeCargoErrors(Stowage& stowage, int simulationErrors, int algErrors, vector<unique_ptr<Container>>& containersAtPort, const string& travelName, const string& algName) {
     const pair<string, string> & sailInfo = {algName, travelName};
     string portInfo = "\tcontainers at port " + stowage._route.getCurrentPort() + "_" + std::to_string(stowage._route.getPortNumber()) + ": ";
-    vector<string> errorMsg;
-    errorMsg.emplace_back(portInfo + "duplicate ID on port (ID rejected)\n");
-    errorMsg.emplace_back(portInfo + "ID already on ship (ID rejected)\n");
-    errorMsg.emplace_back(portInfo + "bad line format, missing or bad weight (ID rejected)\n");
-    errorMsg.emplace_back(portInfo + "bad line format, missing or bad port destination (ID rejected)\n");
-    errorMsg.emplace_back(portInfo + "bad line format, ID cannot be read (ignored)\n");
-    errorMsg.emplace_back(portInfo + "illegal ID check ISO 6346 (ID rejected)\n");
-    errorMsg.emplace_back(portInfo + "file cannot be read altogether (assuming no cargo to be loaded at this port)\n");
-    errorMsg.emplace_back(portInfo + "last port has waiting containers (ignored)\n");
-    errorMsg.emplace_back(portInfo + "total containers amount exceeds ship capacity (rejecting far containers)\n");
     for(const auto& container: containersAtPort) {
-        if(countContainersOnPort(container -> getId(), containersAtPort) > 1) { // 2^10
-            if(!(simulationErrors & pow2(10))) { errorMsg[0].append("The duplicated containers: "); }
-            simulationErrors |= pow2(10);
-            errorMsg[0].append(container -> getId() + " ");
-        }
-        if(stowage._plan.hasContainer(container -> getId())) { // 2^11
-            if(!(simulationErrors & pow2(11))) { errorMsg[1].append("The container: "); }
-            simulationErrors |= pow2(11);
-            errorMsg[1].append(container -> getId() + " ");
-        }
-        if(!stowage._route.portInRoute(container -> getDest())) { // 2^13
-            if(!(simulationErrors & pow2(13))) { errorMsg[3].append("The containers with port not in route: "); }
-            simulationErrors |= pow2(13);
-            errorMsg[3].append(container -> getId() + " ");
-        }
+        if(countContainersOnPort(container -> getId(), containersAtPort) > 1) simulationErrors |= pow2(10); // 2^10
+        if(stowage._plan.hasContainer(container -> getId())) simulationErrors |= pow2(11); // 2^11
+        if(!stowage._route.portInRoute(container -> getDest())) simulationErrors |= pow2(13); // 2^13
     }
-    if(simulationErrors & pow2(10 )) { errorMsg[0].append("\n"); }
-    if(simulationErrors & pow2(11 )) { errorMsg[1].append("\n"); }
-    if(simulationErrors & pow2(13 )) { errorMsg[3].append("\n"); }
-    if(stowage._route.isLastStop() && !containersAtPort.empty()) {
-        simulationErrors |= pow2(17);
-    }
+    if(stowage._route.isLastStop() && !containersAtPort.empty()) simulationErrors |= pow2(17);
     if(stowage._plan.numberOfEmptyCells() + stowage._plan.findContainersToUnload(stowage._route.getCurrentPort()).size() < containersAtPort.size()) { simulationErrors |= pow2(18); }
-    writeReaderErrors(simulationErrors, algErrors, errorMsg, sailInfo, 10);
+    writeReaderErrors(simulationErrors, algErrors, sailInfo, portInfo);
 }
 
 
@@ -212,16 +178,49 @@ void Simulation::setRelevantTravels(vector<string> &travels, const std::unordere
     }
 }
 
+void Simulation::readTravel(const string& currTravelPath, const string& travelName, const string &errorPath) {
+    Stowage stowage;
+    int readStatus = Reader::readShipRoute(getPath(currTravelPath, "route"), stowage._route) | Reader::readShipPlan(getPath(currTravelPath, "ship_plan"), stowage._plan);
+    _travels[travelName] = {stowage, readStatus};
+    scanTravelPath(stowage._route, currTravelPath, errorPath);
+}
 
-bool Simulation::isTravelValid(std::unordered_set<string>& invalidTravels, const string& currTravelPath, const string& travelName, const string& errorPath) {
-    pair<int, vector<string >> readRoute = Reader::readShipRoute(getPath(currTravelPath, "route"));
-    int readShipPlan = Reader::readShipPlan(getPath(currTravelPath, "ship_plan")).first;
-    bool isValidRead = !((readShipPlan & pow2(3)) || (readShipPlan & pow2(4)) || (readRoute.first & pow2(7)) || (readRoute.first & pow2(8)));
-    if(!isValidRead) {
-        invalidTravels.insert(travelName);
+bool Simulation::isInvalidTravel(const string& travelName) {
+    int readStatus = _travels[travelName].second;
+    return (readStatus & pow2(3)) || (readStatus & pow2(4)) || (readStatus & pow2(7)) || (readStatus & pow2(8));
+}
+
+void Simulation::writeErrors(const string &errorPath) {
+    std::ofstream file;
+    for(auto const& algorithmErrors: _simulationErrors) {
+        for(auto const& travelErrors: algorithmErrors.second) {
+            string sailInfo = SEPARATOR + "Algorithm: " + algorithmErrors.first + " on travel: " + travelErrors.first + " had the following errors:\n";
+            file.open(errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
+            file << sailInfo << travelErrors.second;
+            file.close();
+        }
     }
-    bool isInInvalid = invalidTravels.find(travelName) != invalidTravels.end();
-    ShipRoute route = ShipRoute(readRoute.second);
-    scanTravelPath(route, currTravelPath, errorPath);
-    return isValidRead && !isInInvalid;
+}
+
+map<string, std::function<unique_ptr<AbstractAlgorithm>()>> Simulation::loadAlgorithmsFromFile(const string &dirPath, const string &errorPath) {
+    auto& registrar = AlgorithmRegistrar::getInstance();
+    vector<pair<string, string>> algPath; // <algorithm path, algorithm name>
+    std::regex format("(.*)\\.so");
+    for(const auto & entry : fs::directory_iterator(dirPath)) {
+        if(std::regex_match(entry.path().string(), format)) {
+            algPath.emplace_back(entry.path().string(), entry.path().stem().string());
+        }
+    }
+    auto errors = registrar.loadAlgorithmFromFile(algPath);
+    if(!errors.empty()) writeRegistrarErrors(errorPath, errors);
+    return registrar.getAlgorithmFactory();
+}
+
+void Simulation::writeRegistrarErrors(const string &path, const vector<pair<string, string>>& errors) {
+    std::ofstream file;
+    file.open(path, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
+    for(const auto& error: errors) {
+        file << "ERROR: couldn't open algorithm at path: " << error.first << " . The error is: " << error.second << "\n";
+    }
+    file.close();
 }
