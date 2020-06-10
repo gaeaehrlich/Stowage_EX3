@@ -1,7 +1,7 @@
 #include "Simulation.h"
 
 void Simulation::initPaths(const string& outputPath, string& errorPath, string& resultsPath) {
-    errorPath = outputPath + SUBDIR + "simulator.errors";
+    errorPath = outputPath + SUBDIR + "simulation.errors";
     std::remove(errorPath.c_str());
     resultsPath = createResultsFile(outputPath);
 }
@@ -97,7 +97,7 @@ void Simulation::writeCargoErrors(Stowage& stowage, int simulationErrors, int al
 
 
 string Simulation::createResultsFile(const string &outputPath) {
-    string resultsPath = outputPath + SUBDIR + "simulator.results";
+    string resultsPath = outputPath + SUBDIR + "simulation.results";
     std::ofstream file(resultsPath);
     file.close();
     return resultsPath;
