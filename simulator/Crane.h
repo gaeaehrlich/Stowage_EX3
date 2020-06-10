@@ -58,6 +58,7 @@ public:
     bool isInTemporaryUnloaded(const string& id);
     unique_ptr<Container> getContainerToReject(const string& id);
     string getCraneErrors();
+
 };
 
 

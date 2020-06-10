@@ -12,7 +12,12 @@ public:
     ShipRoute _route;
     Crane _crane;
 
-    // TODO create empty stowage
+    Stowage getEmptyCopy() {
+        Stowage stowage;
+        stowage._plan = _plan.getEmptyCopy();
+        stowage._route = _route;
+        return std::move(stowage);
+    }
 };
 
 

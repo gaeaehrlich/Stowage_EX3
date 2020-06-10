@@ -6,7 +6,7 @@ ShipPlan::ShipPlan() {
 }
 
 ShipPlan::ShipPlan(int num, map< pair<int,int>, int > dict) {
-    vector< vector<pair<int,int>> > floors(static_cast<unsigned long long int>(num));
+    vector< vector<pair<int,int>> > floors(num);
     map< pair<int, int> , int> ::iterator it;
     for (it = dict.begin(); it != dict.end(); it++) {
         for(int i = num - 1; i >= num - (it -> second); i--) {
@@ -17,6 +17,23 @@ ShipPlan::ShipPlan(int num, map< pair<int,int>, int > dict) {
         _floors.emplace_back(floor);
     }
 }
+
+
+ShipPlan::ShipPlan(vector<vector<pair<int, int>>> floors) {
+    for(const vector<pair<int,int>>& floor: floors) {
+        _floors.emplace_back(floor);
+    }
+}
+
+
+ShipPlan ShipPlan::getEmptyCopy() {
+    vector< vector<pair<int,int>> > floors;
+    for(auto& floor: _floors) {
+        floors.push_back(floor.getLegalLocations());
+    }
+    return std::move(ShipPlan(floors));
+}
+
 
 int ShipPlan::numberOfFloors() {
     return static_cast<int>(_floors.size());
@@ -124,4 +141,3 @@ vector<Position> ShipPlan::findContainersToUnload(const string& port) {
     }
     return unload;
 }
-

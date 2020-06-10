@@ -42,7 +42,7 @@ int Simulation::sail(Stowage& stowage, const string &algName, unique_ptr<Abstrac
 
 
 void Simulation::runThread(const string &algName,std::function<unique_ptr<AbstractAlgorithm>()> algFunc, const string& travelPath, const string& travelName, const string& outputPath) {
-        Stowage stowage = _travels[travelName].first;
+        Stowage stowage = _travels[travelName].first.getEmptyCopy();
         auto algorithm = algFunc();
         readShip(travelPath, travelName, algorithm, algName);
         WeightBalanceCalculator calculator;

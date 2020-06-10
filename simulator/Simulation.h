@@ -39,15 +39,15 @@ class Simulation {
                                     "\ttravel route: bad port symbol format (ignored)\n",
                                     "\ttravel route: travel error - empty file or file cannot be read altogether (cannot run this travel)\n",
                                     "\ttravel route: travel error - file with only a single valid port (cannot run this travel)\n",
-                                    "duplicate ID on port (ID rejected)\n",
-                                    "ID already on ship (ID rejected)\n",
-                                    "bad line format, missing or bad weight (ID rejected)\n",
-                                    "bad line format, missing or bad port destination (ID rejected)\n",
-                                    "bad line format, ID cannot be read (ignored)\n",
-                                    "illegal ID check ISO 6346 (ID rejected)\n",
-                                    "file cannot be read altogether (assuming no cargo to be loaded at this port)\n",
-                                    "last port has waiting containers (ignored)\n",
-                                    "total containers amount exceeds ship capacity (rejecting far containers)\n"
+                                    "\tduplicate ID on port (ID rejected)\n",
+                                    "\tID already on ship (ID rejected)\n",
+                                    "\tbad line format, missing or bad weight (ID rejected)\n",
+                                    "\tbad line format, missing or bad port destination (ID rejected)\n",
+                                    "\tbad line format, ID cannot be read (ignored)\n",
+                                    "\tillegal ID check ISO 6346 (ID rejected)\n",
+                                    "\tfile cannot be read altogether (assuming no cargo to be loaded at this port)\n",
+                                    "\tlast port has waiting containers (ignored)\n",
+                                    "\ttotal containers amount exceeds ship capacity (rejecting far containers)\n"
     };
 
 public:

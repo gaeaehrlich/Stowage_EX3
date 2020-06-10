@@ -35,23 +35,23 @@ string Simulation::createTravelOutputFolder(const string &outputPath, const stri
 
 void Simulation::writeReaderErrors(int simulationErrors, int algErrors, const pair<string, string>& sailInfo, const string& portInfo) {
     bool errors = false;
-    string msg = "";
-    int index = portInfo.empty() ? 0 : 10;
-    for(long unsigned int i = 0; i < _readerErrors.size(); i++) {
+    string msg;
+    int index = portInfo.empty() ? 0 : 9;
+    for(long unsigned int i = 0; i < 9; i++) {
         if(simulationErrors & pow2(i + index)) {
             if(!errors) {
                 if(index == 0) msg.append("Input travel files errors:\n");
-                else msg.append("Input cargo data files errors:\n");
+                else msg.append("Input cargo data files errors at port " + portInfo + ":\n");
             }
-            if(!portInfo.empty()) msg.append(portInfo);
-            msg.append(_readerErrors[i]);
+            //if(!portInfo.empty()) msg.append(portInfo);
+            msg.append(_readerErrors[i + index]);
             if(!(algErrors & pow2(i + index))) {
                 msg.append("ALGORITHM WARNING: algorithm did not alert this problem\n");
             }
             errors = true;
         }
         else if(algErrors & pow2(i + index)) {
-            string extraError = portInfo.empty() ? _readerErrors[i] : portInfo + _readerErrors[i];
+            string extraError = portInfo.empty() ? _readerErrors[i + index] : portInfo + _readerErrors[i + index];
             msg.append("ALGORITHM WARNING: algorithm " + sailInfo.first + " reports a problem the simulator did not find:\n " + extraError);
             errors = true;
         }
@@ -84,7 +84,7 @@ int Simulation::countContainersOnPort(const string& id, vector<unique_ptr<Contai
 
 void Simulation::writeCargoErrors(Stowage& stowage, int simulationErrors, int algErrors, vector<unique_ptr<Container>>& containersAtPort, const string& travelName, const string& algName) {
     const pair<string, string> & sailInfo = {algName, travelName};
-    string portInfo = "\tcontainers at port " + stowage._route.getCurrentPort() + "_" + std::to_string(stowage._route.getPortNumber()) + ": ";
+    string portInfo = stowage._route.getCurrentPort() + "_" + std::to_string(stowage._route.getPortNumber());
     for(const auto& container: containersAtPort) {
         if(countContainersOnPort(container -> getId(), containersAtPort) > 1) simulationErrors |= pow2(10); // 2^10
         if(stowage._plan.hasContainer(container -> getId())) simulationErrors |= pow2(11); // 2^11
@@ -181,8 +181,8 @@ void Simulation::setRelevantTravels(vector<string> &travels, const std::unordere
 void Simulation::readTravel(const string& currTravelPath, const string& travelName, const string &errorPath) {
     Stowage stowage;
     int readStatus = Reader::readShipRoute(getPath(currTravelPath, "route"), stowage._route) | Reader::readShipPlan(getPath(currTravelPath, "ship_plan"), stowage._plan);
-    _travels[travelName] = {stowage, readStatus};
     scanTravelPath(stowage._route, currTravelPath, errorPath);
+    _travels[travelName] = {std::move(stowage), readStatus};
 }
 
 bool Simulation::isInvalidTravel(const string& travelName) {
