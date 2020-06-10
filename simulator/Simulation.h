@@ -69,7 +69,7 @@ public:
     void scanTravelPath(ShipRoute& route, const string& currTravelPath, const string& errorPath);
     string createResultsFile(const string& outputPath);
     int countContainersOnPort(const string& id, vector<unique_ptr<Container>>& containersAtPort);
-    void setRelevantTravels(vector<string>& travels, const std::unordered_set<string>& invalid);
+    void setRelevantTravels(vector<string>& travels;
     void initPaths(const string& outputPath, string& errorPath, string& resultsPath);
     void runThread(const string &algName, std::function<unique_ptr<AbstractAlgorithm>()> algFunc, const string& travelPath, const string& travelName, const string& outputPath);
     void readTravel(const string& currTravelPath, const string& travelName, const string &errorPath);

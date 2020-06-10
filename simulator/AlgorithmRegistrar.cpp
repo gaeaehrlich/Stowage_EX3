@@ -48,4 +48,5 @@ vector<pair<string, string>> AlgorithmRegistrar::loadAlgorithmFromFile(vector<pa
             }
         }
     }
+    return errors;
 }

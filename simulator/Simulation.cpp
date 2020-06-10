@@ -50,7 +50,7 @@ void Simulation::runThread(const string &algName,std::function<unique_ptr<Abstra
         algorithm -> setWeightBalanceCalculator(calculator);
         int numOp = sail(stowage, algName, algorithm, calculator, travelPath, travelName, outputPath);
         _simulationResults[algName][travelName] = numOp;
-        _simulationErrors[algName][travelName].append(stowage._crane.getCraneErrors());
+        if(!stowage._crane.getCraneErrors().empty()) _simulationErrors[algName][travelName].append(stowage._crane.getCraneErrors());
 }
 
 
@@ -63,7 +63,6 @@ void Simulation::start(const string &travelPath, string &algorithmPath, string &
         std::cout << "Error: no algorithms were loaded. Run terminated." << std::endl;
         return;
     }
-    std::unordered_set<string> invalidTravels;
     for(auto& travelName : travels) {
         string currTravelPath = travelPath + SUBDIR + travelName;
         readTravel(currTravelPath, travelName, errorPath);
@@ -83,7 +82,6 @@ void Simulation::start(const string &travelPath, string &algorithmPath, string &
     }
     _pool.joinThreads();
     writeErrors(errorPath);
-    setRelevantTravels(travels, invalidTravels);
     writeResults(resultsPath, travels);
 }
 

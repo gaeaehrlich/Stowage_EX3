@@ -16,7 +16,7 @@ public:
         Stowage stowage;
         stowage._plan = _plan.getEmptyCopy();
         stowage._route = _route;
-        return std::move(stowage);
+        return stowage;
     }
 };
 

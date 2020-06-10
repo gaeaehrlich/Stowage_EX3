@@ -46,13 +46,13 @@ void Simulation::writeReaderErrors(int simulationErrors, int algErrors, const pa
             //if(!portInfo.empty()) msg.append(portInfo);
             msg.append(_readerErrors[i + index]);
             if(!(algErrors & pow2(i + index))) {
-                msg.append("ALGORITHM WARNING: algorithm did not alert this problem\n");
+                msg.append("ALGORITHM WARNING: algorithm did not alert the following problems:\n");
             }
             errors = true;
         }
         else if(algErrors & pow2(i + index)) {
-            string extraError = portInfo.empty() ? _readerErrors[i + index] : portInfo + _readerErrors[i + index];
-            msg.append("ALGORITHM WARNING: algorithm " + sailInfo.first + " reports a problem the simulator did not find:\n " + extraError);
+            string extraError = portInfo.empty() ? _readerErrors[i + index] : "At port " + portInfo + ":" + _readerErrors[i + index];
+            msg.append("ALGORITHM WARNING: algorithm " + sailInfo.first + " reports a problem the simulator did not find:\n" + extraError);
             errors = true;
         }
     }
@@ -104,6 +104,7 @@ string Simulation::createResultsFile(const string &outputPath) {
 }
 
 void Simulation::writeResults(const string &path, vector<string> travels) {
+    setRelevantTravels(travels);
     vector<tuple<string, vector<int>, int, int>> results; //alg name, results vector, sum, errors
     std::ofstream file;
     file.open(path, std::ios_base::app);
@@ -172,7 +173,11 @@ void Simulation::scanTravelPath(ShipRoute& route, const string &currTravelPath, 
     }
 }
 
-void Simulation::setRelevantTravels(vector<string> &travels, const std::unordered_set<string> &invalid) {
+void Simulation::setRelevantTravels(vector<string> &travels) {
+    std::unordered_set<string> invalid;
+    for(auto& travel: _travels) {
+        if(isInvalidTravel(travel.first)) invalid.insert(travel.first);
+    }
     for(const string& travel: invalid) {
         travels.erase(std::remove(travels.begin(), travels.end(), travel), travels.end());
     }
