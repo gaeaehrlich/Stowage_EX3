@@ -4,8 +4,7 @@
 #include "NaiveAlgorithm.h"
 
 class _208967075_a : public NaiveAlgorithm {
-    Position findPosition(const unique_ptr<Container>& container) override;
+    bool tryMoveFrom(unique_ptr<Container> &container, const Position old, std::ofstream &file) override;
 };
-
 
 #endif //STOWAGE_NAIVEALGORITHM1_H

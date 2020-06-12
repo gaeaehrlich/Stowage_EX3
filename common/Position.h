@@ -12,6 +12,7 @@ public:
 public:
     Position();
     Position(int floor, int x, int y);
+    bool operator!=(const Position& other) const;
 };
 
 

@@ -44,10 +44,11 @@ public:
     void sortCargoLoad();
     void unloadInstructions(std::ofstream& file);
     void loadInstructions(std::ofstream& file, vector<unique_ptr<Container>>& list);
-    virtual Position findPosition(const unique_ptr<Container>& container) = 0;
+    Position findPosition(const unique_ptr<Container>& container, const pair<int, int> oldLoc = {-1, -1});
+    virtual bool tryMoveFrom(unique_ptr<Container>& container, const Position old, std::ofstream &file) = 0;
     bool shouldRejectContainer(unique_ptr<Container>& container);
     void unloadContainersAbove(Position position, std::ofstream& file);
-    string instructionToString(char instruction, const string& id, Position pos);
+    string instructionToString(char instruction, const string& id, const Position pos, const Position move = Position());
     int countContainersOnPort(const string& id);
     void rejectInstructions(std::ofstream& file);
     void removeDuplicates(std::ofstream &file);
