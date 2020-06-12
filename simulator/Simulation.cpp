@@ -1,76 +1,87 @@
 #include "Simulation.h"
 
+Simulation::Simulation(int numThreads) : _pool(numThreads - 1){
+    _pool.startThreads();
+}
 
-bool Simulation::readShip(const string &errorPath, const string &travelPath, const string &travel, pair<string, unique_ptr<AbstractAlgorithm>> &algorithm) {
+void Simulation::readShip(const string &travelPath, const string &travel, unique_ptr<AbstractAlgorithm> &algorithm, const string& algName) {
     string routePath = getPath(travelPath, "route");
     string planPath = getPath(travelPath, "ship_plan");
-    int simulationErrors = Reader::readShipRoute(routePath, _route) | Reader::readShipPlan(planPath, _plan);
-    int algErrors = algorithm.second -> readShipRoute(routePath) | algorithm.second -> readShipPlan(planPath);
-    return writeShipErrors(errorPath, simulationErrors, algErrors, travel, algorithm.first);
+    int algErrors = algorithm -> readShipRoute(routePath) | algorithm -> readShipPlan(planPath);
+    writeShipErrors(algErrors, travel, algName);
 }
 
-void Simulation::getInstructionForCargo(const string &cargoPath, const string &outputPath, const string &errorPath, vector<unique_ptr<Container>>& containersAtPort, pair<string, unique_ptr<AbstractAlgorithm>> &algorithm, const string& travelName) {
+void Simulation::getInstructionForCargo(Stowage& stowage, const string &cargoPath, const string &outputPath, vector<unique_ptr<Container>>& containersAtPort, const string &algName, unique_ptr<AbstractAlgorithm>& algorithm, const string& travelName) {
     int simulationErrors = Reader::readCargoLoad(cargoPath, containersAtPort);
-    int algErrors = algorithm.second -> getInstructionsForCargo(cargoPath, outputPath);
-    writeCargoErrors(errorPath, simulationErrors, algErrors, containersAtPort, travelName, algorithm.first); // void because no fatal errors
+    int algErrors = algorithm -> getInstructionsForCargo(cargoPath, outputPath);
+    writeCargoErrors(stowage, simulationErrors, algErrors, containersAtPort, travelName, algName); // void because no fatal errors
 }
 
-int Simulation::sendInstructionsToCrane(vector<unique_ptr<Container>> containers, WeightBalanceCalculator& calculator, const string &instructions_path, const string &errorPath, const string &sailInfo) {
+int Simulation::sendInstructionsToCrane(Stowage& stowage, vector<unique_ptr<Container>> containers, WeightBalanceCalculator& calculator, const string &instructions_path, const pair<string, string> &sailInfo) {
     vector<Operation> instructions = Reader::getInstructionsVector(instructions_path);
-    return _crane.start(_plan, _route, calculator, std::move(containers), instructions, errorPath, sailInfo);
+    return stowage._crane.start(stowage._plan, stowage._route, calculator, std::move(containers), instructions, sailInfo);
 }
 
-int Simulation::sail(pair<string, unique_ptr<AbstractAlgorithm>> &algorithm, const string &travelPath, const string& travelName, const string& outputPath, const string& errorPath) {
-    int results = 0;
+int Simulation::sail(Stowage& stowage, const string &algName, unique_ptr<AbstractAlgorithm>& algorithm, WeightBalanceCalculator& calculator, const string &travelPath, const string& travelName, const string& outputPath) {
     bool failed = false;
-    scanTravelPath(travelPath, errorPath);
-    string travel_output_path = createTravelOutputFolder(outputPath, algorithm.first, travelName);
-    string plan_path = getPath(travelPath, "ship_plan");
-    WeightBalanceCalculator calculator;
-    calculator.readShipPlan(plan_path);
-    algorithm.second -> setWeightBalanceCalculator(calculator);
-    for(const string& port: _route.getRoute()) {
-        std::cout << "entering port: " << port << std::endl;
-        string cargoPath = getCargoPath(travelPath, port);
+    int numOp = 0;
+    string travelOutputPath = createTravelOutputFolder(outputPath, algName, travelName);
+    for(const string& port: stowage._route.getRoute()) {
+        string cargoPath = getCargoPath(stowage, travelPath, port);
         vector<unique_ptr<Container>> containersAtPort;
-        string portOutputPath = createPortOutputFile(travel_output_path, port);
-        getInstructionForCargo(cargoPath, portOutputPath, errorPath, containersAtPort, algorithm, travelName);
-        string sailInfo = SEPARATOR + "***** ALGORITHM: " + algorithm.first + ", TRAVEL: " + travelName + " PORT: " + port + " *****\n";
-        int numOp = sendInstructionsToCrane(std::move(containersAtPort), calculator, portOutputPath, errorPath, sailInfo);
-        if(numOp == FAILURE) { failed = true; }
-        results += numOp;
-        _route.next();
+        string portOutputPath = createPortOutputFile(stowage, travelOutputPath, port);
+        getInstructionForCargo(stowage, cargoPath, portOutputPath, containersAtPort, algName, algorithm, travelName);
+        pair<string, string> sailInfo = {algName, travelName};// SEPARATOR + "***** ALGORITHM: " + algName + ", TRAVEL: " + travelName + " PORT: " + port + " *****\n";
+        int result = sendInstructionsToCrane(stowage, std::move(containersAtPort), calculator, portOutputPath, sailInfo);
+        if(result == FAILURE) { failed = true; }
+        numOp += result;
+        stowage._route.next();
     }
-    return failed ? FAILURE : results;
+    return failed ? FAILURE : numOp;
 }
 
 
-void Simulation::start(const string &travelPath, string &algorithmPath, string &outputPath) {
-    if(!checkDirectories(travelPath, algorithmPath, outputPath)) { return; }
-    string errorPath = outputPath + SUBDIR + "simulator.errors";
-    std::remove(errorPath.c_str());
+void Simulation::runThread(const string &algName,std::function<unique_ptr<AbstractAlgorithm>()> algFunc, const string& travelPath, const string& travelName, const string& outputPath) {
+        Stowage stowage = _travels[travelName].first.getEmptyCopy();
+        auto algorithm = algFunc();
+        readShip(travelPath, travelName, algorithm, algName);
+        WeightBalanceCalculator calculator;
+        calculator.readShipPlan(getPath(travelPath, "ship_plan"));
+        algorithm -> setWeightBalanceCalculator(calculator);
+        int numOp = sail(stowage, algName, algorithm, calculator, travelPath, travelName, outputPath);
+        _simulationResults[algName][travelName] = numOp;
+        if(!stowage._crane.getCraneErrors().empty()) _simulationErrors[algName][travelName].append(stowage._crane.getCraneErrors());
+}
+
+
+void Simulation::start(const string &travelPath, string &algorithmPath, string &outputPath, int numThreads) {
+    string errorPath, resultsPath;
+    initPaths(outputPath, errorPath, resultsPath);
     vector<string> travels = Reader::getTravels(travelPath);
-    vector<std::function<unique_ptr<AbstractAlgorithm>()>> algorithmFactories;
-    auto& registrar = AlgorithmRegistrar::getInstance();
-    registrar.loadAlgorithmFromFile(algorithmPath, errorPath);
-    string resultsPath = createResultsFile(outputPath);
-    map<string, vector<int>> algResults;
-    std::unordered_set<string> invalidTravels;
+    auto algorithms = loadAlgorithmsFromFile(algorithmPath, errorPath);
+    if(algorithms.empty()) {
+        std::cout << "Error: no algorithms were loaded. Run terminated." << std::endl;
+        return;
+    }
     for(auto& travelName : travels) {
         string currTravelPath = travelPath + SUBDIR + travelName;
-        auto algorithms = registrar.getAlgorithms();
-        if(algorithms.empty()) { return; }
-        for(auto& alg: algorithms) {
-            std::cout << SEPARATOR << "starting travel: " << travelName << " with algorithm: " << alg.first << std::endl;
-            if(!readShip(errorPath, currTravelPath, travelName, alg)) {
-                invalidTravels.insert(travelName);
-                continue;
+        readTravel(currTravelPath, travelName, errorPath);
+        if(isInvalidTravel(travelName)) { continue; }
+        for(auto& algorithm: algorithms) {
+            auto algName = algorithm.first;
+            auto algFunc = algorithm.second;
+            if(numThreads == 1) {
+                runThread(algName, algFunc, currTravelPath, travelName, outputPath);
             }
             else {
-                algResults[alg.first].emplace_back(sail(alg, currTravelPath, travelName, outputPath, errorPath));
+                _pool.addTask([this, algName, algFunc, currTravelPath, travelName, outputPath, errorPath]() {
+                    runThread(algName, algFunc, currTravelPath, travelName, outputPath);
+                });
             }
         }
     }
-    setRelevantTravels(travels, invalidTravels);
-    writeResults(resultsPath, algResults, travels);
+    _pool.joinThreads();
+    writeErrors(errorPath);
+    writeResults(resultsPath, travels);
 }
+

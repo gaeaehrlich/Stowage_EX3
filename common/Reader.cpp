@@ -169,11 +169,11 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
     }
     if (!fatal) {
         for (int i = 0; i < x; i++) {
-        	for (int j = 0; j < y; j++) {
-        		if (mPlan.find({i, j}) == mPlan.end()) {
+            for (int j = 0; j < y; j++) {
+                if (mPlan.find({i, j}) == mPlan.end()) {
                     mPlan[{i, j}] = numFloors;
-        		}
-        	}
+                }
+            }
         }
         plan = ShipPlan(numFloors, std::move(mPlan)); // why not?
     }
@@ -194,8 +194,8 @@ int Reader::readShipRoute(const string &path, ShipRoute& route) {
         if (ignoreLine(currPort)) { continue; }
         currPort = std::regex_replace(currPort, std::regex("^\\s+"), "");
         currPort = std::regex_replace(currPort, std::regex("\\s+$"), "");
-	    std::transform(currPort.begin(), currPort.end(), currPort.begin(),
-                   [](unsigned char c){ return std::toupper(c); });
+        std::transform(currPort.begin(), currPort.end(), currPort.begin(),
+                       [](unsigned char c){ return std::toupper(c); });
         if (currPort == prevPort) {
             errors |= pow2(5);
             continue;
@@ -220,7 +220,9 @@ bool Reader::checkDirPath(const string& pathName) {
 vector<string> Reader::getTravels(const string &dir) {
     vector<string> travels;
     for(const auto & entry : fs::directory_iterator(dir)) {
-        travels.emplace_back(entry.path().stem().string());
+        if(fs::is_directory(entry.path())) {
+            travels.emplace_back(entry.path().stem().string());
+        }
     }
     return travels;
 }

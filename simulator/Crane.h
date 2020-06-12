@@ -20,23 +20,20 @@ using std::unique_ptr;
 
 class Crane {
     vector<Operation> _operations;
-private:
     vector<unique_ptr<Container>> _cargoLoad;
     vector<unique_ptr<Container>> _temporaryUnloaded;
     vector<unique_ptr<Container>> _duplicates;
     std::unordered_set<string> _newlyLoadedDest;
     WeightBalanceCalculator _calculator;
     string _port;
-    string _errorPath;
-    string _sailInfo;
-    bool _errorPort;
+    pair<string, string> _sailInfo; // algorithm name, trave name
+    string _craneErrors; // algorithm name, travel name, errors
 
 public:
-    void setCrane(vector<unique_ptr<Container>> containers, vector<Operation> operations, const string &errorPath, const string &sailInfo, WeightBalanceCalculator& calculator, ShipRoute& route);
+    void setCrane(vector<unique_ptr<Container>> containers, vector<Operation> operations, const  pair<string, string> &sailInfo, WeightBalanceCalculator& calculator, ShipRoute& route);
     void setOperations(vector<Operation> operations);
-    void setErrorPath(const string &errorPath);
-    void setSailInfo(const string &sailInfo);
-    int start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calculator, vector<unique_ptr<Container>> containers, vector<Operation> operations, const string &errorPath, const string &sailInfo);
+    void setSailInfo(const pair<string, string> &sailInfo);
+    int start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calculator, vector<unique_ptr<Container>> containers, vector<Operation> operations, const  pair<string, string> &sailInfo);
     bool end(ShipPlan& plan, ShipRoute& route);
     bool load(const string& id, Position pos, ShipPlan& plan, ShipRoute& route);
     bool unload(const string& id, Position pos, ShipPlan& plan);
@@ -55,12 +52,13 @@ public:
     bool checkShip(ShipPlan& plan);
     bool handleLastStop(ShipPlan& plan, ShipRoute& route);
     void setCalculator(WeightBalanceCalculator& calculator);
-    void checkErrorPort(std::ofstream& file);
     unique_ptr<Container> getContainerToLoad(const string& id);
     bool isDuplicateOnPort(const string& id);
     bool isInDuplicated(const string& id);
     bool isInTemporaryUnloaded(const string& id);
     unique_ptr<Container> getContainerToReject(const string& id);
+    string getCraneErrors();
+
 };
 
 

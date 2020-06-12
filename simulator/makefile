@@ -1,13 +1,13 @@
 COMP = g++-9.3.0
 
-OBJS = Position.o Container.o Operation.o Floor.o ShipPlan.o ShipRoute.o WeightBalanceCalculator.o Reader.o CraneAux.o Crane.o AlgorithmRegistrar.o AlgorithmRegistration.o Auxillary.o Simulation.o main.o
+OBJS = Position.o Container.o Operation.o Floor.o ShipPlan.o ShipRoute.o WeightBalanceCalculator.o Reader.o CraneAux.o Crane.o AlgorithmRegistrar.o AlgorithmRegistration.o Auxiliary.o ThreadPool.o Simulation.o main.o
 EXEC = simulator
 COMMON = ../common/
 SIMULATOR= ./
 ALGORITHM = ../algorithm/
 
 CPP_COMP_FLAG = -std=c++2a -Wall -Wextra -Werror -pedantic-errors -DNDEBUG
-CPP_LINK_FLAG = -ldl -export-dynamic -lstdc++fs
+CPP_LINK_FLAG = -ldl -export-dynamic -lstdc++fs -pthread
 
 $(EXEC): $(OBJS)
 	$(COMP) $(OBJS) $(CPP_LINK_FLAG) -o $@
@@ -26,7 +26,7 @@ ShipRoute.o: $(COMMON)ShipRoute.cpp $(COMMON)ShipRoute.h
 WeightBalanceCalculator.o: $(COMMON)WeightBalanceCalculator.cpp $(COMMON)WeightBalanceCalculator.h
 	$(COMP) $(CPP_COMP_FLAG) -c $(COMMON)$*.cpp
 Reader.o: $(COMMON)Reader.cpp $(COMMON)Reader.h
-	$(COMP) $(CPP_COMP_FLAG) -lstdc++fs -c $(COMMON)$*.cpp
+	$(COMP) $(CPP_COMP_FLAG) -c $(COMMON)$*.cpp
 CraneAux.o: $(SIMULATOR)CraneAux.cpp $(SIMULATOR)Crane.h $(COMMON)Operation.h $(COMMON)Reader.h $(COMMON)ShipPlan.h $(COMMON)WeightBalanceCalculator.h
 	$(COMP) $(CPP_COMP_FLAG) -c $(SIMULATOR)$*.cpp
 Crane.o: $(SIMULATOR)Crane.cpp $(SIMULATOR)Crane.h $(COMMON)Operation.h $(COMMON)Reader.h $(COMMON)ShipPlan.h $(COMMON)WeightBalanceCalculator.h
@@ -35,9 +35,11 @@ AlgorithmRegistrar.o: $(SIMULATOR)AlgorithmRegistrar.cpp $(SIMULATOR)AlgorithmRe
 	$(COMP) $(CPP_COMP_FLAG) -c $(SIMULATOR)$*.cpp
 AlgorithmRegistration.o: $(SIMULATOR)AlgorithmRegistration.cpp $(ALGORITHM)AlgorithmRegistration.h
 	$(COMP) $(CPP_COMP_FLAG) -c $(SIMULATOR)$*.cpp
-Auxillary.o: $(SIMULATOR)Auxillary.cpp $(SIMULATOR)Simulation.h $(SIMULATOR)AlgorithmRegistrar.h
+Auxiliary.o: $(SIMULATOR)Auxiliary.cpp $(SIMULATOR)Simulation.h $(SIMULATOR)AlgorithmRegistrar.h
 	$(COMP) $(CPP_COMP_FLAG) -c $(SIMULATOR)$*.cpp
-Simulation.o: $(SIMULATOR)Simulation.cpp $(SIMULATOR)Simulation.h $(SIMULATOR)AlgorithmRegistrar.h
+ThreadPool.o: $(SIMULATOR)ThreadPool.cpp $(SIMULATOR)ThreadPool.h $(ALGORITHM)AbstractAlgorithm.h
+	$(COMP) $(CPP_COMP_FLAG) -c $(SIMULATOR)$*.cpp
+Simulation.o: $(SIMULATOR)Simulation.cpp $(SIMULATOR)Simulation.h $(SIMULATOR)AlgorithmRegistrar.h $(SIMULATOR)Stowage.h $(SIMULATOR)ThreadPool.h
 	$(COMP) $(CPP_COMP_FLAG) -c $(SIMULATOR)$*.cpp
 main.o: main.cpp $(SIMULATOR)Simulation.h
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp

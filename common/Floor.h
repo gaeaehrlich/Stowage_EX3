@@ -12,7 +12,7 @@ using std::pair;
 using std::unique_ptr;
 
 class Floor {
-    map< pair<int, int> , std::unique_ptr<Container>> _map;
+    map< pair<int, int> , unique_ptr<Container>> _map;
 
 public:
     Floor();

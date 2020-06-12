@@ -2,32 +2,31 @@
 #include "Simulation.h"
 
 
-int Crane::start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calculator, vector<unique_ptr<Container>> containers, vector<Operation> operations, const string &errorPath, const string &sailInfo) {
-    setCrane(std::move(containers), std::move(operations), errorPath, sailInfo, calculator, route);
+int Crane::start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calculator,
+                 vector<unique_ptr<Container>> containers, vector<Operation> operations,
+                 const pair<string, string>& sailInfo) {
+    setCrane(std::move(containers), std::move(operations), sailInfo, calculator, route);
     int sum_operations = 0;
     bool flag = false;
     for(Operation& op : _operations) {
         switch(op._operation) {
             case LOAD:
                 if(!load(op._id, op._position, plan, route)) { flag = true; }
-                sum_operations++;
+                sum_operations += 5;
                 break;
             case UNLOAD:
                 if(!unload(op._id, op._position, plan)) { flag = true; }
-                sum_operations++;
+                sum_operations += 5;
                 break;
             case REJECT:
                 if(!reject(op._id, plan, route)) { flag = true; }
                 break;
             case MOVE:
                 if(!unload(op._id, op._position, plan) || !load(op._id, op._move, plan, route)) {  flag = true; }
-                sum_operations++;
+                sum_operations += 3;
                 break;
             case ERROR:
-                std::ofstream file;
-                file.open(_errorPath, std::ios::out | std::ios::app); // file gets created if it doesn't exist and appends to the end
-                file << _sailInfo << "ERROR: algorithm trying an illegal operation.\n";
-                file.close();
+                _craneErrors.append("ALGORITHM ERROR: algorithm trying an illegal operation.\n");
                 break;
         }
     }
@@ -36,15 +35,13 @@ int Crane::start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calc
 }
 
 
-void Crane::setCrane(vector<unique_ptr<Container>> containers, vector<Operation> operations, const string &errorPath,
-                     const string &sailInfo, WeightBalanceCalculator &calculator, ShipRoute &route) {
+void Crane::setCrane(vector<unique_ptr<Container>> containers, vector<Operation> operations,
+                     const pair<string, string> &sailInfo, WeightBalanceCalculator &calculator, ShipRoute &route) {
     setContainerData(std::move(containers));
     setOperations(std::move(operations));
-    setErrorPath(errorPath);
     setSailInfo(sailInfo);
     setCalculator(calculator);
     _port = route.getCurrentPort();
-    _errorPort = false;
 }
 
 bool Crane::end(ShipPlan& plan, ShipRoute& route) {
@@ -97,7 +94,6 @@ bool Crane::load(const string& id, Position pos, ShipPlan& plan, ShipRoute& rout
     if(_calculator.tryOperation(LOAD, container -> getWeight(), pos._x, pos._y) != WeightBalanceCalculator::APPROVED) { return false; }
 
     plan.getFloor(pos._floor).insert(pos._x, pos._y, std::move(container));
-    std::cout << "Loading container " << id << " to position: floor: " << pos._floor << ", x: " << pos._x << ", y: " << pos._y << std::endl;
     return !isError;
 }
 
@@ -112,7 +108,6 @@ bool Crane::unload(const string& id, Position pos, ShipPlan& plan) {
     if(removed -> getDest() != _port) {
         _temporaryUnloaded.emplace_back(std::move(removed));
     }
-    std::cout << "Unloading container " << id << " from position: floor: " << pos._floor << ", x: " << pos._x << ", y: " << pos._y << std::endl;
     return !isError;
 }
 
@@ -153,7 +148,6 @@ bool Crane::reject(const string& id, ShipPlan& plan, ShipRoute& route) {
         writeInstructionError("Reject", container -> getId(), true);
         return false;
     }
-    std::cout << "Rejecting container " << id << std::endl;
     return true;
 }
 

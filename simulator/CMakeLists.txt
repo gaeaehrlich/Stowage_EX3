@@ -19,12 +19,14 @@ set(COMMON_SRC
         ../common/Position.cpp
         ../common/WeightBalanceCalculator.h
         ../common/WeightBalanceCalculator.cpp
-        AlgorithmRegistrar.cpp)
+        )
 
 add_executable(simulator
         main.cpp
         Crane.h Crane.cpp CraneAux.cpp
-        Simulation.h Simulation.cpp Auxillary.cpp
+        ThreadPool.cpp ThreadPool.h
+        Stowage.h
+        Simulation.h Simulation.cpp Auxiliary.cpp
         ../algorithm/AbstractAlgorithm.h
         ../algorithm/AlgorithmRegistration.h AlgorithmRegistration.cpp
         AlgorithmRegistrar.h AlgorithmRegistrar.cpp
@@ -33,3 +35,4 @@ add_executable(simulator
 
 target_link_libraries(simulator stdc++fs)
 target_link_libraries(simulator ${CMAKE_DL_LIBS})
+target_link_libraries(simulator pthread)

@@ -10,6 +10,8 @@ class ShipPlan {
 public:
     ShipPlan();
     ShipPlan(int num, map< pair<int,int>, int > dict);
+    explicit ShipPlan(vector< vector<pair<int,int>> > floors);
+    ShipPlan getEmptyCopy();
     int numberOfFloors();
     Floor& getFloor(int floor_number);
     bool hasContainer(const string& id);
