@@ -1,5 +1,5 @@
-#ifndef STOWAGE_NAIVEALGORITHM_H
-#define STOWAGE_NAIVEALGORITHM_H
+#ifndef STOWAGE_BASEALGORITHM_H
+#define STOWAGE_BASEALGORITHM_H
 
 #include <string>
 #include <vector>
@@ -20,7 +20,7 @@ using std::unique_ptr;
 using std::string;
 using std::vector;
 
-class NaiveAlgorithm: public AbstractAlgorithm {
+class BaseAlgorithm: public AbstractAlgorithm {
     vector<unique_ptr<Container>> _cargoLoad;
     vector<unique_ptr<Container>> _temporaryUnloaded;
     bool _invalidTravel = false;
@@ -32,7 +32,7 @@ protected:
     ShipPlan _plan;
 
 public:
-    ~NaiveAlgorithm() override;
+    ~BaseAlgorithm() override;
     void finishedPort();
     int readCargoLoad(const string& full_path_and_file_name);
     int readShipPlan(const string& path) override ;
@@ -59,4 +59,4 @@ public:
 };
 
 
-#endif //STOWAGE_NAIVEALGORITHM_H
+#endif //STOWAGE_BASEALGORITHM_H

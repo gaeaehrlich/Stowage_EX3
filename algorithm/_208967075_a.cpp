@@ -13,3 +13,4 @@ bool _208967075_a::tryMoveFrom(unique_ptr<Container> &container, const Position 
     }
     return false;
 }
+
