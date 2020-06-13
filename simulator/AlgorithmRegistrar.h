@@ -10,7 +10,7 @@
 #include <regex>
 #include <iostream>
 #include <dlfcn.h>
-#include <filesystem>
+#include <experimental/filesystem>
 #include <fstream>
 #include "../algorithm/AbstractAlgorithm.h"
 
@@ -19,7 +19,7 @@ using std::string;
 using std::pair;
 using std::unique_ptr;
 using std::map;
-namespace fs = std::filesystem;
+namespace fs = std::experimental::filesystem;
 
 class AlgorithmRegistrar {
     struct DlCloser {

@@ -42,9 +42,13 @@ public:
             const std::string& inputPath,
             const std::string& outputPath) override;
     void sortCargoLoad();
+    void countSortCargo(vector<unique_ptr<Container>>& cargo, bool reverse = false);
     void unloadInstructions(std::ofstream& file);
     void loadInstructions(std::ofstream& file, vector<unique_ptr<Container>>& list);
-    Position findPosition(const unique_ptr<Container>& container, const pair<int, int> oldLoc = {-1, -1});
+    Position findPosition(const unique_ptr<Container>& container, const pair<int, int> oldLoc = {-1, -1}, bool ordered = false);
+    // @param oldLoc - the previous location of the container. oldLoc != {-1, -1} when called by "tryMoveFrom"
+    // if ordered = true, returns position s.t container belows port is after our given container
+    // [if there is no such position, returns bad position: Position() = Position(-1,-1,-1) ]
     virtual bool tryMoveFrom(unique_ptr<Container>& container, const Position old, std::ofstream &file) = 0;
     bool shouldRejectContainer(unique_ptr<Container>& container);
     void unloadContainersAbove(Position position, std::ofstream& file);

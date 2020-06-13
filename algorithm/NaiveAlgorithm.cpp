@@ -40,7 +40,8 @@ int NaiveAlgorithm::getInstructionsForCargo(const string &inputPath, const strin
     if(!_invalidTravel) {
         portStatus = readCargoLoad(inputPath);
         unloadInstructions(file);
-        loadInstructions(file, _temporaryUnloaded);
+        countSortCargo(_temporaryUnloaded, true);
+        loadInstructions(file, _temporaryUnloaded); // todo: add _temporaryUnloaded to _cargoLoad in a SMART way and only then load
         rejectInstructions(file);
         sortCargoLoad();
         loadInstructions(file, _cargoLoad);
@@ -78,21 +79,28 @@ void NaiveAlgorithm::removeDuplicates(std::ofstream &file) {
 }
 
 void NaiveAlgorithm::sortCargoLoad() {
-    ShipRoute& route = _route;
-    ShipPlan& plan = _plan;
-    sort(_cargoLoad.begin(), _cargoLoad.end(), [route, &plan](const unique_ptr<Container>& a, const unique_ptr<Container>& b)  {
-        if (plan.hasContainer(a -> getId())) return false;
-        for(const string& port: route.getRoute()) {
-            if(port == a -> getDest()) return true;
-            if(port == b -> getDest()) return false;
-        }
-        return false;
-    });
-    int numOfEmptyCells = plan.numberOfEmptyCells();
+    countSortCargo(_cargoLoad);
+    int numOfEmptyCells = _plan.numberOfEmptyCells();
     auto end = numOfEmptyCells >= _cargoLoad.size() ? _cargoLoad.end() : _cargoLoad.begin() + numOfEmptyCells;
     std::reverse(_cargoLoad.begin(), end);
 }
 
+
+void NaiveAlgorithm::countSortCargo(vector<unique_ptr<Container>> &cargo, bool reverse) {
+    int n = _route.getCurrentDistance();
+    vector<vector<unique_ptr<Container>>> count(n + 1);
+    for (auto & container : cargo) {
+        int m = _plan.hasContainer(container->getId()) ? n : _route.portDistance(container->getDest());
+        count[m].push_back(std::move(container));
+    }
+    cargo = vector<unique_ptr<Container>>();
+    for (auto & vec : count) {
+        for (auto & container : vec) {
+            cargo.push_back(std::move(container));
+        }
+    }
+    if (reverse) std::reverse(cargo.begin(), cargo.end());
+}
 
 void NaiveAlgorithm::unloadInstructions(std::ofstream& file) {
     vector<Position> unload = _plan.findContainersToUnload(_route.getCurrentPort());
@@ -189,7 +197,7 @@ int NaiveAlgorithm::readCargoLoad(const string &input_path) {
     return readStatus;
 }
 
-Position NaiveAlgorithm::findPosition(const unique_ptr<Container> &container, const pair<int, int> oldLoc) {
+Position NaiveAlgorithm::findPosition(const unique_ptr<Container> &container, const pair<int, int> oldLoc, bool ordered) {
     double diff = -1*(double)_route.getRoute().size(), weight = container -> getWeight();
     double newDist = _route.portDistance(container -> getDest());
     Position best;
@@ -206,7 +214,7 @@ Position NaiveAlgorithm::findPosition(const unique_ptr<Container> &container, co
                     oldDist = _route.portDistance(port);
                 }
                 if (location == oldLoc) { continue; } // in case of move operation
-                if (diff < 0 ? diff < oldDist - newDist : (oldDist >= newDist && oldDist - newDist < diff)) {
+                if (diff < 0 ? (!ordered && diff < oldDist - newDist) : (oldDist >= newDist && oldDist - newDist < diff)) {
                     diff = oldDist - newDist;
                     best = Position(i, location.first, location.second);
                 }

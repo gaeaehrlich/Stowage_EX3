@@ -1,0 +1,2 @@
+# run tests with full paths, for example:
+simulator -travel_path /users/aaaa/ex2/travels_2 -algorithm_path /users/aaaa/ex2/travels_2/algorithms -output /users/aaaa/ex2/out_2

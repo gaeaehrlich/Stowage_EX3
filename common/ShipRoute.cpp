@@ -61,3 +61,7 @@ int ShipRoute::portDistance(const string& port) {
     return it != _route.end() ? std::distance(_route.begin() + _pos, it) : -1;
 }
 
+int ShipRoute::getCurrentDistance() {
+    return std::distance(_route.begin() + _pos, _route.end());
+}
+

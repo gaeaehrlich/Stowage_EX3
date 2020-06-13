@@ -1,4 +1,0 @@
-"C:\Program Files\JetBrains\CLion 2019.3.5\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=C:/TDM-GCC-64/bin/g++.exe -G "CodeBlocks - MinGW Makefiles" "C:\Projects\uni\adv topics cpp\ex2\Stowage\Simulation"
--- Configuring done
--- Generating done
--- Build files have been written to: C:/Projects/uni/adv topics cpp/ex2/Stowage/Simulation/cmake-build-debug

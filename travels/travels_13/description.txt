@@ -1,0 +1,1 @@
+#simple test to check simulator behaviour with bad (attached) algorithm (use travels_2 as input)
