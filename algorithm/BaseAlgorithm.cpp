@@ -209,7 +209,7 @@ Position BaseAlgorithm::findPosition(const unique_ptr<Container> &container) {
         for(pair<int,int> location: floor.getLegalLocations()) {
             if(_plan.isLegalLoadPosition(Position(i, location.first, location.second)) &&
                _calc.tryOperation(LOAD,weight, location.first, location.second) == WeightBalanceCalculator::APPROVED) {
-                double oldDist = 1.5; // if at the bottom, different calculation
+                double oldDist =  2.5; // if at the bottom, different calculation: found this number to be ideal
                 if (_plan.isLegalLocation(Position(i - 1, location.first, location.second))) {
                     string port = _plan.getDestAtPosition(Position(i - 1, location.first, location.second));
                     oldDist = _route.portDistance(port);
