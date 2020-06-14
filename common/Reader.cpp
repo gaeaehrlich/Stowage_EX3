@@ -132,11 +132,10 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
     if (!file || file.peek() == std::ifstream::traits_type::eof()) { return pow2(3); }
     vector<int> vec(3);
     do {
-        if (!std::getline(file, line) || !Reader::splitPlanLine(line, vec)) {
-            return pow2(3);
-        }
+        if (!std::getline(file, line)) { return pow2(3); }
     }
     while (ignoreLine(line));
+    if (!Reader::splitPlanLine(line, vec)) { return pow2(3); }
     numFloors = vec[0]; x = vec[1]; y = vec[2];
     bool fatal = false;
     map< pair<int,int>, int > mPlan;
@@ -175,7 +174,7 @@ int Reader::readShipPlan(const string& path, ShipPlan& plan) {
                 }
             }
         }
-        plan = ShipPlan(numFloors, std::move(mPlan)); // why not?
+        plan = ShipPlan(numFloors, std::move(mPlan));
     }
     return errors;
 }

@@ -104,13 +104,16 @@ void BaseAlgorithm::countSortCargo(vector<unique_ptr<Container>> &cargo, bool re
 
 void BaseAlgorithm::unloadInstructions(std::ofstream& file) {
     vector<Position> unload = _plan.findContainersToUnload(_route.getCurrentPort());
+    buildUnloadPositions(unload);
     for(const Position& pos: unload) {
         unloadContainersAbove(pos, file);
         if(_calc.tryOperation(UNLOAD, _plan.getWeightByPosition(pos), pos._x, pos._y) ==  WeightBalanceCalculator::APPROVED) {
             unique_ptr<Container> removed = std::move(_plan.getFloor(pos._floor).pop(pos._x, pos._y));
+            _countContainersToUnload[{pos._x, pos._y}] -= 1;
             file << instructionToString('U', removed -> getId(), pos);
         }
     }
+    _countContainersToUnload.clear();
 }
 
 void BaseAlgorithm::loadInstructions(std::ofstream& file, vector<unique_ptr<Container>>& list) {
@@ -197,31 +200,38 @@ int BaseAlgorithm::readCargoLoad(const string &input_path) {
     return readStatus;
 }
 
-Position BaseAlgorithm::findPosition(const unique_ptr<Container> &container, const pair<int, int> oldLoc, bool ordered) {
+Position BaseAlgorithm::findPosition(const unique_ptr<Container> &container) {
     double diff = -1*(double)_route.getRoute().size(), weight = container -> getWeight();
     double newDist = _route.portDistance(container -> getDest());
     Position best;
-    for(int i = 0; i < _plan.numberOfFloors(); ++i) {
+    for(int i = 0; i < _plan.numberOfFloors() && diff != 0; ++i) {
         Floor& floor = _plan.getFloor(i);
         for(pair<int,int> location: floor.getLegalLocations()) {
             if(_plan.isLegalLoadPosition(Position(i, location.first, location.second)) &&
                _calc.tryOperation(LOAD,weight, location.first, location.second) == WeightBalanceCalculator::APPROVED) {
                 double oldDist = 1.5; // if at the bottom, different calculation
                 if (_plan.isLegalLocation(Position(i - 1, location.first, location.second))) {
-                    string port = _plan.getDestAtPosition(Position(i - 1,
-                                                                   location.first,
-                                                                   location.second));
+                    string port = _plan.getDestAtPosition(Position(i - 1, location.first, location.second));
                     oldDist = _route.portDistance(port);
                 }
-                if (location == oldLoc) { continue; } // in case of move operation
-                if (diff < 0 ? (!ordered && diff < oldDist - newDist) : (oldDist >= newDist && oldDist - newDist < diff)) {
+                if (_countContainersToUnload.find(location) != _countContainersToUnload.end()
+                    && _countContainersToUnload[location]) { continue; } // in case of move operation
+                if (diff < 0 ? diff < oldDist - newDist : (oldDist >= newDist && oldDist - newDist < diff)) {
                     diff = oldDist - newDist;
                     best = Position(i, location.first, location.second);
+                    if (diff == 0) { break; } // ideal!
                 }
-                if (diff == 0) { break; } // ideal!
             }
         }
-        if (diff == 0) { break; }
     }
     return best;
+}
+
+void BaseAlgorithm::buildUnloadPositions(const vector<Position>& unload) {
+    for (auto pos : unload) {
+        if (_countContainersToUnload.find({pos._x, pos._y}) == _countContainersToUnload.end()) {
+            _countContainersToUnload[{pos._x, pos._y}] =0;
+        }
+        _countContainersToUnload[{pos._x, pos._y}] += 1;
+    }
 }

@@ -23,6 +23,7 @@ using std::vector;
 class BaseAlgorithm: public AbstractAlgorithm {
     vector<unique_ptr<Container>> _cargoLoad;
     vector<unique_ptr<Container>> _temporaryUnloaded;
+    map<pair<int, int>, int> _countContainersToUnload;
     bool _invalidTravel = false;
     int _status = 0;
 
@@ -43,9 +44,10 @@ public:
             const std::string& outputPath) override;
     void sortCargoLoad();
     void countSortCargo(vector<unique_ptr<Container>>& cargo, bool reverse = false);
+    void buildUnloadPositions(const vector<Position>& unload);
     void unloadInstructions(std::ofstream& file);
     void loadInstructions(std::ofstream& file, vector<unique_ptr<Container>>& list);
-    Position findPosition(const unique_ptr<Container>& container, const pair<int, int> oldLoc = {-1, -1}, bool ordered = false);
+    Position findPosition(const unique_ptr<Container>& container);
     // @param oldLoc - the previous location of the container. oldLoc != {-1, -1} when called by "tryMoveFrom"
     // if ordered = true, returns position s.t container belows port is after our given container
     // [if there is no such position, returns bad position: Position() = Position(-1,-1,-1) ]
