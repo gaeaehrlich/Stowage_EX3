@@ -1,6 +1,6 @@
 COMP = g++-9.3.0
 
-OBJS = Position.o Container.o Operation.o Floor.o ShipPlan.o ShipRoute.o WeightBalanceCalculator.o Reader.o NaiveAlgorithm.o
+OBJS = Position.o Container.o Operation.o Floor.o ShipPlan.o ShipRoute.o WeightBalanceCalculator.o Reader.o BaseAlgorithm.o
 
 SHARED_OBJS  = _208967075_a.so _208967075_b.so
 
@@ -28,17 +28,17 @@ WeightBalanceCalculator.o: $(COMMON)WeightBalanceCalculator.cpp $(COMMON)WeightB
 	$(COMP) $(CPP_COMP_FLAG) -c $(COMMON)$*.cpp
 Reader.o: $(COMMON)Reader.cpp $(COMMON)Reader.h
 	$(COMP) $(CPP_COMP_FLAG) -c $(COMMON)$*.cpp
-NaiveAlgorithm.o: $(ALGORITHM)NaiveAlgorithm.cpp $(ALGORITHM)NaiveAlgorithm.h $(ALGORITHM)AbstractAlgorithm.h $(ALGORITHM)AlgorithmRegistration.h
+BaseAlgorithm.o: $(ALGORITHM)BaseAlgorithm.cpp $(ALGORITHM)BaseAlgorithm.h $(ALGORITHM)AbstractAlgorithm.h $(ALGORITHM)AlgorithmRegistration.h
 	$(COMP) $(CPP_COMP_FLAG) -c $(ALGORITHM)$*.cpp
 
-_208967075_a.o: $(ALGORITHM)_208967075_a.cpp $(ALGORITHM)_208967075_a.h $(ALGORITHM)NaiveAlgorithm.h
+_208967075_a.o: $(ALGORITHM)_208967075_a.cpp $(ALGORITHM)_208967075_a.h $(ALGORITHM)BaseAlgorithm.h
 	$(COMP) $(CPP_COMP_FLAG) -c $(ALGORITHM)$*.cpp
-_208967075_b.o: $(ALGORITHM)_208967075_b.cpp $(ALGORITHM)_208967075_b.h $(ALGORITHM)NaiveAlgorithm.h
+_208967075_b.o: $(ALGORITHM)_208967075_b.cpp $(ALGORITHM)_208967075_b.h $(ALGORITHM)BaseAlgorithm.h
 	$(COMP) $(CPP_COMP_FLAG) -c $(ALGORITHM)$*.cpp
 
-_208967075_a.so: $(ALGORITHM)_208967075_a.o NaiveAlgorithm.o $(OBJS)
+_208967075_a.so: $(ALGORITHM)_208967075_a.o BaseAlgorithm.o $(OBJS)
 	$(COMP) $(CPP_LINK_FLAG) -o $@ $^
-_208967075_b.so: $(ALGORITHM)_208967075_b.o NaiveAlgorithm.o $(OBJS)
+_208967075_b.so: $(ALGORITHM)_208967075_b.o BaseAlgorithm.o $(OBJS)
 	$(COMP) $(CPP_LINK_FLAG) -o $@ $^
 
 clean:
