@@ -91,17 +91,19 @@ bool Reader::legalContainerId(const string& id) {
 }
 
 bool Reader::legalCheckDigit(const string& id) {
-    int sum = 0, i = 0, temp;
+    int sum = 0, i = 0, temp, p = 1;
+    int val[26] = {10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 23, 24,
+                   25, 26, 27, 28, 29, 30, 31, 32, 34, 35, 36, 37, 38};
     for(char ch : id) {
         if (i <= 3) {
-            int add = static_cast<int>(floor((double) (ch - 'A' + 10) / 11));
-            temp = ch - 'A' + 10 + add;
+            temp = val[ch - 'A'];
         }
         else if (i < 10){
             temp = ch - '0';
         }
         else { break; }
-        sum += (int)pow(2, i) * temp;
+        sum += p* temp;
+        p *= 2;
         i++;
     }
     sum -= 11 * (int)floor((double)sum / 11);
