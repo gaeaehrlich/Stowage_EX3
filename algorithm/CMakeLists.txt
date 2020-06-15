@@ -19,7 +19,7 @@ set(COMMON_SRC
         ../common/Position.h
         ../common/Position.cpp
         ../common/WeightBalanceCalculator.h
-        ../common/WeightBalanceCalculator.cpp
+        ../simulator/WeightBalanceCalculator.cpp
         )
 
 add_library(_208967075_a SHARED

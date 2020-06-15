@@ -1,4 +1,4 @@
-#include "WeightBalanceCalculator.h"
+#include "../common/WeightBalanceCalculator.h"
 
 int WeightBalanceCalculator::readShipPlan(const std::string& full_path_and_file_name) {
     (void)full_path_and_file_name;
