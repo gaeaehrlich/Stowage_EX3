@@ -39,6 +39,7 @@ class Simulation {
                                     "\ttravel route: bad port symbol format (ignored)\n",
                                     "\ttravel route: travel error - empty file or file cannot be read altogether (cannot run this travel)\n",
                                     "\ttravel route: travel error - file with only a single valid port (cannot run this travel)\n",
+                                    "\treserved\n",
                                     "\tduplicate ID on port (ID rejected)\n",
                                     "\tID already on ship (ID rejected)\n",
                                     "\tbad line format, missing or bad weight (ID rejected)\n",

@@ -36,7 +36,7 @@ string Simulation::createTravelOutputFolder(const string &outputPath, const stri
 void Simulation::writeReaderErrors(int simulationErrors, int algErrors, const pair<string, string>& sailInfo, const string& portInfo) {
     bool errors = false;
     string msg;
-    int index = portInfo.empty() ? 0 : 9;
+    int index = portInfo.empty() ? 0 : 10;
     for(long unsigned int i = 0; i < 9; i++) {
         if(simulationErrors & pow2(i + index)) {
             if(!errors) {
