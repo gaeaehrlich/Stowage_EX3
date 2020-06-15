@@ -127,12 +127,11 @@ bool Crane::isErrorUnload(const string& id, ShipPlan &plan, Position pos, bool& 
     Position aboveFloor = Position(pos._floor + 1, pos._x, pos._y);
     bool cellAboveNull = pos._floor + 1 == plan.numberOfFloors() ? true : plan.isLegalFloor(aboveFloor) && plan.isEmptyPosition(aboveFloor);
 
-    if(!plan.hasContainer(id) || !isLegalLocation || !cellAboveNull) {
+    if(!plan.hasContainer(id) || !isLegalLocation || !cellAboveNull || plan.isEmptyPosition(pos)) {
         writeInstructionError("Unload", id, false);
         fatal = true;
         return true;
     }
-
     if(plan.getIdAtPosition(pos) != id) {
         _craneErrors.append("ALGORITHM ERROR: algorithm is unloading the container " + plan.getIdAtPosition(pos) + " instead of " + id + " at port " + _port + ".\n");
         writeInstructionError("Unload", id, true);
@@ -140,6 +139,25 @@ bool Crane::isErrorUnload(const string& id, ShipPlan &plan, Position pos, bool& 
     }
     return false;
 }
+
+bool Crane::isErrorMove(const string &id, ShipPlan &plan, Position pos, Position move, bool& fatal) {
+    bool isLegalLocation = plan.isLegalLocation(pos);
+    Position aboveFloor = Position(pos._floor + 1, pos._x, pos._y);
+    bool cellAboveNull = pos._floor + 1 == plan.numberOfFloors() ? true : plan.isLegalFloor(aboveFloor) && plan.isEmptyPosition(aboveFloor);
+
+    if(!plan.hasContainer(id) || !isLegalLocation || !cellAboveNull || plan.isEmptyPosition(pos) || !plan.isLegalLoadPosition(move)) {
+        writeInstructionError("Move", id, false);
+        fatal = true;
+        return true;
+    }
+    if(plan.getIdAtPosition(pos) != id) {
+        _craneErrors.append("ALGORITHM ERROR: algorithm is moving the container " + plan.getIdAtPosition(pos) + " instead of " + id + " at port " + _port + ".\n");
+        writeInstructionError("Unload", id, true);
+        return true;
+    }
+    return false;
+}
+
 
 void Crane::writeLeftAtPortError(const string& id, const string& msg) {
     _craneErrors.append("ALGORITHM ERROR: algorithm is making a mistake with container " + id

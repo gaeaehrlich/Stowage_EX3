@@ -80,7 +80,7 @@ void BaseAlgorithm::removeDuplicates(std::ofstream &file) {
 
 void BaseAlgorithm::sortCargoLoad() {
     countSortCargo(_cargoLoad);
-    int numOfEmptyCells = _plan.numberOfEmptyCells();
+    unsigned long long numOfEmptyCells = _plan.numberOfEmptyCells();
     auto end = numOfEmptyCells >= _cargoLoad.size() ? _cargoLoad.end() : _cargoLoad.begin() + numOfEmptyCells;
     std::reverse(_cargoLoad.begin(), end);
 }

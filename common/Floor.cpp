@@ -19,14 +19,14 @@ bool Floor::insert(int x, int y, std::unique_ptr<Container> container) {
 
 unique_ptr<Container> Floor::pop(int x, int y) {
     if(_map.find({x,y}) == _map.end()) {
-        printf("Unavailable location for this floor");
+        printf("Unavailable location for this floor\n");
         return nullptr;
     }
     else if(_map[{x,y}] != nullptr) {
         unique_ptr<Container> container = std::move(_map[{x,y}]);
         return container;
     }
-    printf("No container to pop");
+    printf("No container to pop\n");
     return nullptr;
 }
 

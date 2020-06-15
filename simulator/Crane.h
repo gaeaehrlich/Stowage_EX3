@@ -37,12 +37,14 @@ public:
     bool end(ShipPlan& plan, ShipRoute& route);
     bool load(const string& id, Position pos, ShipPlan& plan, ShipRoute& route);
     bool unload(const string& id, Position pos, ShipPlan& plan);
+    bool move(const string& id, Position pos, Position move, ShipPlan& plan);
     bool reject(const string& id, ShipPlan& plan, ShipRoute& route);
     void setContainerData(vector<unique_ptr<Container>> containers);
     void containerNotFoundError(const string& place);
     int shouldReject(unique_ptr<Container>& container, ShipPlan& plan, ShipRoute& route, bool write = false);
     void writeInstructionError(const string &instruction, const string& id, bool executed);
     bool isErrorLoad(unique_ptr<Container>& container, ShipPlan& plan, ShipRoute& route, Position pos, bool& fatal);
+    bool isErrorMove(const string& id, ShipPlan& plan, Position pos, Position move, bool& fatal);
     bool isErrorUnload(const string& id, ShipPlan& plan, Position pos, bool& fatal);
     bool checkLoadedTemporaryUnloaded();
     void writeLeftAtPortError(const string& id, const string& msg);

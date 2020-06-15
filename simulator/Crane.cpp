@@ -22,7 +22,7 @@ int Crane::start(ShipPlan& plan, ShipRoute& route, WeightBalanceCalculator& calc
                 if(!reject(op._id, plan, route)) { flag = true; }
                 break;
             case MOVE:
-                if(!unload(op._id, op._position, plan) || !load(op._id, op._move, plan, route)) {  flag = true; }
+                if(!move(op._id, op._position, op._move, plan)) {  flag = true; }
                 sum_operations += 3;
                 break;
             case ERROR:
@@ -111,6 +111,19 @@ bool Crane::unload(const string& id, Position pos, ShipPlan& plan) {
     return !isError;
 }
 
+bool Crane::move(const string &id, Position pos, Position move, ShipPlan &plan) {
+    bool fatal = false;
+    bool isError = isErrorMove(id, plan, pos, move, fatal);
+    if(fatal) { return false; }
+
+    if(_calculator.tryOperation(UNLOAD, plan.getWeightById(id), pos._x, pos._y) != WeightBalanceCalculator::APPROVED) { return false; }
+    unique_ptr<Container> container = std::move(plan.getFloor(pos._floor).pop(pos._x, pos._y));
+
+    if(_calculator.tryOperation(LOAD, container -> getWeight(), move._x, move._y) != WeightBalanceCalculator::APPROVED) { return false; }
+    plan.getFloor(move._floor).insert(move._x, move._y, std::move(container));
+    return !isError;
+}
+
 unique_ptr<Container> Crane::getContainerToReject(const string &id) {
     auto duplicatePointer = find_if(_duplicates.begin(), _duplicates.end(), [&](unique_ptr<Container>& container) {
         return container -> getId() == id;
@@ -150,4 +163,3 @@ bool Crane::reject(const string& id, ShipPlan& plan, ShipRoute& route) {
     }
     return true;
 }
-
