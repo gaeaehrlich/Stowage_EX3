@@ -34,32 +34,38 @@ string Simulation::createTravelOutputFolder(const string &outputPath, const stri
 }
 
 void Simulation::writeReaderErrors(int simulationErrors, int algErrors, const pair<string, string>& sailInfo, const string& portInfo) {
-    bool errors = false;
-    string msg;
+    bool errors1 = false, errors2 = false, errors3 = false;
+    string msg1, msg2, msg3;
     int index = portInfo.empty() ? 0 : 10;
-    for(long unsigned int i = 0; i < 9; i++) {
-        if(simulationErrors & pow2(i + index)) {
-            if(!errors) {
-                if(index == 0) msg.append("Input travel files errors:\n");
-                else msg.append("Input cargo data files errors at port " + portInfo + ":\n");
+    for (long unsigned int i = 0; i < 9; i++) {
+        if (simulationErrors & pow2(i + index)) {
+            if (!errors1) {
+                errors1 = true;
+                msg1.append("Simulation warning:\n");
             }
-            msg.append(_readerErrors[i + index]);
-            if(!(algErrors & pow2(i + index))) {
-                msg.append("ALGORITHM WARNING: algorithm did not alert the following problem:\n");
-                msg.append(_readerErrors[i + index]);
+            msg1.append(_readerErrors[i + index]);
+
+            if (!(algErrors & pow2(i + index))) {
+                if (!errors2) { 
+                    errors2 = true;
+                    msg2.append("Algorithm warning - algorithm did not alert the following problems:\n");
+                }
+                msg2.append(_readerErrors[i + index]);
             }
-            errors = true;
         }
-        else if(algErrors & pow2(i + index)) {
-            string extraError = portInfo.empty() ? _readerErrors[i + index] : "At port " + portInfo + ":" + _readerErrors[i + index];
-            msg.append("ALGORITHM WARNING: algorithm " + sailInfo.first + " reports a problem the simulator did not find:\n" + extraError);
-            errors = true;
+        else if (algErrors & pow2(i + index)) {
+            if (!errors3) {
+                errors3 = true;
+                msg3.append("Algorithm warning - algorithm reports the following problems the simulator did not find:\n");
+            }
+            msg3.append(_readerErrors[i + index]);
         }
     }
-    if(errors) {
-        _simulationErrors[sailInfo.first][sailInfo.second].append(msg);
+    if (errors1 || errors2 || errors3) {
+        string extraError = portInfo.empty() ? "\nINPUT TRAVEL FILES ERRORS:\n" : "\nINPUT CARGO DATA FILES ERRORS AT PORT " + portInfo + ":\n";
+        _simulationErrors[sailInfo.first][sailInfo.second].append(extraError + msg1 + msg2 + msg3);
     }
-}
+}   
 
 void Simulation::writeShipErrors(int algErrors, const string& travel, const string& algName) {
     int simulationErrors = _travels[travel].second;
