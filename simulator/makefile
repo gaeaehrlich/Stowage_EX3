@@ -26,7 +26,7 @@ ShipRoute.o: $(COMMON)ShipRoute.cpp $(COMMON)ShipRoute.h
 Reader.o: $(COMMON)Reader.cpp $(COMMON)Reader.h
 	$(COMP) $(CPP_COMP_FLAG) -c $(COMMON)$*.cpp
 WeightBalanceCalculator.o: $(SIMULATOR)WeightBalanceCalculator.cpp $(COMMON)WeightBalanceCalculator.h
-	$(COMP) $(CPP_COMP_FLAG) -c $(COMMON)$*.cpp
+	$(COMP) $(CPP_COMP_FLAG) -c $(SIMULATOR)$*.cpp
 CraneAux.o: $(SIMULATOR)CraneAux.cpp $(SIMULATOR)Crane.h $(COMMON)Operation.h $(COMMON)Reader.h $(COMMON)ShipPlan.h $(COMMON)WeightBalanceCalculator.h
 	$(COMP) $(CPP_COMP_FLAG) -c $(SIMULATOR)$*.cpp
 Crane.o: $(SIMULATOR)Crane.cpp $(SIMULATOR)Crane.h $(COMMON)Operation.h $(COMMON)Reader.h $(COMMON)ShipPlan.h $(COMMON)WeightBalanceCalculator.h
