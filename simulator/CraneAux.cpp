@@ -152,7 +152,7 @@ bool Crane::isErrorMove(const string &id, ShipPlan &plan, Position pos, Position
     }
     if(plan.getIdAtPosition(pos) != id) {
         _craneErrors.append("ALGORITHM ERROR: algorithm is moving the container " + plan.getIdAtPosition(pos) + " instead of " + id + " at port " + _port + ".\n");
-        writeInstructionError("Unload", id, true);
+        writeInstructionError("Move", id, true);
         return true;
     }
     return false;
