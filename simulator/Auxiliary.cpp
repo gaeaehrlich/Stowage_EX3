@@ -43,10 +43,10 @@ void Simulation::writeReaderErrors(int simulationErrors, int algErrors, const pa
                 if(index == 0) msg.append("Input travel files errors:\n");
                 else msg.append("Input cargo data files errors at port " + portInfo + ":\n");
             }
-            //if(!portInfo.empty()) msg.append(portInfo);
             msg.append(_readerErrors[i + index]);
             if(!(algErrors & pow2(i + index))) {
-                msg.append("ALGORITHM WARNING: algorithm did not alert the following problems:\n");
+                msg.append("ALGORITHM WARNING: algorithm did not alert the following problem:\n");
+                msg.append(_readerErrors[i + index]);
             }
             errors = true;
         }
